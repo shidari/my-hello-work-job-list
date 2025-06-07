@@ -1,0 +1,25 @@
+{
+  "name": "hello-work-searcher",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,ts,jsx,tsx,json,jsonc}": [
+      "pnpm dlx @biomejs/biome check --fix --unsafe --no-errors-on-unmatched --files-ignore-unknown=true --colors=off",
+      "git add"
+    ]
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.11.0",
+  "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.1.0"
+  }
+}
