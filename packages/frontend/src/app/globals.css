@@ -40,3 +40,15 @@ form {
   height:100%;
   overflow: scroll;
 }
+
+.job-detail {
+  border:0.1em solid gainsboro;
+  padding: 1em;
+}
+
+.job-detail ul{
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1em;
+}
