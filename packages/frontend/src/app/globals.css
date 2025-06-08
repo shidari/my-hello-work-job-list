@@ -1,42 +1,42 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
 body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
+  height: 100vh;
   margin: 0;
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
+main {
+  height: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+form {
+  height: 100%;
+}
+
+.container {
+  display: flex;
+  justify-content: center;
+  height:100%;
+}
+
+.container-inner {
+  width: 80%;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+  height:100%;
+}
+
+.job-overview {
+  border: 0.1em solid gainsboro;
+  border-radius: 4px;
+  padding: 2%;
+}
+
+.job-overview-list {
+  display: flex; 
+  flex-direction: column;
+  gap: 13em;
+  height:100%;
+  overflow: scroll;
 }
