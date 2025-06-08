@@ -1,0 +1,20 @@
+{
+	"name": "scraper",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev --test-scheduled",
+		"start": "wrangler dev --test-scheduled",
+		"cf-typegen": "wrangler types"
+	},
+	"devDependencies": {
+		"@types/jsdom": "^21.1.7",
+		"typescript": "^5.5.2",
+		"wrangler": "^4.19.1"
+	},
+	"dependencies": {
+		"jsdom": "^26.1.0",
+		"neverthrow": "^8.2.0"
+	}
+}
