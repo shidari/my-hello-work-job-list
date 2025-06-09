@@ -15,5 +15,5 @@ export type Job = {
 // JobOverviewコンポーネントと命名がバッティングしてしまうため、後で名前考える
 export type TJobOverview = Pick<
 	Job,
-	"companyName" | "employmentType" | "jobTitle" | "workPlace"
+	"jobNumber" | "companyName" | "employmentType" | "jobTitle" | "workPlace"
 >;

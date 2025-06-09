@@ -1,5 +1,7 @@
+import Link from "next/link";
 import type { Job, TJobOverview } from "../type";
 import { FlexN } from "./Flex";
+import "./index.css";
 
 export function JobOverview({
 	companyName,
@@ -28,20 +30,28 @@ export function JobOverview({
 export function JobOverviewList({ items }: { items: TJobOverview[] }) {
 	return (
 		<div className="job-overview-list">
-			{items.map(({ companyName, jobTitle, employmentType, workPlace }, i) => {
-				return (
-					<FlexN n={(1 / items.length) * 10} key={i.toString()}>
-						<section className="job-overview">
-							<JobOverview
-								companyName={companyName}
-								jobTitle={jobTitle}
-								employmentType={employmentType}
-								workPlace={workPlace}
-							/>
-						</section>
-					</FlexN>
-				);
-			})}
+			{items.map(
+				(
+					{ companyName, jobTitle, employmentType, workPlace, jobNumber },
+					i,
+				) => {
+					return (
+						<FlexN n={(1 / items.length) * 10} key={i.toString()}>
+							<section className="job-overview">
+								<Link href={`/jobs/${jobNumber}`}>
+									<JobOverview
+										jobNumber={jobNumber}
+										companyName={companyName}
+										jobTitle={jobTitle}
+										employmentType={employmentType}
+										workPlace={workPlace}
+									/>
+								</Link>
+							</section>
+						</FlexN>
+					);
+				},
+			)}
 		</div>
 	);
 }

@@ -1,20 +1,22 @@
 import type { Metadata } from "next";
-import "./globals.css";
-import { Container } from "./components/Container";
 export const metadata: Metadata = {
 	title: "ハローワーククローラー",
 };
 
 export default function RootLayout({
 	children,
+	modal,
 }: Readonly<{
 	children: React.ReactNode;
+	modal: React.ReactNode;
 }>) {
 	return (
 		<html lang="ja">
-			<body>
+			<body style={{ height: "100vh", margin: "0" }}>
 				{/* mainをここに入れるかどうか */}
-				<Container>{children}</Container>
+				{children}
+				{modal}
+				<div id="modal-root" />
 			</body>
 		</html>
 	);

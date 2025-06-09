@@ -1,4 +1,4 @@
-import "../globals.css";
+import "./index.css";
 export function FlexColumn({
 	children,
 }: Readonly<{
