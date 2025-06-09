@@ -1,10 +1,10 @@
-import { JSDOM } from "jsdom";
+import { parseHTML } from "linkedom";
 import { type Result, err, ok } from "neverthrow";
 import type { ErrorMessage, Job } from "./type";
 
 export const scrapeJobDescription: (html: string) => Result<Job, ErrorMessage> =
 	(html: string) => {
-		const jsdom = new JSDOM(html);
+		const jsdom = parseHTML(html);
 		const doc = jsdom.window.document;
 		const companyName = doc.querySelector("#ID_jgshMei")?.textContent;
 		const jobTitle = doc.querySelector("#ID_sksu")?.textContent;
