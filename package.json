@@ -9,7 +9,7 @@
   },
   "lint-staged": {
     "*.{js,ts,jsx,tsx,json,jsonc}": [
-      "pnpm dlx @biomejs/biome check --fix --unsafe --no-errors-on-unmatched --files-ignore-unknown=true --colors=off",
+      "pnpm exec biome check --fix --unsafe --no-errors-on-unmatched --files-ignore-unknown=true --colors=off",
       "git add"
     ]
   },
