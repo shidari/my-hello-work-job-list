@@ -37,8 +37,8 @@ export class ScrapeJobDataError extends Data.TaggedError("ScrapeJobDataError")<{
   readonly message: string;
 }> {}
 
-export class AssertSingleJobListed extends Data.TaggedError(
-  "AssertSingleJobListed",
+export class AssertSingleJobListedError extends Data.TaggedError(
+  "AssertSingleJobListedError",
 )<{ readonly message: string }> {}
 export class JobDetailPageValidationError extends Data.TaggedError(
   "JobDetailPageValidationError",

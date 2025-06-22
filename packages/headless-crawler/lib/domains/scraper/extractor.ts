@@ -31,30 +31,37 @@ function extractJobNumber(page: JobDetailPage) {
     const rawJobNumber = yield* Effect.tryPromise({
       try: async () => {
         const rawJobNumber = await jobNumberLoc.textContent();
-        if (rawJobNumber === null)
-          throw new ExtractJobInfoError({ message: "jobNumber is null." });
         return rawJobNumber;
       },
       catch: (e) =>
         new ExtractJobInfoError({ message: `unexpected error.\n${String(e)}` }),
     });
+    if (rawJobNumber === null)
+      return yield* Effect.fail(
+        new ExtractJobInfoError({ message: "jobNumber is null." }),
+      );
     const jobNumber = yield* validateJobNumber(rawJobNumber);
     return jobNumber;
   });
 }
 function extractCompanyName(page: JobDetailPage) {
-  return Effect.tryPromise({
-    try: async () => {
-      const companyNameLoc = page.locator("#ID_jgshMei");
-      const companyName = await companyNameLoc.textContent();
-      if (companyName === null)
-        throw new ExtractJobCompanyNameError({ message: "jobNumber is null." });
-      return companyName;
-    },
-    catch: (e) =>
-      new ExtractJobCompanyNameError({
-        message: `unexpected error.\n${String(e)}`,
-      }),
+  return Effect.gen(function* () {
+    const companyName = yield* Effect.tryPromise({
+      try: async () => {
+        const companyNameLoc = page.locator("#ID_jgshMei");
+        const text = await companyNameLoc.textContent();
+        return text;
+      },
+      catch: (e) =>
+        new ExtractJobCompanyNameError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
+    });
+    if (companyName === null)
+      return yield* Effect.fail(
+        new ExtractJobCompanyNameError({ message: "jobNumber is null." }),
+      );
+    return companyName;
   });
 }
 function extractReceivedDate(page: JobDetailPage) {
@@ -63,10 +70,6 @@ function extractReceivedDate(page: JobDetailPage) {
     const rawReceivedDate = yield* Effect.tryPromise({
       try: async () => {
         const text = await receivedDateLoc.textContent();
-        if (!text)
-          throw new ExtractReceivedDateError({
-            message: "received date textContent is null",
-          });
         return text;
       },
       catch: (e) =>
@@ -74,6 +77,12 @@ function extractReceivedDate(page: JobDetailPage) {
           message: `unexpected error.\n${String(e)}`,
         }),
     });
+    if (!rawReceivedDate)
+      return yield* Effect.fail(
+        new ExtractReceivedDateError({
+          message: "received date textContent is null",
+        }),
+      );
     yield* Effect.logDebug(`rawReceivedDate=${rawReceivedDate}`);
     const receivedDate = yield* validateReceivedDate(rawReceivedDate);
     return receivedDate;
@@ -85,10 +94,6 @@ function extractExpiryDate(page: JobDetailPage) {
     const rawExpiryDate = yield* Effect.tryPromise({
       try: async () => {
         const text = await expiryDateLoc.textContent();
-        if (!text)
-          throw new ExtractExpiryDateError({
-            message: "expiryDate textContent is null.",
-          });
         return text;
       },
       catch: (e) =>
@@ -96,6 +101,12 @@ function extractExpiryDate(page: JobDetailPage) {
           message: `unexpected error.\n${String(e)}`,
         }),
     });
+    if (!rawExpiryDate)
+      return yield* Effect.fail(
+        new ExtractExpiryDateError({
+          message: "expiryDate textContent is null.",
+        }),
+      );
     const expiryDate = yield* validateExpiryDate(rawExpiryDate);
     return expiryDate;
   });
@@ -106,7 +117,6 @@ function extractHomePage(page: JobDetailPage) {
     const rawHomePage = yield* Effect.tryPromise({
       try: async () => {
         const text = await homePageLoc.textContent();
-        if (!text) new ExtractHomePageError({ message: "home page is null" });
         return text;
       },
       catch: (e) =>
@@ -114,71 +124,95 @@ function extractHomePage(page: JobDetailPage) {
           message: `unexpected error.\n${String(e)}`,
         }),
     });
+    if (!rawHomePage)
+      return yield* new ExtractHomePageError({ message: "home page is null" });
+
     const homePage = yield* validateHomePage(rawHomePage?.trim());
     return homePage;
   });
 }
 function extractOccupation(page: JobDetailPage) {
-  return Effect.tryPromise({
-    try: async () => {
-      const occupationLoc = page.locator("#ID_sksu");
-      const text = await occupationLoc.textContent();
-      if (!text)
-        throw new ExtractOccupationError({ message: "occupation is empty." });
-      return text;
-    },
-    catch: (e) =>
-      new ExtractOccupationError({
-        message: `unexpected error.\n${String(e)}`,
-      }),
+  return Effect.gen(function* () {
+    const occupation = yield* Effect.tryPromise({
+      try: async () => {
+        const occupationLoc = page.locator("#ID_sksu");
+        const text = await occupationLoc.textContent();
+        return text;
+      },
+      catch: (e) =>
+        new ExtractOccupationError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
+    });
+    if (!occupation)
+      return yield* Effect.fail(
+        new ExtractOccupationError({ message: "occupation is empty." }),
+      );
+    return occupation;
   });
 }
 function extractEmploymentType(page: JobDetailPage) {
-  return Effect.tryPromise({
-    try: async () => {
-      const employmentTypeLoc = page.locator("#ID_koyoKeitai");
+  return Effect.gen(function* () {
+    const emplomentType = yield* Effect.tryPromise({
+      try: async () => {
+        const employmentTypeLoc = page.locator("#ID_koyoKeitai");
 
-      const text = await employmentTypeLoc.textContent();
-      if (!text)
-        throw new ExtractEmployMentTypeError({
+        const text = await employmentTypeLoc.textContent();
+        return text;
+      },
+      catch: (e) =>
+        new ExtractEmployMentTypeError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
+    });
+    if (!emplomentType)
+      return yield* Effect.fail(
+        new ExtractEmployMentTypeError({
           message: "emploment type is empty.",
-        });
-      return text;
-    },
-    catch: (e) =>
-      new ExtractEmployMentTypeError({
-        message: `unexpected error.\n${String(e)}`,
-      }),
+        }),
+      );
+    return emplomentType;
   });
 }
 function extractWage(page: JobDetailPage) {
-  return Effect.tryPromise({
-    try: async () => {
-      const wageLoc = page.locator("#ID_chgn");
-      const text = await wageLoc.textContent();
-      if (!text) throw new ExtractWageError({ message: "wage is empty" });
-      return text;
-    },
-    catch: (e) =>
-      new ExtractWageError({ message: `unexpected error.\n${String(e)}` }),
+  return Effect.gen(function* () {
+    const wage = yield* Effect.tryPromise({
+      try: async () => {
+        const wageLoc = page.locator("#ID_chgn");
+        const text = await wageLoc.textContent();
+        return text;
+      },
+      catch: (e) =>
+        new ExtractWageError({ message: `unexpected error.\n${String(e)}` }),
+    });
+    if (!wage)
+      return yield* Effect.fail(
+        new ExtractWageError({ message: "wage is empty" }),
+      );
+    return wage;
   });
 }
 function extractWorkingHours(page: JobDetailPage) {
-  return Effect.tryPromise({
-    try: async () => {
-      // 一旦一つだけ
-      const workingHoursLoc = page.locator("#ID_shgJn1");
-      const text = await workingHoursLoc.textContent();
-      if (!text)
-        throw new ExtractWorkingHoursError({
+  return Effect.gen(function* () {
+    const workingHours = yield* Effect.tryPromise({
+      try: async () => {
+        // 一旦一つだけ
+        const workingHoursLoc = page.locator("#ID_shgJn1");
+        const text = await workingHoursLoc.textContent();
+        return text;
+      },
+      catch: (e) =>
+        new ExtractWorkingHoursError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
+    });
+    if (!workingHours)
+      return yield* Effect.fail(
+        new ExtractWorkingHoursError({
           message: "working hours is empty",
-        });
-      return text;
-    },
-    catch: (e) =>
-      new ExtractWorkingHoursError({
-        message: `unexpected error.\n${String(e)}`,
-      }),
+        }),
+      );
+    return workingHours;
   });
 }
 
@@ -188,10 +222,6 @@ function extractEmployeeCount(page: JobDetailPage) {
     const rawEmployeeCount = yield* Effect.tryPromise({
       try: async () => {
         const text = await employeeCountLoc.textContent();
-        if (!text)
-          throw new ExtractEmployeeCountError({
-            message: "employee count is empty",
-          });
         return text;
       },
       catch: (e) =>
@@ -199,6 +229,12 @@ function extractEmployeeCount(page: JobDetailPage) {
           message: `unexpected error.\n${String(e)}`,
         }),
     });
+    if (!rawEmployeeCount)
+      return yield* Effect.fail(
+        new ExtractEmployeeCountError({
+          message: "employee count is empty",
+        }),
+      );
     yield* Effect.logDebug(`rawEmployeeCount=${rawEmployeeCount}`);
     const employeeCount = yield* validateEmpoyeeCount(rawEmployeeCount);
     return employeeCount;

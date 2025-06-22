@@ -10,6 +10,7 @@ import { goToJobSearchPage } from "../shared/helper/pagenation";
 import { validateJobSearchPage } from "../shared/helper/validator";
 import type { JobNumber } from "../shared/type";
 import type {
+  AssertSingleJobListedError,
   FillJobNumberError,
   FromJobListToJobDetailPageError,
   JobDetailPagePagenationError,
@@ -49,7 +50,8 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
       | SearchThenGotoJobListPageError
       | FromJobListToJobDetailPageError
       | NewPageError
-      | JobDetailPagePagenationError,
+      | JobDetailPagePagenationError
+      | AssertSingleJobListedError,
       PlaywrightBrowser
     >;
   }

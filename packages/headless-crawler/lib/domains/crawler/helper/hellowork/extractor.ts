@@ -17,11 +17,6 @@ export function extractJobNumbers(jobOverviewList: JobOverViewList) {
                 .locator("td")
                 .nth(1)
                 .textContent();
-              if (!text) {
-                return Effect.fail(
-                  new ExtractJobNumbersError({ message: "jobNumber is null" }),
-                );
-              }
               return text;
             }),
           );
@@ -31,6 +26,11 @@ export function extractJobNumbers(jobOverviewList: JobOverViewList) {
             message: `unexpected error. ${String(e)}`,
           }),
       });
+      if (rawJobNumber === null) {
+        return yield* Effect.fail(
+          new ExtractJobNumbersError({ message: "jobNumber is null" }),
+        );
+      }
       const jobNumber = yield* validateJobNumber(rawJobNumber);
       return jobNumber;
     });
