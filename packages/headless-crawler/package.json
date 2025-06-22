@@ -9,6 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
+    "type-check": "tsc --noEmit",
     "test:crawler": "ts-node lib/lambda/handler/crawler/test/index.ts",
     "test:scraper": "ts-node lib/lambda/handler/scraper/test/index.ts"
   },
