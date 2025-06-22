@@ -1,17 +1,14 @@
 import { Context, Effect, Layer } from "effect";
-import { PlaywrightBrowser } from "../common/context";
+import { PlaywrightBrowser } from "../shared/context";
 import type {
-  GetOriginError,
+  GoToJobSearchPageError,
   ListJobsError,
   NewPageError,
-  ResolveURLError,
-} from "../common/error";
-import {
-  createPage,
-  goToHelloWorkSearchThenReturnPage,
-} from "../common/helper";
-import type { JobNumber } from "../common/type";
-import type { GoToHelloWorkSearchPageError } from "../crawler/error";
+} from "../shared/error";
+import { createPage } from "../shared/helper/helper";
+import { goToJobSearchPage } from "../shared/helper/pagenation";
+import { validateJobSearchPage } from "../shared/helper/validator";
+import type { JobNumber } from "../shared/type";
 import type {
   FillJobNumberError,
   FromJobListToJobDetailPageError,
@@ -43,7 +40,7 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
       JobInfo,
       | ExtractTextContentError
       | JobDetailPageContentValidationError
-      | GoToHelloWorkSearchPageError
+      | GoToJobSearchPageError
       | PageValidationError
       | FillJobNumberError
       | ListJobsError
@@ -52,9 +49,7 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
       | SearchThenGotoJobListPageError
       | FromJobListToJobDetailPageError
       | NewPageError
-      | JobDetailPagePagenationError
-      | GetOriginError
-      | ResolveURLError,
+      | JobDetailPagePagenationError,
       PlaywrightBrowser
     >;
   }
@@ -78,7 +73,8 @@ export function buildHelloWorkScrapingLayer(config: HelloWorkScrapingConfig) {
           Effect.gen(function* () {
             yield* Effect.logInfo("start scrapling...");
             yield* Effect.logDebug("go to hello work seach page.");
-            const searchPage = yield* goToHelloWorkSearchThenReturnPage(page);
+            yield* goToJobSearchPage(page);
+            const searchPage = yield* validateJobSearchPage(page);
             yield* Effect.logDebug(
               "fill jobNumber then go to hello work seach page.",
             );

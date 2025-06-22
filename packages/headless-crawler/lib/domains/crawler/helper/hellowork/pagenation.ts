@@ -1,16 +1,15 @@
 import { Effect } from "effect";
-import type { Page } from "playwright";
-import { fillJobCriteriaField } from "../../../common/helper";
+import { fillJobCriteriaField } from "../../../shared/helper/form";
 import type {
-  HelloWorkSearchPage,
+  JobListPage,
   JobSearchCriteria,
-} from "../../../common/type";
+  JobSearchPage,
+} from "../../../shared/type";
 import {
-  GoToHelloWorkSearchPageError,
+  IsNextPageEnabledError,
   NextJobListPageError,
   SearchThenGotoFirstJobListPageError,
 } from "../../error";
-import type { FirstJobListPage, JobListPage } from "../../type";
 
 export function goToNextJobListPage(page: JobListPage) {
   return Effect.tryPromise({
@@ -25,7 +24,7 @@ export function goToNextJobListPage(page: JobListPage) {
 }
 
 export function searchThenGotoJobListPage(
-  page: HelloWorkSearchPage,
+  page: JobSearchPage,
   searchFilter: JobSearchCriteria,
 ) {
   return Effect.gen(function* () {
@@ -34,14 +33,26 @@ export function searchThenGotoJobListPage(
       try: async () => {
         const searchBtn = page.locator("#ID_searchBtn");
         await searchBtn.click();
-        // 型を一旦剥がして、別の方にするため
-        const pagePrime: Page = page;
-        return pagePrime as FirstJobListPage;
       },
       catch: (e) =>
         new SearchThenGotoFirstJobListPageError({
           message: `unexpected error.\n${String(e)}`,
         }),
     });
+  });
+}
+
+export function isNextPageEnabled(page: JobListPage) {
+  return Effect.tryPromise({
+    try: async () => {
+      const nextPageBtn = page.locator('input[value="次へ＞"]').first();
+      return !(await nextPageBtn.isDisabled());
+    },
+    catch: (e) => {
+      console.error(e);
+      return new IsNextPageEnabledError({
+        message: `unexpected error. ${String(e)}`,
+      });
+    },
   });
 }

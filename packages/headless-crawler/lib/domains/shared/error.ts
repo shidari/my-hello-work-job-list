@@ -43,9 +43,9 @@ export class EmploymentLabelToSelectorError extends Data.TaggedError(
 )<{
   readonly message: string;
 }> {}
-export class ResolveURLError extends Data.TaggedError("ResolveURLError")<{
-  readonly message: string;
-}> {}
-export class GetOriginError extends Data.TaggedError("GetOriginError")<{
-  readonly message: string;
-}> {}
+export class EngineeringLabelSelectorError extends Data.TaggedError(
+  "EngineeringLabelSelectorError",
+)<{ readonly message: string }> {}
+export class GoToJobSearchPageError extends Data.TaggedError(
+  "GoToJobSearchPageError",
+)<{ readonly message: string }> {}

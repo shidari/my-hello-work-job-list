@@ -3,8 +3,8 @@ import type {
   JobListPageValidationError,
   JobNumberValidationError,
   JobSearchPageValidationError,
-} from "../common/error";
-import type { JobNumber } from "../common/type";
+} from "../shared/error";
+import type { JobNumber } from "../shared/type";
 import type {
   EmployeeCountValidationError,
   ExpiryDateValidationError,

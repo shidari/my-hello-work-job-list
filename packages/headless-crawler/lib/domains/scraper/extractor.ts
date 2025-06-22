@@ -1,5 +1,5 @@
 import { Effect } from "effect";
-import { validateJobNumber } from "../common/helper";
+import { validateJobNumber } from "../shared/helper/validator";
 import {
   ExtractEmployMentTypeError,
   ExtractEmployeeCountError,

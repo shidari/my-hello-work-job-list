@@ -1,15 +1,19 @@
 import { Chunk, Context, Effect, Layer, Stream } from "effect";
-import { PlaywrightBrowser } from "../common/context";
-import type { ExtractJobNumbersError, ListJobsError } from "../common/error";
+import { PlaywrightBrowser } from "../shared/context";
+import type {
+  EmploymentLabelToSelectorError,
+  EngineeringLabelSelectorError,
+  ExtractJobNumbersError,
+  ListJobsError,
+} from "../shared/error";
+import { createPage } from "../shared/helper/helper";
+import { goToJobSearchPage } from "../shared/helper/pagenation";
 import {
-  createPage,
-  goToHelloWorkSearchPage,
   validateJobListPage,
   validateJobSearchPage,
-} from "../common/helper";
-import type { EngineeringLabelSelectorError } from "./error";
+} from "../shared/helper/validator";
+import { fetchJobMetaData } from "./helper/hellowork/fetcher";
 import { searchThenGotoJobListPage } from "./helper/hellowork/pagenation";
-import { fetchJobMetaData } from "./helper/hellowork/util";
 import type {
   FillFormError,
   HelloWorkCrawlingConfig,
@@ -28,6 +32,7 @@ export class HelloWorkCrawler extends Context.Tag("HelloWorkCrawler")<
       | FillFormError
       | PagenationError
       | ExtractJobNumbersError
+      | EmploymentLabelToSelectorError
     >;
   }
 >() {}
@@ -49,15 +54,12 @@ export const buildHelloWorkCrawlerLayer = (config: HelloWorkCrawlingConfig) => {
         crawlJobLinks: () =>
           Effect.gen(function* () {
             yield* Effect.logInfo("start crawling...");
-            yield* Effect.gen(function* () {
-              yield* goToHelloWorkSearchPage(page);
-              const searchPage = yield* validateJobSearchPage(page);
-              yield* searchThenGotoJobListPage(
-                searchPage,
-                config.jobSearchCriteria,
-              );
-            });
-
+            yield* goToJobSearchPage(page);
+            const searchPage = yield* validateJobSearchPage(page);
+            yield* searchThenGotoJobListPage(
+              searchPage,
+              config.jobSearchCriteria,
+            );
             const jobListPage = yield* validateJobListPage(page);
             const initialCount = 0;
             const stream = Stream.paginateChunkEffect(

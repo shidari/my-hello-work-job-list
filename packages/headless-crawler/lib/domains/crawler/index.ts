@@ -1,5 +1,5 @@
 import { Effect, Layer, LogLevel, Logger } from "effect/index";
-import { PlaywrightBrowserLive } from "../common/context";
+import { PlaywrightBrowserLive } from "../shared/context";
 import { HelloWorkCrawler, buildHelloWorkCrawlerLayer } from "./context";
 import crawlingConfig from "./crawling.config";
 

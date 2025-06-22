@@ -1,7 +1,7 @@
 import type { HelloWorkCrawlingConfig } from "./type";
 
 export function defineHelloWorkCrawlingConfig(
-	config: HelloWorkCrawlingConfig,
+  config: HelloWorkCrawlingConfig,
 ): HelloWorkCrawlingConfig {
-	return config;
+  return config;
 }

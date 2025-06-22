@@ -3,11 +3,21 @@ import type { Locator, Page } from "playwright";
 const jobNumber = Symbol();
 export type JobNumber = string & { [jobNumber]: unknown };
 
-const helloWorkSearchPageBrand = Symbol();
+const jobSearchPage = Symbol();
 
-export type HelloWorkSearchPage = Page & {
-  [helloWorkSearchPageBrand]: unknown;
+export type JobSearchPage = Page & {
+  [jobSearchPage]: unknown;
 };
+
+const firstJobListPage = Symbol();
+
+export type FirstJobListPage = Page & { [firstJobListPage]: unknown };
+
+const jobListPage = Symbol();
+
+export type JobListPage =
+  | FirstJobListPage
+  | (Page & { [jobListPage]: unknown });
 
 export type EmploymentType = "RegularEmployee" | "PartTimeWorker";
 

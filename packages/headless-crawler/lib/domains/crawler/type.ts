@@ -3,12 +3,13 @@ import type {
   FillOccupationFieldError,
   FillPrefectureFieldError,
   FillWorkTypeError,
+  GoToJobSearchPageError,
   JobListPageValidationError,
+  JobNumberValidationError,
   JobSearchPageValidationError,
-} from "../common/error";
-import type { JobNumber, JobSearchCriteria } from "../common/type";
+} from "../shared/error";
+import type { JobNumber, JobSearchCriteria } from "../shared/type";
 import type {
-  GoToHelloWorkSearchPageError,
   IsNextPageEnabledError,
   JobListPagenationError,
   NextJobListPageError,
@@ -18,15 +19,6 @@ import type {
 export type JobMetadata = {
   jobNumber: JobNumber;
 };
-
-const firstJobListPage = Symbol();
-
-export type FirstJobListPage = Page & { [firstJobListPage]: unknown };
-const jobListPage = Symbol();
-
-export type JobListPage =
-  | FirstJobListPage
-  | (Page & { [jobListPage]: unknown });
 
 export type NewJobOpeningsFilter = "TodayYesterday" | "Within1Week";
 export type HelloWorkCrawlingConfig = {
@@ -42,7 +34,7 @@ export type PagenationError =
   | NextJobListPageError
   | SearchThenGotoFirstJobListPageError
   | IsNextPageEnabledError
-  | GoToHelloWorkSearchPageError;
+  | GoToJobSearchPageError;
 
 export type FillFormError =
   | FillWorkTypeError
@@ -51,4 +43,5 @@ export type FillFormError =
 
 export type ValidationError =
   | JobListPageValidationError
-  | JobSearchPageValidationError;
+  | JobSearchPageValidationError
+  | JobNumberValidationError;

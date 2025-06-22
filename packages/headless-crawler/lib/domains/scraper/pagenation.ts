@@ -1,7 +1,6 @@
 import { Effect } from "effect";
-import { validateJobListPage } from "../common/helper";
-import type { HelloWorkSearchPage, JobNumber } from "../common/type";
-import type { JobListPage } from "../crawler/type";
+import { validateJobListPage } from "../shared/helper/validator";
+import type { JobListPage, JobNumber, JobSearchPage } from "../shared/type";
 import { assertSingleJobListed } from "./aserter";
 import {
   FromJobListToJobDetailPageError,
@@ -10,7 +9,7 @@ import {
 import { fillJobNumber } from "./form";
 
 export function searchThenGotoJobListThenReturnPage(
-  page: HelloWorkSearchPage,
+  page: JobSearchPage,
   jobNumber: JobNumber,
 ) {
   return Effect.gen(function* () {

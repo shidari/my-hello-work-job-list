@@ -1,6 +1,6 @@
 import { Effect } from "effect";
-import { listJobOverviewElem } from "../common/helper";
-import type { JobListPage } from "../crawler/type";
+import { listJobOverviewElem } from "../shared/helper/helper";
+import type { JobListPage } from "../shared/type";
 import { AssertSingleJobListed } from "./error";
 
 export function assertSingleJobListed(page: JobListPage) {

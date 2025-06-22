@@ -1,8 +1,8 @@
 import { Effect } from "effect";
-import type { HelloWorkSearchPage, JobNumber } from "../common/type";
+import type { JobNumber, JobSearchPage } from "../shared/type";
 import { FillJobNumberError } from "./error";
 
-export function fillJobNumber(page: HelloWorkSearchPage, jobNumber: JobNumber) {
+export function fillJobNumber(page: JobSearchPage, jobNumber: JobNumber) {
   return Effect.tryPromise({
     try: async () => {
       const jobNumberSplits = jobNumber.split("-");

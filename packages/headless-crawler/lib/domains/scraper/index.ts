@@ -1,6 +1,6 @@
 import { Effect, Layer, LogLevel, Logger } from "effect";
-import { PlaywrightBrowserLive } from "../common/context";
-import { validateJobNumber } from "../common/helper";
+import { PlaywrightBrowserLive } from "../shared/context";
+import { validateJobNumber } from "../shared/helper/validator";
 import { HelloWorkScraper, buildHelloWorkScrapingLayer } from "./scraper";
 import config from "./scraping.config";
 
