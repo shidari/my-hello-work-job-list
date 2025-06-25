@@ -9,7 +9,7 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "bootstrap":"aws-vault exec cdk-bootstrap-user -- cdk bootstrap",
+    "bootstrap":"aws-vault exec cdk-bootstrap-user -- cdk bootstrap  --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess",
     "deploy": "cdk deploy",
     "type-check": "tsc --noEmit",
     "test:crawler": "ts-node lib/lambda/handler/crawler/test/index.ts",
