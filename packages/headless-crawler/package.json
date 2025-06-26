@@ -9,13 +9,14 @@
     "watch": "tsc -w",
     "test": "jest",
     "cdk": "cdk",
-    "bootstrap":"aws-vault exec cdk-bootstrap-user -- cdk bootstrap  --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess",
+    "bootstrap": "aws-vault exec cdk-bootstrap-user -- cdk bootstrap  --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess",
     "deploy": "aws-vault exec cdk-deploy -- cdk deploy",
     "type-check": "tsc --noEmit",
     "test:crawler": "ts-node lib/lambda/handler/crawler/test/index.ts",
     "test:scraper": "ts-node lib/lambda/handler/scraper/test/index.ts"
   },
   "devDependencies": {
+    "@sparticuz/chromium": "^137.0.1",
     "@types/aws-lambda": "^8.10.149",
     "@types/jest": "^29.5.14",
     "@types/node": "22.7.9",
