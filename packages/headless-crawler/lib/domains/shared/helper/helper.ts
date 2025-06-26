@@ -45,6 +45,7 @@ export function createContext(browser: Browser) {
         catch: (e) =>
           new NewContextError({ message: `unexpetcted error.\n${String(e)}` }),
       });
+      context.setDefaultTimeout(10000);
       return { context };
     }),
     ({ context }) => Effect.promise(() => context.close()),
