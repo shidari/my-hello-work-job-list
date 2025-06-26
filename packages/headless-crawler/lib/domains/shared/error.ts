@@ -6,6 +6,9 @@ export class LaunchBrowserError extends Data.TaggedError("LaunchBrowserError")<{
 export class NewPageError extends Data.TaggedError("NewPageError")<{
   readonly message: string;
 }> {}
+export class NewContextError extends Data.TaggedError("NewContextError")<{
+  readonly message: string;
+}> {}
 
 export class JobSearchPageValidationError extends Data.TaggedError(
   "JobSearchPageValidationError",

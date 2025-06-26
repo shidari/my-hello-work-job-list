@@ -1,12 +1,15 @@
 import { Chunk, Context, Effect, Layer, Stream } from "effect";
-import { PlaywrightBrowser } from "../shared/context";
 import type {
   EmploymentLabelToSelectorError,
   EngineeringLabelSelectorError,
   ExtractJobNumbersError,
   ListJobsError,
 } from "../shared/error";
-import { createPage } from "../shared/helper/helper";
+import {
+  createContext,
+  createPage,
+  launchBrowser,
+} from "../shared/helper/helper";
 import { goToJobSearchPage } from "../shared/helper/pagenation";
 import {
   validateJobListPage,
@@ -44,12 +47,9 @@ export const buildHelloWorkCrawlerLayer = (config: HelloWorkCrawlingConfig) => {
       yield* Effect.logInfo(
         `building crawler: config=${JSON.stringify(config, null, 2)}`,
       );
-      const { launchBrower, closeBrowesr } = yield* PlaywrightBrowser;
-      const browser = yield* Effect.acquireRelease(
-        launchBrower({ ...config.browserConfig }),
-        closeBrowesr,
-      );
-      const page = yield* createPage(browser);
+      const browser = yield* launchBrowser(config.browserConfig);
+      const context = yield* createContext(browser);
+      const page = yield* createPage(context);
       return HelloWorkCrawler.of({
         crawlJobLinks: () =>
           Effect.gen(function* () {
@@ -67,6 +67,7 @@ export const buildHelloWorkCrawlerLayer = (config: HelloWorkCrawlingConfig) => {
                 jobListPage,
                 count: initialCount,
                 roughMaxCount: config.roughMaxCount,
+                nextPageDelayMs: config.nextPageDelayMs,
               },
               fetchJobMetaData,
             );

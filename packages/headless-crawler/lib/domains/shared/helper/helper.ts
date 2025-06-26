@@ -1,8 +1,15 @@
 import { Effect } from "effect";
-import type { Browser } from "playwright";
+import {
+  type Browser,
+  type BrowserContext,
+  type LaunchOptions,
+  chromium,
+} from "playwright";
 import {
   EngineeringLabelSelectorError,
+  LaunchBrowserError,
   ListJobsError,
+  NewContextError,
   NewPageError,
 } from "../error";
 import type {
@@ -14,12 +21,48 @@ import type {
   JobOverViewList,
 } from "../type";
 
-export function createPage(browser: Browser) {
-  return Effect.tryPromise({
-    try: () => browser.newPage(),
-    catch: (e) =>
-      new NewPageError({ message: `unexpected error.\n${String(e)}` }),
-  });
+export function launchBrowser(options: LaunchOptions) {
+  return Effect.acquireRelease(
+    Effect.gen(function* () {
+      const browser = yield* Effect.tryPromise({
+        try: () => chromium.launch({ ...options }),
+        catch: (e) =>
+          new LaunchBrowserError({
+            message: `unexpected error.\n${String(e)}`,
+          }),
+      });
+      return { browser };
+    }),
+    ({ browser }) => Effect.promise(() => browser.close()),
+  ).pipe(Effect.map(({ browser }) => browser));
+}
+
+export function createContext(browser: Browser) {
+  return Effect.acquireRelease(
+    Effect.gen(function* () {
+      const context = yield* Effect.tryPromise({
+        try: () => browser.newContext(),
+        catch: (e) =>
+          new NewContextError({ message: `unexpetcted error.\n${String(e)}` }),
+      });
+      return { context };
+    }),
+    ({ context }) => Effect.promise(() => context.close()),
+  ).pipe(Effect.map(({ context }) => context));
+}
+
+export function createPage(context: BrowserContext) {
+  return Effect.acquireRelease(
+    Effect.gen(function* () {
+      const page = yield* Effect.tryPromise({
+        try: () => context.newPage(),
+        catch: (e) =>
+          new NewPageError({ message: `unexpected error.\n${String(e)}` }),
+      });
+      return { page };
+    }),
+    ({ page }) => Effect.promise(() => page.close()),
+  ).pipe(Effect.map(({ page }) => page));
 }
 
 export function engineeringLabelToSelector(

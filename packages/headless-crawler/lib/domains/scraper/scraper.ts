@@ -1,11 +1,14 @@
 import { Context, Effect, Layer } from "effect";
-import { PlaywrightBrowser } from "../shared/context";
 import type {
   GoToJobSearchPageError,
   ListJobsError,
   NewPageError,
 } from "../shared/error";
-import { createPage } from "../shared/helper/helper";
+import {
+  createContext,
+  createPage,
+  launchBrowser,
+} from "../shared/helper/helper";
 import { goToJobSearchPage } from "../shared/helper/pagenation";
 import { validateJobSearchPage } from "../shared/helper/validator";
 import type { JobNumber } from "../shared/type";
@@ -51,8 +54,7 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
       | FromJobListToJobDetailPageError
       | NewPageError
       | JobDetailPagePagenationError
-      | AssertSingleJobListedError,
-      PlaywrightBrowser
+      | AssertSingleJobListedError
     >;
   }
 >() {}
@@ -64,12 +66,9 @@ export function buildHelloWorkScrapingLayer(config: HelloWorkScrapingConfig) {
       yield* Effect.logInfo(
         `building scraper: config=${JSON.stringify(config, null, 2)}`,
       );
-      const { launchBrower, closeBrowesr } = yield* PlaywrightBrowser;
-      const browser = yield* Effect.acquireRelease(
-        launchBrower({ ...config.browserConfig }),
-        closeBrowesr,
-      );
-      const page = yield* createPage(browser);
+      const browser = yield* launchBrowser(config.browserConfig);
+      const context = yield* createContext(browser);
+      const page = yield* createPage(context);
       return HelloWorkScraper.of({
         scrapeJobData: (jobNumber: JobNumber) =>
           Effect.gen(function* () {

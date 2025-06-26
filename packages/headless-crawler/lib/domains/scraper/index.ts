@@ -1,15 +1,11 @@
-import { Effect, Layer, LogLevel, Logger } from "effect";
-import { PlaywrightBrowserLive } from "../shared/context";
+import { Effect, LogLevel, Logger } from "effect";
 import { validateJobNumber } from "../shared/helper/validator";
 import { HelloWorkScraper, buildHelloWorkScrapingLayer } from "./scraper";
-import config from "./scraping.config";
+import scrapingConfig from "./scraping.config";
 export function buildScrapingRunner(rawJobNumber: string) {
   return Effect.gen(function* () {
-    const config2 = yield* Effect.promise(() => config);
-    const layer = Layer.provideMerge(
-      buildHelloWorkScrapingLayer(config2),
-      PlaywrightBrowserLive,
-    );
+    const config = yield* Effect.promise(() => scrapingConfig);
+    const layer = buildHelloWorkScrapingLayer(config);
 
     const program = Effect.gen(function* () {
       const jobNumber = yield* validateJobNumber(rawJobNumber);
@@ -21,7 +17,7 @@ export function buildScrapingRunner(rawJobNumber: string) {
       .pipe(Effect.scoped)
       .pipe(
         Logger.withMinimumLogLevel(
-          config2.debugLog ? LogLevel.Debug : LogLevel.Info,
+          config.debugLog ? LogLevel.Debug : LogLevel.Info,
         ),
       );
   });
