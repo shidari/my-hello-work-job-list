@@ -18,7 +18,9 @@ export const PlaywrightBrowserLive = Layer.succeed(
     launchBrower: (options: LaunchOptions = {}) =>
       Effect.tryPromise({
         try: async () => {
-          const browser = await chromium.launch(options);
+          const browser = await chromium.launch({
+            ...options,
+          });
           return browser;
         },
         catch: (e) =>

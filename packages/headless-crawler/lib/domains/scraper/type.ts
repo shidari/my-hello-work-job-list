@@ -22,14 +22,21 @@ import type {
   ReceivedDateValidationError,
 } from "./error";
 export type HelloWorkScrapingConfig = {
-  browserConfig: Pick<LaunchOptions, "headless">;
+  browserConfig: Pick<LaunchOptions, "headless" | "executablePath" | "args">;
   debugLog: boolean;
 };
 
-export function defineHelloWorkScrapingConfig(
-  config: HelloWorkScrapingConfig,
-): HelloWorkScrapingConfig {
-  return config;
+export async function defineHelloWorkScrapingConfig(
+  config:
+    | HelloWorkScrapingConfig
+    | Promise<HelloWorkScrapingConfig>
+    | (() => HelloWorkScrapingConfig | HelloWorkScrapingConfig)
+    | (() => HelloWorkScrapingConfig | Promise<HelloWorkScrapingConfig>),
+): Promise<HelloWorkScrapingConfig> {
+  if (typeof config === "function") {
+    return await config();
+  }
+  return await config;
 }
 
 const r = Symbol();
