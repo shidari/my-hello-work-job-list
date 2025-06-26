@@ -1,4 +1,4 @@
-import { Effect, Layer, LogLevel, Logger } from "effect/index";
+import { Effect, LogLevel, Logger } from "effect/index";
 import { HelloWorkCrawler, buildHelloWorkCrawlerLayer } from "./context";
 import crawlingConfig from "./crawling.config";
 

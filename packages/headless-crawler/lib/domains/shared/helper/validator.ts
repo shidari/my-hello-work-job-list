@@ -31,12 +31,17 @@ export function validateJobSearchPage(page: Page) {
 }
 
 export function validateJobNumber(val: unknown) {
-  return Effect.try({
-    try: () => jobNumber.parse(val) as JobNumber,
-    catch: (e) =>
-      new JobNumberValidationError({
-        message: `unexpected error.\n${String(e)}`,
-      }),
+  return Effect.gen(function* () {
+    yield* Effect.logDebug(
+      `calling validateJobNumber. args={val:${JSON.stringify(val, null, 2)}}`,
+    );
+    return yield* Effect.try({
+      try: () => jobNumber.parse(val) as JobNumber,
+      catch: (e) =>
+        new JobNumberValidationError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
+    });
   });
 }
 
