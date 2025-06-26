@@ -1,8 +1,8 @@
 import { Effect } from "effect";
-import { runnable } from "..";
+import { crawlerRunnable } from "..";
 
 async function main() {
-  Effect.runPromise(runnable).then((jobNumbers) =>
+  Effect.runPromise(crawlerRunnable).then((jobNumbers) =>
     console.dir({ jobNumbers }, { depth: null }),
   );
 }

@@ -23,7 +23,7 @@ export type JobMetadata = {
 export type NewJobOpeningsFilter = "TodayYesterday" | "Within1Week";
 export type HelloWorkCrawlingConfig = {
   roughMaxCount: number;
-  browserConfig: Pick<LaunchOptions, "headless">;
+  browserConfig: Pick<LaunchOptions, "headless" | "executablePath" | "args">;
   debugLog: boolean;
   nextPageDelayMs: number;
   jobSearchCriteria: JobSearchCriteria;
