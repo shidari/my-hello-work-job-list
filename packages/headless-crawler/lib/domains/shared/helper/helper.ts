@@ -45,7 +45,6 @@ export function createContext(browser: Browser) {
         catch: (e) =>
           new NewContextError({ message: `unexpetcted error.\n${String(e)}` }),
       });
-      context.setDefaultTimeout(10000);
       return { context };
     }),
     ({ context }) => Effect.promise(() => context.close()),
@@ -60,6 +59,8 @@ export function createPage(context: BrowserContext) {
         catch: (e) =>
           new NewPageError({ message: `unexpected error.\n${String(e)}` }),
       });
+      page.setDefaultTimeout(10000);
+      page.setDefaultNavigationTimeout(200000);
       return { page };
     }),
     ({ page }) => Effect.promise(() => page.close()),
