@@ -7,19 +7,15 @@ export function extractJobNumbers(jobOverviewList: JobOverViewList) {
   return Effect.forEach(jobOverviewList, (table) => {
     return Effect.gen(function* () {
       const rawJobNumber = yield* Effect.tryPromise({
-        try: () => {
-          return Promise.all(
-            jobOverviewList.map(async (table) => {
-              const text = await table
-                .locator("div.right-side")
-                .locator("tr")
-                .nth(3)
-                .locator("td")
-                .nth(1)
-                .textContent();
-              return text;
-            }),
-          );
+        try: async () => {
+          const text = await table
+            .locator("div.right-side")
+            .locator("tr")
+            .nth(3)
+            .locator("td")
+            .nth(1)
+            .textContent();
+          return text;
         },
         catch: (e) =>
           new ExtractJobNumbersError({
@@ -31,7 +27,8 @@ export function extractJobNumbers(jobOverviewList: JobOverViewList) {
           new ExtractJobNumbersError({ message: "jobNumber is null" }),
         );
       }
-      const jobNumber = yield* validateJobNumber(rawJobNumber);
+      const trimedRawJobNumber = rawJobNumber.trim();
+      const jobNumber = yield* validateJobNumber(trimedRawJobNumber);
       return jobNumber;
     });
   });
