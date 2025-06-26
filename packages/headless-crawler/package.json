@@ -12,8 +12,8 @@
     "bootstrap": "aws-vault exec cdk-bootstrap-user -- cdk bootstrap  --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess",
     "deploy": "aws-vault exec cdk-deploy -- cdk deploy",
     "type-check": "tsc --noEmit",
-    "test:crawler": "ts-node lib/lambda/handler/crawler/test/index.ts",
-    "test:scraper": "ts-node lib/lambda/handler/scraper/test/index.ts"
+    "verify:crawler": "ts-node lib/domains/crawler/playground/index.ts",
+    "verify:scraper": "ts-node lib/domains/scraper/playground/index.ts"
   },
   "devDependencies": {
     "@sparticuz/chromium": "^137.0.1",
