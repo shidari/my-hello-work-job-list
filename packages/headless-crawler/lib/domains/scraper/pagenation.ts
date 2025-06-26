@@ -1,37 +1,7 @@
 import { Effect } from "effect";
-import { validateJobListPage } from "../shared/helper/validator";
-import type { JobListPage, JobNumber, JobSearchPage } from "../shared/type";
+import type { JobListPage } from "../shared/type";
 import { assertSingleJobListed } from "./aserter";
-import {
-  FromJobListToJobDetailPageError,
-  SearchThenGotoJobListPageError,
-} from "./error";
-import { fillJobNumber } from "./form";
-
-export function searchThenGotoJobListThenReturnPage(
-  page: JobSearchPage,
-  jobNumber: JobNumber,
-) {
-  return Effect.gen(function* () {
-    yield* Effect.logDebug("in searchThenGotoJobListPage");
-    yield* fillJobNumber(page, jobNumber);
-    yield* Effect.logDebug(
-      "in searchThenGotoJobListPage. fillJobNumber executed.",
-    );
-    yield* Effect.tryPromise({
-      try: async () => {
-        const numberSearchBtn = page.locator("#ID_searchNoBtn");
-        await numberSearchBtn.click();
-      },
-      catch: (e) =>
-        new SearchThenGotoJobListPageError({
-          message: `unexpected error.\n${String(e)}`,
-        }),
-    });
-    const jobListPage = yield* validateJobListPage(page);
-    return jobListPage;
-  });
-}
+import { FromJobListToJobDetailPageError } from "./error";
 
 export function goToSingleJobDetailPage(page: JobListPage) {
   return Effect.gen(function* () {

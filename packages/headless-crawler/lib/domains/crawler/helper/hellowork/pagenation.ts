@@ -23,25 +23,6 @@ export function goToNextJobListPage(page: JobListPage) {
   });
 }
 
-export function searchThenGotoJobListPage(
-  page: JobSearchPage,
-  searchFilter: JobSearchCriteria,
-) {
-  return Effect.gen(function* () {
-    yield* fillJobCriteriaField(page, searchFilter);
-    yield* Effect.tryPromise({
-      try: async () => {
-        const searchBtn = page.locator("#ID_searchBtn");
-        await searchBtn.click();
-      },
-      catch: (e) =>
-        new SearchThenGotoFirstJobListPageError({
-          message: `unexpected error.\n${String(e)}`,
-        }),
-    });
-  });
-}
-
 export function isNextPageEnabled(page: JobListPage) {
   return Effect.tryPromise({
     try: async () => {

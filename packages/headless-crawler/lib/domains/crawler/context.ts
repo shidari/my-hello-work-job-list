@@ -10,13 +10,15 @@ import {
   createPage,
   launchBrowser,
 } from "../shared/helper/helper";
-import { goToJobSearchPage } from "../shared/helper/pagenation";
+import {
+  goToJobSearchPage,
+  searchThenGotoJobListPage,
+} from "../shared/helper/pagenation";
 import {
   validateJobListPage,
   validateJobSearchPage,
 } from "../shared/helper/validator";
 import { fetchJobMetaData } from "./helper/hellowork/fetcher";
-import { searchThenGotoJobListPage } from "./helper/hellowork/pagenation";
 import type {
   FillFormError,
   HelloWorkCrawlingConfig,
