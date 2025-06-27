@@ -1,6 +1,6 @@
+import { employeeCountSchema, homePage, receivedDate } from "@sho/schema";
 import { Effect } from "effect";
 import type { Page } from "playwright";
-import z from "zod";
 import {
   EmployeeCountValidationError,
   ExpiryDateValidationError,
@@ -8,7 +8,6 @@ import {
   JobDetailPageValidationError,
   ReceivedDateValidationError,
 } from "./scraper-error";
-import { employeeCountSchema, homePage, receivedDate } from "./scraper-schema";
 import type {
   EmployeetCount,
   ExpiryDate,
