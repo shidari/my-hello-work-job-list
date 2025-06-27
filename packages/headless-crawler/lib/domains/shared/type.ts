@@ -1,4 +1,11 @@
 import type { Locator, Page } from "playwright";
+import type {
+  EmploymentLabelToSelectorError,
+  EngineeringLabelSelectorError,
+  FillOccupationFieldError,
+  FillPrefectureFieldError,
+  FillWorkTypeError,
+} from "./error";
 
 const jobNumber = Symbol();
 export type JobNumber = string & { [jobNumber]: unknown };
@@ -63,3 +70,12 @@ const emplomentTypeSelector = Symbol();
 export type EmploymentTypeSelector = string & {
   [emplomentTypeSelector]: unknown;
 };
+
+export type JobFieldFillingError =
+  | FillWorkTypeError
+  | FillPrefectureFieldError
+  | FillOccupationFieldError;
+
+export type SelectorConverterError =
+  | EmploymentLabelToSelectorError
+  | EngineeringLabelSelectorError;

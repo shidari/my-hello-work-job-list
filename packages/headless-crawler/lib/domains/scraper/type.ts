@@ -1,10 +1,12 @@
 import type { LaunchOptions, Page } from "playwright";
+import type { SearchThenGotoFirstJobListPageError } from "../crawler/error";
 import type {
+  GoToJobSearchPageError,
   JobListPageValidationError,
   JobNumberValidationError,
   JobSearchPageValidationError,
 } from "../shared/error";
-import type { JobNumber } from "../shared/type";
+import type { JobFieldFillingError, JobNumber } from "../shared/type";
 import type {
   EmployeeCountValidationError,
   ExpiryDateValidationError,
@@ -18,8 +20,13 @@ import type {
   ExtractReceivedDateError,
   ExtractWageError,
   ExtractWorkingHoursError,
+  FillJobNumberError,
+  FromJobListToJobDetailPageError,
   HomePageValidationError,
+  JobDetailPagePagenationError,
+  JobDetailPageValidationError,
   ReceivedDateValidationError,
+  SearchThenGotoJobListPageError,
 } from "./error";
 export type HelloWorkScrapingConfig = {
   browserConfig: Pick<LaunchOptions, "headless" | "executablePath" | "args">;
@@ -66,14 +73,14 @@ export type JobInfo = {
 const jobDetailPage = Symbol();
 export type JobDetailPage = Page & { [jobDetailPage]: unknown };
 
-export type JobDetailPageContentValidationError =
+type JobDetailPageContentValidationError =
   | ReceivedDateValidationError
   | ExpiryDateValidationError
   | HomePageValidationError
   | JobNumberValidationError
   | EmployeeCountValidationError;
 
-export type ExtractTextContentError =
+export type ExtractTextContentOnScrapingError =
   | ExtractJobInfoError
   | ExtractJobCompanyNameError
   | ExtractReceivedDateError
@@ -85,7 +92,21 @@ export type ExtractTextContentError =
   | ExtractWorkingHoursError
   | ExtractEmployeeCountError;
 
-export type PageValidationError =
+export type ValidationOnScrapingError =
+  | PageValidationError
+  | JobDetailPageContentValidationError;
+type PageValidationError =
   | JobSearchPageValidationError
-  | JobDetailPageContentValidationError
-  | JobListPageValidationError;
+  | JobListPageValidationError
+  | JobDetailPageValidationError;
+
+export type JobFieldFillingOnScrapingError =
+  | JobFieldFillingError
+  | FillJobNumberError;
+
+export type PagenationOnScrapingError =
+  | GoToJobSearchPageError
+  | SearchThenGotoJobListPageError
+  | FromJobListToJobDetailPageError
+  | JobDetailPagePagenationError
+  | SearchThenGotoFirstJobListPageError;
