@@ -1,5 +1,7 @@
 import * as cdk from "aws-cdk-lib";
 import { Duration } from "aws-cdk-lib";
+import * as events from "aws-cdk-lib/aws-events";
+import * as targets from "aws-cdk-lib/aws-events-targets";
 import * as lambda from "aws-cdk-lib/aws-lambda";
 import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
@@ -17,9 +19,37 @@ export class HeadlessCrawlerStack extends cdk.Stack {
       visibilityTimeout: cdk.Duration.seconds(300),
     });
 
+    // EventBridgeルール(Cron)を作成（例: 毎日午前1時に実行）
+    const rule = new events.Rule(this, "CrawlerScheduleRule", {
+      schedule: events.Schedule.cron({
+        minute: "0",
+        hour: "1",
+        weekDay: "MON",
+      }),
+    });
+
     const playwrightLayer = new lambda.LayerVersion(this, "playwrightLayer", {
       code: lambda.Code.fromAsset("lib/functions/layer/playwright.zip"),
       compatibleRuntimes: [lambda.Runtime.NODEJS_22_X],
+    });
+
+    const crawler = new NodejsFunction(this, "CrawlingFunction", {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      entry: "lib/functions/crawlerHandler/handler.ts",
+      handler: "handler",
+      memorySize: 1024,
+      timeout: cdk.Duration.seconds(90),
+      layers: [playwrightLayer],
+      bundling: {
+        externalModules: [
+          "chromium-bidi/lib/cjs/bidiMapper/BidiMapper",
+          "chromium-bidi/lib/cjs/cdp/CdpConnection",
+          "@sparticuz/chromium",
+          "./chromium/appIcon.png",
+          "./loader",
+          "playwright-core",
+        ], // Layer に含めるモジュールは除外
+      },
     });
 
     const scraper = new NodejsFunction(this, "ScrapingFunction", {
@@ -46,5 +76,7 @@ export class HeadlessCrawlerStack extends cdk.Stack {
         batchSize: 1,
       }),
     );
+
+    rule.addTarget(new targets.LambdaFunction(crawler));
   }
 }
