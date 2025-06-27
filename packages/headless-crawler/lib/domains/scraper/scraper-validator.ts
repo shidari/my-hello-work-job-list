@@ -7,15 +7,15 @@ import {
   HomePageValidationError,
   JobDetailPageValidationError,
   ReceivedDateValidationError,
-} from "./error";
-import { employeeCountSchema, homePage, receivedDate } from "./schema";
+} from "./scraper-error";
+import { employeeCountSchema, homePage, receivedDate } from "./scraper-schema";
 import type {
   EmployeetCount,
   ExpiryDate,
   HomePage,
   JobDetailPage,
   ReceivedDate,
-} from "./type";
+} from "./scraper-type";
 
 export function validateReceivedDate(val: unknown) {
   return Effect.try({

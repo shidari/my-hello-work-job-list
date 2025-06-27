@@ -18,14 +18,14 @@ import {
   validateJobListPage,
   validateJobSearchPage,
 } from "../shared/helper/validator";
-import { fetchJobMetaData } from "./helper/hellowork/fetcher";
 import type {
   FillFormError,
   HelloWorkCrawlingConfig,
   JobMetadata,
   PagenationError,
   ValidationError,
-} from "./type";
+} from "./crawler-type";
+import { fetchJobMetaData } from "./helper/hellowork/crawler-fetcher";
 export class HelloWorkCrawler extends Context.Tag("HelloWorkCrawler")<
   HelloWorkCrawler,
   {

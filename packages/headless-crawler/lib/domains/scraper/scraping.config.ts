@@ -1,4 +1,4 @@
-import { defineHelloWorkScrapingConfig } from "./type";
+import { defineHelloWorkScrapingConfig } from "./scraper-type";
 
 export default defineHelloWorkScrapingConfig(async () => {
   const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;

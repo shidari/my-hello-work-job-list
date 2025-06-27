@@ -14,7 +14,7 @@ import type {
   JobListPagenationError,
   NextJobListPageError,
   SearchThenGotoFirstJobListPageError,
-} from "./error";
+} from "./crawler-error";
 
 export type JobMetadata = {
   jobNumber: JobNumber;

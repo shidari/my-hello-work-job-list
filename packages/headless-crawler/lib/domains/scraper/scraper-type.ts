@@ -1,5 +1,5 @@
 import type { LaunchOptions, Page } from "playwright";
-import type { SearchThenGotoFirstJobListPageError } from "../crawler/error";
+import type { SearchThenGotoFirstJobListPageError } from "../crawler/crawler-error";
 import type {
   GoToJobSearchPageError,
   JobListPageValidationError,
@@ -27,7 +27,7 @@ import type {
   JobDetailPageValidationError,
   ReceivedDateValidationError,
   SearchThenGotoJobListPageError,
-} from "./error";
+} from "./scraper-error";
 export type HelloWorkScrapingConfig = {
   browserConfig: Pick<LaunchOptions, "headless" | "executablePath" | "args">;
   debugLog: boolean;
@@ -73,7 +73,7 @@ export type JobInfo = {
 const jobDetailPage = Symbol();
 export type JobDetailPage = Page & { [jobDetailPage]: unknown };
 
-type JobDetailPageContentValidationError =
+export type JobDetailPageContentValidationError =
   | ReceivedDateValidationError
   | ExpiryDateValidationError
   | HomePageValidationError

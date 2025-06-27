@@ -1,4 +1,4 @@
-import type { HelloWorkCrawlingConfig } from "./type";
+import type { HelloWorkCrawlingConfig } from "./crawler-type";
 export default defineHelloWorkCrawlingConfig(async () => {
   const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;
   const chromium = isLambda

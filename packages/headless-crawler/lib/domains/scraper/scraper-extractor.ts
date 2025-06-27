@@ -11,19 +11,19 @@ import {
   ExtractReceivedDateError,
   ExtractWageError,
   ExtractWorkingHoursError,
-} from "./error";
+} from "./scraper-error";
 import type {
-  ExtractTextContentError,
+  ExtractTextContentOnScrapingError,
   JobDetailPage,
   JobDetailPageContentValidationError,
   JobInfo,
-} from "./type";
+} from "./scraper-type";
 import {
   validateEmpoyeeCount,
   validateExpiryDate,
   validateHomePage,
   validateReceivedDate,
-} from "./validator";
+} from "./scraper-validator";
 
 function extractJobNumber(page: JobDetailPage) {
   return Effect.gen(function* () {
@@ -245,7 +245,7 @@ export function extractJobInfo(
   page: JobDetailPage,
 ): Effect.Effect<
   JobInfo,
-  ExtractTextContentError | JobDetailPageContentValidationError
+  ExtractTextContentOnScrapingError | JobDetailPageContentValidationError
 > {
   return Effect.gen(function* () {
     const jobNumber = yield* extractJobNumber(page);

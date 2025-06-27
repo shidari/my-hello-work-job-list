@@ -9,7 +9,7 @@ import {
   IsNextPageEnabledError,
   NextJobListPageError,
   SearchThenGotoFirstJobListPageError,
-} from "../../error";
+} from "../../crawler-error";
 
 export function goToNextJobListPage(page: JobListPage) {
   return Effect.tryPromise({

@@ -14,9 +14,12 @@ import {
   validateJobSearchPage,
 } from "../shared/helper/validator";
 import type { JobNumber, SelectorConverterError } from "../shared/type";
-import type { AssertSingleJobListedError, ScrapeJobDataError } from "./error";
-import { extractJobInfo } from "./extractor";
-import { goToSingleJobDetailPage } from "./pagenation";
+import type {
+  AssertSingleJobListedError,
+  ScrapeJobDataError,
+} from "./scraper-error";
+import { extractJobInfo } from "./scraper-extractor";
+import { goToSingleJobDetailPage } from "./scraper-pagenation";
 import type {
   ExtractTextContentOnScrapingError,
   HelloWorkScrapingConfig,
@@ -24,8 +27,8 @@ import type {
   JobInfo,
   PagenationOnScrapingError,
   ValidationOnScrapingError,
-} from "./type";
-import { validateJobDetailPage } from "./validator";
+} from "./scraper-type";
+import { validateJobDetailPage } from "./scraper-validator";
 
 export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
   HelloWorkScraper,

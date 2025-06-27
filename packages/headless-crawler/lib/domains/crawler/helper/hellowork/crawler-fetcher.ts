@@ -2,8 +2,8 @@ import { Chunk, Effect, Option } from "effect";
 import { listJobOverviewElem } from "../../../shared/helper/helper";
 import type { JobListPage } from "../../../shared/type";
 import { delay } from "../../../shared/util";
-import { extractJobNumbers } from "./extractor";
-import { goToNextJobListPage, isNextPageEnabled } from "./pagenation";
+import { extractJobNumbers } from "./crawler-extractor";
+import { goToNextJobListPage, isNextPageEnabled } from "./crawler-pagenation";
 
 export function fetchJobMetaData({
   jobListPage,

@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import { listJobOverviewElem } from "../shared/helper/helper";
 import type { JobListPage } from "../shared/type";
-import { AssertSingleJobListedError } from "./error";
+import { AssertSingleJobListedError } from "./scraper-error";
 
 export function assertSingleJobListed(page: JobListPage) {
   return Effect.gen(function* () {

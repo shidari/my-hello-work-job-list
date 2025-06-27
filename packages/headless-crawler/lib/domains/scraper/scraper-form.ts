@@ -1,6 +1,6 @@
 import { Effect } from "effect";
 import type { JobNumber, JobSearchPage } from "../shared/type";
-import { FillJobNumberError } from "./error";
+import { FillJobNumberError } from "./scraper-error";
 
 export function fillJobNumber(page: JobSearchPage, jobNumber: JobNumber) {
   return Effect.tryPromise({

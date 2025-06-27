@@ -1,7 +1,7 @@
 import { Effect } from "effect";
 import type { JobListPage } from "../shared/type";
-import { assertSingleJobListed } from "./aserter";
-import { FromJobListToJobDetailPageError } from "./error";
+import { assertSingleJobListed } from "./scraper-aserter";
+import { FromJobListToJobDetailPageError } from "./scraper-error";
 
 export function goToSingleJobDetailPage(page: JobListPage) {
   return Effect.gen(function* () {
