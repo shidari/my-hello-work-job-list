@@ -1,4 +1,4 @@
-import { defineHelloWorkCrawlingConfig } from "./config";
+import type { HelloWorkCrawlingConfig } from "./type";
 export default defineHelloWorkCrawlingConfig(async () => {
   const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;
   const chromium = isLambda
@@ -21,3 +21,16 @@ export default defineHelloWorkCrawlingConfig(async () => {
     },
   };
 });
+
+async function defineHelloWorkCrawlingConfig(
+  config:
+    | HelloWorkCrawlingConfig
+    | Promise<HelloWorkCrawlingConfig>
+    | (() => HelloWorkCrawlingConfig)
+    | (() => Promise<HelloWorkCrawlingConfig>),
+): Promise<HelloWorkCrawlingConfig> {
+  if (typeof config === "function") {
+    return await config();
+  }
+  return await config;
+}
