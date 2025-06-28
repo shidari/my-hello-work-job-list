@@ -1,6 +1,18 @@
 import type { JobDetailPage, JobInfo } from "@sho/schema";
 import { Effect } from "effect";
-import { validateJobNumber } from "../shared/helper/validator";
+import { ZodError } from "zod";
+import {
+  validateCompanyName,
+  validateEmployeeCount,
+  validateEmploymentType,
+  validateExpiryDate,
+  validateHomePage,
+  validateJobNumber,
+  validateOccupation,
+  validateReceivedDate,
+  validateWage,
+  validateWorkingHours,
+} from "../shared/helper/validator";
 import {
   ExtractEmployMentTypeError,
   ExtractEmployeeCountError,
@@ -15,14 +27,8 @@ import {
 } from "./scraper-error";
 import type {
   ExtractTextContentOnScrapingError,
-  JobDetailPageContentValidationError,
+  JobPropertyValidationError,
 } from "./scraper-type";
-import {
-  validateEmpoyeeCount,
-  validateExpiryDate,
-  validateHomePage,
-  validateReceivedDate,
-} from "./scraper-validator";
 
 function extractJobNumber(page: JobDetailPage) {
   return Effect.gen(function* () {
@@ -33,33 +39,32 @@ function extractJobNumber(page: JobDetailPage) {
         return rawJobNumber;
       },
       catch: (e) =>
-        new ExtractJobInfoError({ message: `unexpected error.\n${String(e)}` }),
+        new ExtractJobInfoError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
     });
-    if (rawJobNumber === null)
-      return yield* Effect.fail(
-        new ExtractJobInfoError({ message: "jobNumber is null." }),
-      );
     const jobNumber = yield* validateJobNumber(rawJobNumber);
     return jobNumber;
   });
 }
 function extractCompanyName(page: JobDetailPage) {
   return Effect.gen(function* () {
-    const companyName = yield* Effect.tryPromise({
+    const rawCompanyName = yield* Effect.tryPromise({
       try: async () => {
         const companyNameLoc = page.locator("#ID_jgshMei");
         const text = await companyNameLoc.textContent();
         return text;
       },
       catch: (e) =>
-        new ExtractJobCompanyNameError({
-          message: `unexpected error.\n${String(e)}`,
-        }),
+        e instanceof ZodError
+          ? new ExtractJobCompanyNameError({
+              message: e.message,
+            })
+          : new ExtractJobCompanyNameError({
+              message: `unexpected error.\n${String(e)}`,
+            }),
     });
-    if (companyName === null)
-      return yield* Effect.fail(
-        new ExtractJobCompanyNameError({ message: "jobNumber is null." }),
-      );
+    const companyName = yield* validateCompanyName(rawCompanyName);
     return companyName;
   });
 }
@@ -100,12 +105,6 @@ function extractExpiryDate(page: JobDetailPage) {
           message: `unexpected error.\n${String(e)}`,
         }),
     });
-    if (!rawExpiryDate)
-      return yield* Effect.fail(
-        new ExtractExpiryDateError({
-          message: "expiryDate textContent is null.",
-        }),
-      );
     const expiryDate = yield* validateExpiryDate(rawExpiryDate);
     return expiryDate;
   });
@@ -123,36 +122,29 @@ function extractHomePage(page: JobDetailPage) {
           message: `unexpected error.\n${String(e)}`,
         }),
     });
-    if (!rawHomePage)
-      return yield* new ExtractHomePageError({ message: "home page is null" });
-
     const homePage = yield* validateHomePage(rawHomePage?.trim());
     return homePage;
   });
 }
 function extractOccupation(page: JobDetailPage) {
   return Effect.gen(function* () {
-    const occupation = yield* Effect.tryPromise({
+    const rawOccupation = Effect.tryPromise({
       try: async () => {
         const occupationLoc = page.locator("#ID_sksu");
         const text = await occupationLoc.textContent();
-        return text;
       },
       catch: (e) =>
         new ExtractOccupationError({
           message: `unexpected error.\n${String(e)}`,
         }),
     });
-    if (!occupation)
-      return yield* Effect.fail(
-        new ExtractOccupationError({ message: "occupation is empty." }),
-      );
+    const occupation = yield* validateOccupation(rawOccupation);
     return occupation;
   });
 }
 function extractEmploymentType(page: JobDetailPage) {
   return Effect.gen(function* () {
-    const emplomentType = yield* Effect.tryPromise({
+    const rawEmplomentType = yield* Effect.tryPromise({
       try: async () => {
         const employmentTypeLoc = page.locator("#ID_koyoKeitai");
 
@@ -164,18 +156,13 @@ function extractEmploymentType(page: JobDetailPage) {
           message: `unexpected error.\n${String(e)}`,
         }),
     });
-    if (!emplomentType)
-      return yield* Effect.fail(
-        new ExtractEmployMentTypeError({
-          message: "emploment type is empty.",
-        }),
-      );
+    const emplomentType = yield* validateEmploymentType(rawEmplomentType);
     return emplomentType;
   });
 }
 function extractWage(page: JobDetailPage) {
   return Effect.gen(function* () {
-    const wage = yield* Effect.tryPromise({
+    const rawWage = yield* Effect.tryPromise({
       try: async () => {
         const wageLoc = page.locator("#ID_chgn");
         const text = await wageLoc.textContent();
@@ -184,16 +171,13 @@ function extractWage(page: JobDetailPage) {
       catch: (e) =>
         new ExtractWageError({ message: `unexpected error.\n${String(e)}` }),
     });
-    if (!wage)
-      return yield* Effect.fail(
-        new ExtractWageError({ message: "wage is empty" }),
-      );
+    const wage = yield* validateWage(rawWage);
     return wage;
   });
 }
 function extractWorkingHours(page: JobDetailPage) {
   return Effect.gen(function* () {
-    const workingHours = yield* Effect.tryPromise({
+    const rawWorkingHours = yield* Effect.tryPromise({
       try: async () => {
         // 一旦一つだけ
         const workingHoursLoc = page.locator("#ID_shgJn1");
@@ -205,12 +189,7 @@ function extractWorkingHours(page: JobDetailPage) {
           message: `unexpected error.\n${String(e)}`,
         }),
     });
-    if (!workingHours)
-      return yield* Effect.fail(
-        new ExtractWorkingHoursError({
-          message: "working hours is empty",
-        }),
-      );
+    const workingHours = yield* validateWorkingHours(rawWorkingHours);
     return workingHours;
   });
 }
@@ -228,14 +207,8 @@ function extractEmployeeCount(page: JobDetailPage) {
           message: `unexpected error.\n${String(e)}`,
         }),
     });
-    if (!rawEmployeeCount)
-      return yield* Effect.fail(
-        new ExtractEmployeeCountError({
-          message: "employee count is empty",
-        }),
-      );
     yield* Effect.logDebug(`rawEmployeeCount=${rawEmployeeCount}`);
-    const employeeCount = yield* validateEmpoyeeCount(rawEmployeeCount);
+    const employeeCount = yield* validateEmployeeCount(rawEmployeeCount);
     return employeeCount;
   });
 }
@@ -244,7 +217,7 @@ export function extractJobInfo(
   page: JobDetailPage,
 ): Effect.Effect<
   JobInfo,
-  ExtractTextContentOnScrapingError | JobDetailPageContentValidationError
+  ExtractTextContentOnScrapingError | JobPropertyValidationError
 > {
   return Effect.gen(function* () {
     const jobNumber = yield* extractJobNumber(page);

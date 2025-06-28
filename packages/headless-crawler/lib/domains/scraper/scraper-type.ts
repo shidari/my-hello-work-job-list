@@ -1,15 +1,22 @@
 import type { LaunchOptions } from "playwright";
 import type { SearchThenGotoFirstJobListPageError } from "../crawler/crawler-error";
 import type {
+  CompanyNameValidationError,
+  EmployeeCountValidationError,
+  EmploymentTypeValidationError,
+  ExpiryDateValidationError,
   GoToJobSearchPageError,
+  HomePageValidationError,
   JobListPageValidationError,
   JobNumberValidationError,
   JobSearchPageValidationError,
+  OccupationValidationError,
+  ReceivedDateValidationError,
+  WageValidationError,
+  WorkingHoursValidationError,
 } from "../shared/error";
 import type { JobFieldFillingError } from "../shared/type";
 import type {
-  EmployeeCountValidationError,
-  ExpiryDateValidationError,
   ExtractEmployMentTypeError,
   ExtractEmployeeCountError,
   ExtractExpiryDateError,
@@ -22,10 +29,8 @@ import type {
   ExtractWorkingHoursError,
   FillJobNumberError,
   FromJobListToJobDetailPageError,
-  HomePageValidationError,
   JobDetailPagePagenationError,
   JobDetailPageValidationError,
-  ReceivedDateValidationError,
   SearchThenGotoJobListPageError,
 } from "./scraper-error";
 export type HelloWorkScrapingConfig = {
@@ -64,6 +69,18 @@ export type ExtractTextContentOnScrapingError =
   | ExtractWageError
   | ExtractWorkingHoursError
   | ExtractEmployeeCountError;
+
+export type JobPropertyValidationError =
+  | JobNumberValidationError
+  | CompanyNameValidationError
+  | ReceivedDateValidationError
+  | ExpiryDateValidationError
+  | HomePageValidationError
+  | OccupationValidationError
+  | EmploymentTypeValidationError
+  | WageValidationError
+  | WorkingHoursValidationError
+  | EmployeeCountValidationError;
 
 export type ValidationOnScrapingError =
   | PageValidationError

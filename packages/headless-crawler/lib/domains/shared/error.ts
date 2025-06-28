@@ -38,6 +38,51 @@ export class JobNumberValidationError extends Data.TaggedError(
 )<{
   readonly message: string;
 }> {}
+export class CompanyNameValidationError extends Data.TaggedError(
+  "CompanyNameValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class ReceivedDateValidationError extends Data.TaggedError(
+  "ReceivedDateValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class ExpiryDateValidationError extends Data.TaggedError(
+  "ExpiryDateValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class HomePageValidationError extends Data.TaggedError(
+  "HomePageValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class OccupationValidationError extends Data.TaggedError(
+  "OccupationValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class EmploymentTypeValidationError extends Data.TaggedError(
+  "EmploymentTypeValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class WageValidationError extends Data.TaggedError(
+  "WageValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class WorkingHoursValidationError extends Data.TaggedError(
+  "WageValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class EmployeeCountValidationError extends Data.TaggedError(
+  "EmployeeCountValidationError",
+)<{
+  readonly message: string;
+}> {}
 export class JobListPageValidationError extends Data.TaggedError(
   "JobListPageValidationError",
 )<{ readonly message: string }> {}

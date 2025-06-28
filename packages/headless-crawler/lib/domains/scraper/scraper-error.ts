@@ -3,26 +3,6 @@ import { Data } from "effect";
 export class FillJobNumberError extends Data.TaggedError("FillJobNumberError")<{
   readonly message: string;
 }> {}
-export class ReceivedDateValidationError extends Data.TaggedError(
-  "ReceivedDateValidationError",
-)<{
-  readonly message: string;
-}> {}
-export class ExpiryDateValidationError extends Data.TaggedError(
-  "ExpiryDateValidationError",
-)<{
-  readonly message: string;
-}> {}
-export class HomePageValidationError extends Data.TaggedError(
-  "HomePageValidationError",
-)<{
-  readonly message: string;
-}> {}
-export class EmployeeCountValidationError extends Data.TaggedError(
-  "EmployeeCountValidationError",
-)<{
-  readonly message: string;
-}> {}
 export class SearchThenGotoJobListPageError extends Data.TaggedError(
   "SearchThenGotoJobListPageError",
 )<{

@@ -25,6 +25,7 @@ import type {
   ExtractTextContentOnScrapingError,
   HelloWorkScrapingConfig,
   JobFieldFillingOnScrapingError,
+  JobPropertyValidationError,
   PagenationOnScrapingError,
   ValidationOnScrapingError,
 } from "./scraper-type";
@@ -46,6 +47,7 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
       | PagenationOnScrapingError
       | SelectorConverterError
       | JobFieldFillingOnScrapingError
+      | JobPropertyValidationError
     >;
   }
 >() {}

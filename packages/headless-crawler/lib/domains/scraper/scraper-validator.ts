@@ -1,75 +1,7 @@
-import {
-  type EmployeetCount,
-  type ExpiryDate,
-  type HomePage,
-  type JobDetailPage,
-  type ReceivedDate,
-  employeeCountSchema,
-  homePage,
-  receivedDate,
-} from "@sho/schema";
+import type { JobDetailPage } from "@sho/schema";
 import { Effect } from "effect";
 import type { Page } from "playwright";
-import {
-  EmployeeCountValidationError,
-  ExpiryDateValidationError,
-  HomePageValidationError,
-  JobDetailPageValidationError,
-  ReceivedDateValidationError,
-} from "./scraper-error";
-
-export function validateReceivedDate(val: unknown) {
-  return Effect.try({
-    try: () => receivedDate.parse(val) as ReceivedDate,
-    catch: (e) =>
-      new ReceivedDateValidationError({
-        message: `unexpected error.\n${String(e)}`,
-      }),
-  });
-}
-export function validateExpiryDate(val: unknown) {
-  return Effect.try({
-    try: () => receivedDate.parse(val) as ExpiryDate,
-    catch: (e) =>
-      new ExpiryDateValidationError({
-        message: `unexpected error.\n${String(e)}`,
-      }),
-  });
-}
-
-export function validateHomePage(val: unknown) {
-  return Effect.try({
-    try: () => homePage.parse(val) as HomePage,
-    catch: (e) =>
-      new HomePageValidationError({
-        message: `unexpected error.\n${String(e)}`,
-      }),
-  });
-}
-
-// いい書き方が分からなくてちょっと複雑になっている
-export function validateEmpoyeeCount(val: unknown) {
-  return Effect.try({
-    try: () => {
-      const result = employeeCountSchema.safeParse(val);
-      if (!result.success) {
-        throw new EmployeeCountValidationError({
-          message: result.error.issues.map((i) => i.message).join("; "),
-        });
-      }
-      return result.data as EmployeetCount;
-    },
-    catch: (e) =>
-      e instanceof EmployeeCountValidationError
-        ? new EmployeeCountValidationError({
-            message: e.message,
-          })
-        : new EmployeeCountValidationError({
-            message: `Unexpected error.\n${String(e)}`,
-          }),
-  });
-}
-
+import { JobDetailPageValidationError } from "./scraper-error";
 export function validateJobDetailPage(
   page: Page,
 ): Effect.Effect<JobDetailPage, JobDetailPageValidationError, never> {
