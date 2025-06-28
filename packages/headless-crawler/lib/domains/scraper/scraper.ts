@@ -1,3 +1,4 @@
+import type { JobInfo, JobNumber } from "@sho/schema";
 import { Context, Effect, Layer } from "effect";
 import type { ListJobsError, NewPageError } from "../shared/error";
 import {
@@ -13,7 +14,7 @@ import {
   validateJobListPage,
   validateJobSearchPage,
 } from "../shared/helper/validator";
-import type { JobNumber, SelectorConverterError } from "../shared/type";
+import type { SelectorConverterError } from "../shared/type";
 import type {
   AssertSingleJobListedError,
   ScrapeJobDataError,
@@ -24,7 +25,6 @@ import type {
   ExtractTextContentOnScrapingError,
   HelloWorkScrapingConfig,
   JobFieldFillingOnScrapingError,
-  JobInfo,
   PagenationOnScrapingError,
   ValidationOnScrapingError,
 } from "./scraper-type";

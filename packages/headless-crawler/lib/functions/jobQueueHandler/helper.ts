@@ -1,13 +1,8 @@
+import type { JobNumber } from "@sho/schema";
 import { Effect, Schema } from "effect";
-import type { JobNumber } from "../../domains/shared/type";
 import { SafeParseEventBodyError, ToFirstRecordError } from "./error";
 import { jobQueueEventBodySchema } from "./schema";
-import {
-  JSONValue,
-  type TsafeParseEventBody,
-  type TtoFirstRecord,
-  type TtoJobNumber,
-} from "./type";
+import type { TsafeParseEventBody, TtoFirstRecord, TtoJobNumber } from "./type";
 
 const safeParseEventBody: TsafeParseEventBody = (val) => {
   const decode = Schema.decodeUnknownSync(jobQueueEventBodySchema);

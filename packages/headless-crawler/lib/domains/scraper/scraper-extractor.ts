@@ -1,3 +1,4 @@
+import type { JobDetailPage, JobInfo } from "@sho/schema";
 import { Effect } from "effect";
 import { validateJobNumber } from "../shared/helper/validator";
 import {
@@ -14,9 +15,7 @@ import {
 } from "./scraper-error";
 import type {
   ExtractTextContentOnScrapingError,
-  JobDetailPage,
   JobDetailPageContentValidationError,
-  JobInfo,
 } from "./scraper-type";
 import {
   validateEmpoyeeCount,

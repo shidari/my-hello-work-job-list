@@ -1,4 +1,13 @@
-import { employeeCountSchema, homePage, receivedDate } from "@sho/schema";
+import {
+  type EmployeetCount,
+  type ExpiryDate,
+  type HomePage,
+  type JobDetailPage,
+  type ReceivedDate,
+  employeeCountSchema,
+  homePage,
+  receivedDate,
+} from "@sho/schema";
 import { Effect } from "effect";
 import type { Page } from "playwright";
 import {
@@ -8,13 +17,6 @@ import {
   JobDetailPageValidationError,
   ReceivedDateValidationError,
 } from "./scraper-error";
-import type {
-  EmployeetCount,
-  ExpiryDate,
-  HomePage,
-  JobDetailPage,
-  ReceivedDate,
-} from "./scraper-type";
 
 export function validateReceivedDate(val: unknown) {
   return Effect.try({

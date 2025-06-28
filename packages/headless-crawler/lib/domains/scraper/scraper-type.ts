@@ -1,4 +1,4 @@
-import type { LaunchOptions, Page } from "playwright";
+import type { LaunchOptions } from "playwright";
 import type { SearchThenGotoFirstJobListPageError } from "../crawler/crawler-error";
 import type {
   GoToJobSearchPageError,
@@ -6,7 +6,7 @@ import type {
   JobNumberValidationError,
   JobSearchPageValidationError,
 } from "../shared/error";
-import type { JobFieldFillingError, JobNumber } from "../shared/type";
+import type { JobFieldFillingError } from "../shared/type";
 import type {
   EmployeeCountValidationError,
   ExpiryDateValidationError,
@@ -45,33 +45,6 @@ export async function defineHelloWorkScrapingConfig(
   }
   return await config;
 }
-
-const r = Symbol();
-export type ReceivedDate = string & { [r]: unknown };
-
-const h = Symbol();
-export type HomePage = string & { [h]: unknown };
-
-const e = Symbol();
-export type ExpiryDate = string & { [e]: unknown };
-
-const ec = Symbol();
-export type EmployeetCount = number & { [ec]: unknown };
-export type JobInfo = {
-  jobNumber: JobNumber;
-  companyName: string;
-  receivedDate: ReceivedDate;
-  expiryDate: ExpiryDate;
-  homePage: HomePage;
-  occupation: string;
-  employmentType: string;
-  wage: string;
-  workingHours: string;
-  employeeCount: EmployeetCount;
-};
-
-const jobDetailPage = Symbol();
-export type JobDetailPage = Page & { [jobDetailPage]: unknown };
 
 export type JobDetailPageContentValidationError =
   | ReceivedDateValidationError

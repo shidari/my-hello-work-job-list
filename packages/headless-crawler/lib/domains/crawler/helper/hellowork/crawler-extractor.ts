@@ -1,7 +1,7 @@
+import type { JobOverViewList } from "@sho/schema";
 import { Effect } from "effect";
 import { ExtractJobNumbersError } from "../../../shared/error";
 import { validateJobNumber } from "../../../shared/helper/validator";
-import type { JobOverViewList } from "../../../shared/type";
 
 export function extractJobNumbers(jobOverviewList: JobOverViewList) {
   return Effect.forEach(jobOverviewList, (table) => {

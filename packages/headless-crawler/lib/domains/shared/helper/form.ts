@@ -1,10 +1,3 @@
-import { Effect } from "effect";
-import {
-  EmploymentLabelToSelectorError,
-  FillOccupationFieldError,
-  FillPrefectureFieldError,
-  FillWorkTypeError,
-} from "../error";
 import type {
   DirtyWorkLocation,
   EmploymentType,
@@ -12,7 +5,14 @@ import type {
   EngineeringLabel,
   JobSearchCriteria,
   JobSearchPage,
-} from "../type";
+} from "@sho/schema";
+import { Effect } from "effect";
+import {
+  EmploymentLabelToSelectorError,
+  FillOccupationFieldError,
+  FillPrefectureFieldError,
+  FillWorkTypeError,
+} from "../error";
 import { engineeringLabelToSelector } from "./helper";
 
 function employmentLabelToSelector(employmentType: EmploymentType) {

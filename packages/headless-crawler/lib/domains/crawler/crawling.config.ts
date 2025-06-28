@@ -1,4 +1,5 @@
-import type { HelloWorkCrawlingConfig } from "./crawler-type";
+import type { JobSearchCriteria } from "@sho/schema";
+import type { LaunchOptions } from "playwright";
 export default defineHelloWorkCrawlingConfig(async () => {
   const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;
   const chromium = isLambda
@@ -21,6 +22,14 @@ export default defineHelloWorkCrawlingConfig(async () => {
     },
   };
 });
+
+export type HelloWorkCrawlingConfig = {
+  roughMaxCount: number;
+  browserConfig: Pick<LaunchOptions, "headless" | "executablePath" | "args">;
+  debugLog: boolean;
+  nextPageDelayMs: number;
+  jobSearchCriteria: JobSearchCriteria;
+};
 
 async function defineHelloWorkCrawlingConfig(
   config:

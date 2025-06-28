@@ -1,8 +1,8 @@
+import type { JobSearchCriteria, JobSearchPage } from "@sho/schema";
 import { Effect } from "effect";
 import type { Page } from "playwright";
 import { SearchThenGotoFirstJobListPageError } from "../../crawler/crawler-error";
 import { GoToJobSearchPageError } from "../error";
-import type { JobSearchCriteria, JobSearchPage } from "../type";
 import { fillJobCriteriaField } from "./form";
 
 export function goToJobSearchPage(page: Page) {

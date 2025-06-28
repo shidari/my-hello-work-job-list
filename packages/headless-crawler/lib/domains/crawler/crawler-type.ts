@@ -1,4 +1,3 @@
-import type { LaunchOptions, Page } from "playwright";
 import type {
   FillOccupationFieldError,
   FillPrefectureFieldError,
@@ -8,26 +7,12 @@ import type {
   JobNumberValidationError,
   JobSearchPageValidationError,
 } from "../shared/error";
-import type { JobNumber, JobSearchCriteria } from "../shared/type";
 import type {
   IsNextPageEnabledError,
   JobListPagenationError,
   NextJobListPageError,
   SearchThenGotoFirstJobListPageError,
 } from "./crawler-error";
-
-export type JobMetadata = {
-  jobNumber: JobNumber;
-};
-
-export type NewJobOpeningsFilter = "TodayYesterday" | "Within1Week";
-export type HelloWorkCrawlingConfig = {
-  roughMaxCount: number;
-  browserConfig: Pick<LaunchOptions, "headless" | "executablePath" | "args">;
-  debugLog: boolean;
-  nextPageDelayMs: number;
-  jobSearchCriteria: JobSearchCriteria;
-};
 
 export type PagenationError =
   | JobListPagenationError

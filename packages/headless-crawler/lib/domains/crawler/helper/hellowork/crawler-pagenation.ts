@@ -1,14 +1,9 @@
 import { Effect } from "effect";
-import { fillJobCriteriaField } from "../../../shared/helper/form";
-import type {
-  JobListPage,
-  JobSearchCriteria,
-  JobSearchPage,
-} from "../../../shared/type";
+
+import type { JobListPage } from "@sho/schema";
 import {
   IsNextPageEnabledError,
   NextJobListPageError,
-  SearchThenGotoFirstJobListPageError,
 } from "../../crawler-error";
 
 export function goToNextJobListPage(page: JobListPage) {

@@ -1,6 +1,6 @@
+import type { JobListPage } from "@sho/schema";
 import { Chunk, Effect, Option } from "effect";
 import { listJobOverviewElem } from "../../../shared/helper/helper";
-import type { JobListPage } from "../../../shared/type";
 import { delay } from "../../../shared/util";
 import { extractJobNumbers } from "./crawler-extractor";
 import { goToNextJobListPage, isNextPageEnabled } from "./crawler-pagenation";

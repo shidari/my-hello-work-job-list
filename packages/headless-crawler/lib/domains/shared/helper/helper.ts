@@ -1,3 +1,11 @@
+import type {
+  EngineeringLabel,
+  EngineeringLabelSelector,
+  EngineeringLabelSelectorOpenerSibling,
+  EngineeringLabelSelectorRadioBtn,
+  JobListPage,
+  JobOverViewList,
+} from "@sho/schema";
 import { Effect } from "effect";
 import {
   type Browser,
@@ -12,14 +20,6 @@ import {
   NewContextError,
   NewPageError,
 } from "../error";
-import type {
-  EngineeringLabel,
-  EngineeringLabelSelector,
-  EngineeringLabelSelectorOpenerSibling,
-  EngineeringLabelSelectorRadioBtn,
-  JobListPage,
-  JobOverViewList,
-} from "../type";
 
 export function launchBrowser(options: LaunchOptions) {
   return Effect.acquireRelease(

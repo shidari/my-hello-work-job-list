@@ -1,3 +1,4 @@
+import type { JobListPage, JobNumber, JobSearchPage } from "@sho/schema";
 import { Effect } from "effect";
 import type { Page } from "playwright";
 import {
@@ -6,7 +7,6 @@ import {
   JobSearchPageValidationError,
 } from "../error";
 import { jobNumber } from "../schema";
-import type { JobListPage, JobNumber, JobSearchPage } from "../type";
 
 export function validateJobSearchPage(page: Page) {
   return Effect.gen(function* () {

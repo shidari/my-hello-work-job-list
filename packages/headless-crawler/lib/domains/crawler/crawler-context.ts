@@ -1,3 +1,4 @@
+import type { JobMetadata } from "@sho/schema";
 import { Chunk, Context, Effect, Layer, Stream } from "effect";
 import type {
   EmploymentLabelToSelectorError,
@@ -20,11 +21,10 @@ import {
 } from "../shared/helper/validator";
 import type {
   FillFormError,
-  HelloWorkCrawlingConfig,
-  JobMetadata,
   PagenationError,
   ValidationError,
 } from "./crawler-type";
+import type { HelloWorkCrawlingConfig } from "./crawling.config";
 import { fetchJobMetaData } from "./helper/hellowork/crawler-fetcher";
 export class HelloWorkCrawler extends Context.Tag("HelloWorkCrawler")<
   HelloWorkCrawler,
