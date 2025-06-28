@@ -79,6 +79,9 @@ importers:
       effect:
         specifier: ^3.16.5
         version: 3.16.10
+      playwright:
+        specifier: ^1.53.1
+        version: 1.53.1
       zod:
         specifier: ^3.25.67
         version: 3.25.67
@@ -142,6 +145,9 @@ importers:
         specifier: ^3.25.67
         version: 3.25.67
     devDependencies:
+      playwright:
+        specifier: ^1.53.1
+        version: 1.53.1
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
@@ -2163,6 +2169,16 @@ packages:
   pkg-dir@4.2.0:
     resolution: {integrity: sha512-HRDzbaKjC+AOWVXxAU/x54COGeIv9eb+6CkDSQoNTt4XyWoIJvuPsXizxu/Fr23EiekbtZwmh1IcIG/l/a10GQ==}
     engines: {node: '>=8'}
+
+  playwright-core@1.53.1:
+    resolution: {integrity: sha512-Z46Oq7tLAyT0lGoFx4DOuB1IA9D1TPj0QkYxpPVUnGDqHHvDpCftu1J2hM2PiWsNMoZh8+LQaarAWcDfPBc6zg==}
+    engines: {node: '>=18'}
+    hasBin: true
+
+  playwright@1.53.1:
+    resolution: {integrity: sha512-LJ13YLr/ocweuwxyGf1XNFWIU4M2zUSo149Qbp+A4cpwDjsxRPj7k6H25LBrEHiEwxvRbD8HdwvQmRMSvquhYw==}
+    engines: {node: '>=18'}
+    hasBin: true
 
   postcss@8.4.31:
     resolution: {integrity: sha512-PS08Iboia9mts/2ygV3eLpY5ghnUcfLV/EXTOW1E2qYxJKGGBUtNjN76FYHnMs36RmARn41bC0AZmn+rR0OVpQ==}
@@ -4638,6 +4654,14 @@ snapshots:
   pkg-dir@4.2.0:
     dependencies:
       find-up: 4.1.0
+
+  playwright-core@1.53.1: {}
+
+  playwright@1.53.1:
+    dependencies:
+      playwright-core: 1.53.1
+    optionalDependencies:
+      fsevents: 2.3.2
 
   postcss@8.4.31:
     dependencies:
