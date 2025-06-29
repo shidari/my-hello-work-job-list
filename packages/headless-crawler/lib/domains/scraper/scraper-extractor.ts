@@ -128,10 +128,11 @@ function extractHomePage(page: JobDetailPage) {
 }
 function extractOccupation(page: JobDetailPage) {
   return Effect.gen(function* () {
-    const rawOccupation = Effect.tryPromise({
+    const rawOccupation = yield* Effect.tryPromise({
       try: async () => {
         const occupationLoc = page.locator("#ID_sksu");
         const text = await occupationLoc.textContent();
+        return text;
       },
       catch: (e) =>
         new ExtractOccupationError({

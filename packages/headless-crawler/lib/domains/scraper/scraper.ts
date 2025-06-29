@@ -8,7 +8,7 @@ import {
 } from "../shared/helper/helper";
 import {
   goToJobSearchPage,
-  searchThenGotoJobListPage,
+  searchNoThenGotoSingleJobListPage,
 } from "../shared/helper/pagenation";
 import {
   validateJobListPage,
@@ -72,7 +72,7 @@ export function buildHelloWorkScrapingLayer(config: HelloWorkScrapingConfig) {
             yield* Effect.logDebug(
               "fill jobNumber then go to hello work seach page.",
             );
-            yield* searchThenGotoJobListPage(searchPage, { jobNumber });
+            yield* searchNoThenGotoSingleJobListPage(searchPage, jobNumber);
             const jobListPage = yield* validateJobListPage(searchPage);
             yield* Effect.logDebug("now on job List page.");
 

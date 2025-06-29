@@ -97,3 +97,10 @@ export class EngineeringLabelSelectorError extends Data.TaggedError(
 export class GoToJobSearchPageError extends Data.TaggedError(
   "GoToJobSearchPageError",
 )<{ readonly message: string }> {}
+
+export class SearchThenGotoFirstJobListPageError extends Data.TaggedError(
+  "SearchThenGotoFirstJobListPageError",
+)<{ readonly message: string }> {}
+export class SearchThenGotoJobListPageError extends Data.TaggedError(
+  "SearchThenGotoJobListPageError",
+)<{ readonly message: string }> {}

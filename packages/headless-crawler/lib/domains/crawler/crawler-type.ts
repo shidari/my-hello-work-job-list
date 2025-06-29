@@ -6,12 +6,12 @@ import type {
   JobListPageValidationError,
   JobNumberValidationError,
   JobSearchPageValidationError,
+  SearchThenGotoFirstJobListPageError,
 } from "../shared/error";
 import type {
   IsNextPageEnabledError,
   JobListPagenationError,
   NextJobListPageError,
-  SearchThenGotoFirstJobListPageError,
 } from "./crawler-error";
 
 export type PagenationError =

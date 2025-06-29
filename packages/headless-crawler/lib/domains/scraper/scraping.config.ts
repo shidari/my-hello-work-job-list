@@ -10,6 +10,6 @@ export default defineHelloWorkScrapingConfig(async () => {
       args: chromium ? chromium.args : [],
       executablePath: chromium ? await chromium.executablePath() : undefined,
     },
-    debugLog: true,
+    debugLog: false,
   };
 });

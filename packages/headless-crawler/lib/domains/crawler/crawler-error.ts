@@ -13,6 +13,3 @@ export class JobListPagenationError extends Data.TaggedError(
 export class IsNextPageEnabledError extends Data.TaggedError(
   "IsNextPageEnabledError",
 )<{ readonly message: string }> {}
-export class SearchThenGotoFirstJobListPageError extends Data.TaggedError(
-  "SearchThenGotoFirstJobListPageError",
-)<{ readonly message: string }> {}

@@ -12,7 +12,7 @@ export default defineHelloWorkCrawlingConfig(async () => {
       args: chromium ? chromium.args : [],
     },
     nextPageDelayMs: 3000,
-    debugLog: true,
+    debugLog: false,
     jobSearchCriteria: {
       workLocation: { prefecture: "東京都" },
       desiredOccupation: {

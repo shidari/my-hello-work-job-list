@@ -1,8 +1,12 @@
-import type { JobSearchCriteria, JobSearchPage } from "@sho/schema";
+import type { JobNumber, JobSearchCriteria, JobSearchPage } from "@sho/schema";
 import { Effect } from "effect";
 import type { Page } from "playwright";
-import { SearchThenGotoFirstJobListPageError } from "../../crawler/crawler-error";
-import { GoToJobSearchPageError } from "../error";
+import { fillJobNumber } from "../../scraper/scraper-form";
+import {
+  GoToJobSearchPageError,
+  SearchThenGotoFirstJobListPageError,
+  SearchThenGotoJobListPageError,
+} from "../error";
 import { fillJobCriteriaField } from "./form";
 
 export function goToJobSearchPage(page: Page) {
@@ -28,9 +32,31 @@ export function searchThenGotoJobListPage(
     yield* Effect.tryPromise({
       try: async () => {
         const searchBtn = page.locator("#ID_searchBtn");
+
         await Promise.all([
           page.waitForURL("**/kensaku/*.do"),
           searchBtn.click(),
+        ]);
+      },
+      catch: (e) =>
+        new SearchThenGotoJobListPageError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
+    });
+  });
+}
+export function searchNoThenGotoSingleJobListPage(
+  page: JobSearchPage,
+  jobNumber: JobNumber,
+) {
+  return Effect.gen(function* () {
+    yield* fillJobNumber(page, jobNumber);
+    yield* Effect.tryPromise({
+      try: async () => {
+        const searchNoBtn = page.locator("#ID_searchNoBtn");
+        await Promise.all([
+          page.waitForURL("**/kensaku/*.do"),
+          searchNoBtn.click(),
         ]);
       },
       catch: (e) =>

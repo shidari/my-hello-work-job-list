@@ -1,5 +1,4 @@
 import type { LaunchOptions } from "playwright";
-import type { SearchThenGotoFirstJobListPageError } from "../crawler/crawler-error";
 import type {
   CompanyNameValidationError,
   EmployeeCountValidationError,
@@ -12,6 +11,7 @@ import type {
   JobSearchPageValidationError,
   OccupationValidationError,
   ReceivedDateValidationError,
+  SearchThenGotoFirstJobListPageError,
   WageValidationError,
   WorkingHoursValidationError,
 } from "../shared/error";

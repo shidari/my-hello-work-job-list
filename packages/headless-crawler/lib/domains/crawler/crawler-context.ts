@@ -5,6 +5,7 @@ import type {
   EngineeringLabelSelectorError,
   ExtractJobNumbersError,
   ListJobsError,
+  SearchThenGotoJobListPageError,
 } from "../shared/error";
 import {
   createContext,
@@ -38,6 +39,7 @@ export class HelloWorkCrawler extends Context.Tag("HelloWorkCrawler")<
       | PagenationError
       | ExtractJobNumbersError
       | EmploymentLabelToSelectorError
+      | SearchThenGotoJobListPageError
     >;
   }
 >() {}

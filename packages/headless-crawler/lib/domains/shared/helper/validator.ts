@@ -118,14 +118,19 @@ export function validateHomePage(val: unknown) {
 }
 
 export function validateOccupation(val: unknown) {
-  return Effect.try({
-    try: () => OccupationSchema.parse(val),
-    catch: (e) =>
-      e instanceof ZodError
-        ? new OccupationValidationError({ message: e.message })
-        : new OccupationValidationError({
-            message: `unexpected error.\n${String(e)}`,
-          }),
+  return Effect.gen(function* () {
+    yield* Effect.logDebug(
+      `validateOccupation. args=${JSON.stringify(val, null, 2)}`,
+    );
+    return yield* Effect.try({
+      try: () => OccupationSchema.parse(val),
+      catch: (e) =>
+        e instanceof ZodError
+          ? new OccupationValidationError({ message: e.message })
+          : new OccupationValidationError({
+              message: `unexpected error.\n${String(e)}`,
+            }),
+    });
   });
 }
 
