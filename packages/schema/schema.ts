@@ -11,6 +11,15 @@ export const ReceivedDateShema = z
     /^\d{4}年\d{1,2}月\d{1,2}日$/,
     "received date format invalid. should be yyyy年mm月dd日",
   )
+  .transform((value) => {
+    const dateStr = value
+      .replace("年", "-")
+      .replace("月", "-")
+      .replace("日", "");
+    return new Date(dateStr);
+  })
+  .refine((date) => z.date().parse(date), "invalid date.")
+  .transform((date) => date.toISOString())
   .brand<"ReceivedDateShema">();
 export const ExpiryDateSchema = z
   .string()
@@ -18,6 +27,15 @@ export const ExpiryDateSchema = z
     /^\d{4}年\d{1,2}月\d{1,2}日$/,
     "expiry date format invalid. should be yyyy年mm月dd日",
   )
+  .transform((value) => {
+    const dateStr = value
+      .replace("年", "-")
+      .replace("月", "-")
+      .replace("日", "");
+    return new Date(dateStr);
+  })
+  .refine((date) => z.date().parse(date), "invalid date.")
+  .transform((date) => date.toISOString())
   .brand<"ExpiryDateSchema">();
 export const HomePageSchema = z.string().url("home page should be url");
 export const OccupationSchema = z
