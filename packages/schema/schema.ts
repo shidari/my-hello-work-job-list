@@ -37,22 +37,57 @@ export const ExpiryDateSchema = z
   .refine((date) => z.date().parse(date), "invalid date.")
   .transform((date) => date.toISOString())
   .brand<"ExpiryDateSchema">();
-export const HomePageSchema = z.string().url("home page should be url");
+export const HomePageSchema = z
+  .string()
+  .url("home page should be url")
+  .nullable();
 export const OccupationSchema = z
   .string()
   .min(1, "occupation should not be empty.")
   .brand<"OccupationSchema">();
 export const EmploymentTypeSchema = z
-  .string()
-  .min(1, "employment type should not be empty.")
+  .enum(["正社員", "パート労働者", "正社員以外", "有期雇用派遣労働者"])
   .brand<"EmploymentTypeSchema">();
 export const WageSchema = z
   .string()
   .min(1, "wage should not be empty")
+  .transform((value) => {
+    // 直接正規表現を使って上限と下限を抽出し、数値に変換
+    const match = value.match(
+      /^(\d{1,3}(?:,\d{3})*)円〜(\d{1,3}(?:,\d{3})*)円$/,
+    );
+
+    if (!match) {
+      throw new Error("Invalid wage format");
+    }
+
+    // 数字のカンマを削除してから数値に変換
+    const wageMin = Number.parseInt(match[1].replace(/,/g, ""), 10);
+    const wageMax = Number.parseInt(match[2].replace(/,/g, ""), 10);
+    return { wageMin, wageMax }; // 上限と下限の数値オブジェクトを返す
+  })
+  .refine((wage) =>
+    z.object({ wageMin: z.number(), wageMax: z.number() }).parse(wage),
+  )
   .brand<"WageSchema">();
 export const WorkingHoursSchema = z
   .string()
   .min(1, "workingHours should not be empty.")
+  .transform((value) => {
+    const match = value.match(
+      /^(\d{1,2})時(\d{1,2})分〜(\d{1,2})時(\d{1,2})分$/,
+    );
+    if (!match) {
+      throw new Error("Invalid format, should be '9時00分〜18時00分'");
+    }
+
+    const [_, startH, startM, endH, endM] = match;
+
+    const workingStartTime = `${startH.padStart(2, "0")}:${startM.padStart(2, "0")}:00`;
+    const workingEndTime = `${endH.padStart(2, "0")}:${endM.padStart(2, "0")}:00`;
+
+    return { workingStartTime, workingEndTime };
+  })
   .brand<"WorkingHoursSchema">();
 export const EmployeeCountSchema = z
   .string()

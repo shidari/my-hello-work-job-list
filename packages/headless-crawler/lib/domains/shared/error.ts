@@ -104,3 +104,6 @@ export class SearchThenGotoFirstJobListPageError extends Data.TaggedError(
 export class SearchThenGotoJobListPageError extends Data.TaggedError(
   "SearchThenGotoJobListPageError",
 )<{ readonly message: string }> {}
+export class HomePageExistsError extends Data.TaggedError(
+  "HomePageExistsError",
+)<{ readonly message: string }> {}

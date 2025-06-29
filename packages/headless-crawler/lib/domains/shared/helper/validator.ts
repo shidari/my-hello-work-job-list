@@ -120,7 +120,7 @@ export function validateHomePage(val: unknown) {
 export function validateOccupation(val: unknown) {
   return Effect.gen(function* () {
     yield* Effect.logDebug(
-      `validateOccupation. args=${JSON.stringify(val, null, 2)}`,
+      `calling validateOccupation. args=${JSON.stringify(val, null, 2)}`,
     );
     return yield* Effect.try({
       try: () => OccupationSchema.parse(val),
@@ -147,14 +147,19 @@ export function validateEmploymentType(val: unknown) {
 }
 
 export function validateWage(val: unknown) {
-  return Effect.try({
-    try: () => WageSchema.parse(val),
-    catch: (e) =>
-      e instanceof ZodError
-        ? new WageValidationError({ message: e.message })
-        : new WageValidationError({
-            message: `unexpected error.\n${String(e)}`,
-          }),
+  return Effect.gen(function* () {
+    yield* Effect.logDebug(
+      `calling validateWage. args=${JSON.stringify(val, null, 2)}`,
+    );
+    return yield* Effect.try({
+      try: () => WageSchema.parse(val),
+      catch: (e) =>
+        e instanceof ZodError
+          ? new WageValidationError({ message: e.message })
+          : new WageValidationError({
+              message: `unexpected error.\n${String(e)}`,
+            }),
+    });
   });
 }
 

@@ -3,6 +3,7 @@ import type {
   EngineeringLabelSelector,
   EngineeringLabelSelectorOpenerSibling,
   EngineeringLabelSelectorRadioBtn,
+  JobDetailPage,
   JobListPage,
   JobOverViewList,
 } from "@sho/schema";
@@ -15,6 +16,7 @@ import {
 } from "playwright";
 import {
   EngineeringLabelSelectorError,
+  HomePageExistsError,
   LaunchBrowserError,
   ListJobsError,
   NewContextError,
@@ -103,4 +105,16 @@ export function listJobOverviewElem(
         : Effect.succeed(tables as JobOverViewList),
     ),
   );
+}
+
+export function homePageExists(page: JobDetailPage) {
+  return Effect.tryPromise({
+    try: async () => {
+      const homePageLoc = page.locator("#ID_hp");
+      const count = await homePageLoc.count();
+      return count === 1;
+    },
+    catch: (e) =>
+      new HomePageExistsError({ message: `unexpected error\n${String(e)}` }),
+  });
 }

@@ -1,6 +1,10 @@
 import type { JobInfo, JobNumber } from "@sho/schema";
 import { Context, Effect, Layer } from "effect";
-import type { ListJobsError, NewPageError } from "../shared/error";
+import type {
+  HomePageExistsError,
+  ListJobsError,
+  NewPageError,
+} from "../shared/error";
 import {
   createContext,
   createPage,
@@ -48,6 +52,7 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
       | SelectorConverterError
       | JobFieldFillingOnScrapingError
       | JobPropertyValidationError
+      | HomePageExistsError
     >;
   }
 >() {}

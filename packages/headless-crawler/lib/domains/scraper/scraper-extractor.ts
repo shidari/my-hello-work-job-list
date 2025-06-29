@@ -1,6 +1,8 @@
 import type { JobDetailPage, JobInfo } from "@sho/schema";
 import { Effect } from "effect";
 import { ZodError } from "zod";
+import type { HomePageExistsError } from "../shared/error";
+import { homePageExists } from "../shared/helper/helper";
 import {
   validateCompanyName,
   validateEmployeeCount,
@@ -114,6 +116,7 @@ function extractHomePage(page: JobDetailPage) {
     const homePageLoc = page.locator("#ID_hp");
     const rawHomePage = yield* Effect.tryPromise({
       try: async () => {
+        await page.pause();
         const text = await homePageLoc.textContent();
         return text;
       },
@@ -218,14 +221,19 @@ export function extractJobInfo(
   page: JobDetailPage,
 ): Effect.Effect<
   JobInfo,
-  ExtractTextContentOnScrapingError | JobPropertyValidationError
+  | ExtractTextContentOnScrapingError
+  | JobPropertyValidationError
+  | HomePageExistsError
 > {
   return Effect.gen(function* () {
     const jobNumber = yield* extractJobNumber(page);
     const companyName = yield* extractCompanyName(page);
     const receivedDate = yield* extractReceivedDate(page);
     const expiryDate = yield* extractExpiryDate(page);
-    const homePage = yield* extractHomePage(page);
+    // そもそもURLを公開していないことがある
+    const homePage = (yield* homePageExists(page))
+      ? yield* extractHomePage(page)
+      : null;
     const occupation = yield* extractOccupation(page);
     const employmentType = yield* extractEmploymentType(page);
     const wage = yield* extractWage(page);
