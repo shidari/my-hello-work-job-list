@@ -5,9 +5,13 @@ import { JobFetch } from "./endpoints/jobFetch";
 import { JobInsert } from "./endpoints/jobInsert";
 import { JobList } from "./endpoints/jobList";
 
+export const customLogger = (message: string, ...rest: string[]) => {
+  console.log(message, ...rest);
+};
+
 // Start a Hono app
 const app = new Hono<{ Bindings: Env }>();
-app.use(logger());
+app.use(logger(customLogger));
 
 // Setup OpenAPI registry
 const openapi = fromHono(app, {

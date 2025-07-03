@@ -3,6 +3,7 @@ import { Bool, OpenAPIRoute } from "chanfana";
 import { HTTPException } from "hono/http-exception";
 import { ResultAsync } from "neverthrow";
 import { z } from "zod";
+import { customLogger } from "..";
 import { getDb } from "../db";
 import { jobs } from "../db/schema";
 import type { AppContext } from "../types";
@@ -56,9 +57,13 @@ export class JobInsert extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const result = await this.validateData().andThen(({ body }) =>
-      this.insertJob(body, c),
-    );
+    const result = await this.validateData().andThen(({ body }) => {
+      customLogger(
+        "job will be inserted:",
+        `Job: ${JSON.stringify(body, null, 2)}`,
+      );
+      return this.insertJob(body, c);
+    });
     return result.match(
       (job) => c.json({ success: true, result: { job } }),
       (err) => {
