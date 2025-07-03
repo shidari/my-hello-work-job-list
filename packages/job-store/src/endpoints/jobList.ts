@@ -1,16 +1,16 @@
+import { JobSchemaForUI } from "@sho/schema";
 import { OpenAPIRoute } from "chanfana";
 import { HTTPException } from "hono/http-exception";
 import { ResultAsync } from "neverthrow";
 import { z } from "zod";
 import { getDb } from "../db";
 import { jobs } from "../db/schema";
-import {
-  type AppContext,
-  type JobFetchError,
-  type JobForUI,
-  type JobFromDrizzle,
-  JobSchemaForUI,
-  type ValidationError,
+import type {
+  AppContext,
+  JobFetchError,
+  JobForUI,
+  JobFromDrizzle,
+  ValidationError,
 } from "../types";
 
 export class JobList extends OpenAPIRoute {

@@ -123,3 +123,43 @@ export const JobInfoSchema = z.object({
   workingHours: WorkingHoursSchema,
   employeeCount: EmployeeCountSchema,
 });
+
+export const ISODateSchema = z
+  .string()
+  .refine((str) => !Number.isNaN(Date.parse(str)), {
+    message: "有効なISO 8601日付ではありません",
+  });
+
+export const JobInsertBodySchema = JobInfoSchema.omit({
+  wage: true,
+  workingHours: true,
+  receivedDate: true,
+  expiryDate: true,
+  employeeCount: true,
+}).extend({
+  wageMax: z.number(),
+  wageMin: z.number(),
+  workingStartTime: z.string(),
+  workingEndTime: z.string(),
+  receivedDate: ISODateSchema,
+  expiryDate: ISODateSchema,
+  employeeCount: z.number().int().nonnegative(),
+});
+
+export const JobSchema = JobInsertBodySchema.extend({
+  createdAt: z.string(),
+  updatedAt: z.string(),
+  status: z.string(),
+});
+export type JobInsertBodySchema = z.infer<typeof JobInsertBodySchema>;
+
+export const JobSchemaForUI = JobSchema.omit({
+  wageMax: true,
+  wageMin: true,
+  workingEndTime: true,
+  workingStartTime: true,
+  status: true,
+}).extend({
+  workingHours: z.string(),
+  wage: z.string(),
+});

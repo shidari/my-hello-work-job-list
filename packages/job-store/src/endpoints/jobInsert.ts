@@ -1,10 +1,11 @@
+import { JobInsertBodySchema, JobSchema } from "@sho/schema";
 import { Bool, OpenAPIRoute } from "chanfana";
 import { HTTPException } from "hono/http-exception";
 import { ResultAsync } from "neverthrow";
 import { z } from "zod";
 import { getDb } from "../db";
 import { jobs } from "../db/schema";
-import { type AppContext, JobInsertBodySchema, JobSchema } from "../types";
+import type { AppContext } from "../types";
 
 export class JobInsert extends OpenAPIRoute {
   schema = {

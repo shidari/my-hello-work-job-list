@@ -1,3 +1,4 @@
+import { JobSchemaForUI } from "@sho/schema";
 import { OpenAPIRoute } from "chanfana";
 import { eq } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
@@ -6,12 +7,11 @@ import { ResultAsync, errAsync, okAsync } from "neverthrow";
 import { z } from "zod";
 import { getDb } from "../db";
 import { jobs } from "../db/schema";
-import {
-  type AppContext,
-  type JobFetchError,
-  type JobForUI,
-  type JobFromDrizzle,
-  JobSchemaForUI,
+import type {
+  AppContext,
+  JobFetchError,
+  JobForUI,
+  JobFromDrizzle,
 } from "../types";
 
 export class JobFetch extends OpenAPIRoute {
