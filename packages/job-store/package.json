@@ -1,0 +1,28 @@
+{
+  "name": "cloudflare-workers-openapi",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev",
+    "cf-typegen": "wrangler types",
+    "migrate":  "pnpm exec drizzle-kit generate && wrangler d1 migrations apply job-store --local"
+  },
+  "dependencies": {
+    "@sho/schema": "workspace:*",
+    "chanfana": "^2.6.3",
+    "dotenv": "^17.0.0",
+    "drizzle-orm": "^0.44.2",
+    "hono": "^4.6.20",
+    "neverthrow": "^8.2.0",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/node": "22.13.0",
+    "@types/service-worker-mock": "^2.0.4",
+    "drizzle-kit": "^0.31.4",
+    "tsx": "^4.20.3",
+    "wrangler": "^4.22.0"
+  }
+}
