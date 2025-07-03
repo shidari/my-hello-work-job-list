@@ -45,19 +45,23 @@ export const ParsedWageSchema = RawWageSchema.transform((value) => {
     z.object({ wageMin: z.number(), wageMax: z.number() }).parse(wage),
   )
   .brand<"WageSchema">();
-export const ParsedWorkingSchema = RawWorkingHoursSchema.transform((value) => {
-  const match = value.match(/^(\d{1,2})時(\d{1,2})分〜(\d{1,2})時(\d{1,2})分$/);
-  if (!match) {
-    throw new Error("Invalid format, should be '9時00分〜18時00分'");
-  }
+export const ParsedWorkingHoursSchema = RawWorkingHoursSchema.transform(
+  (value) => {
+    const match = value.match(
+      /^(\d{1,2})時(\d{1,2})分〜(\d{1,2})時(\d{1,2})分$/,
+    );
+    if (!match) {
+      throw new Error("Invalid format, should be '9時00分〜18時00分'");
+    }
 
-  const [_, startH, startM, endH, endM] = match;
+    const [_, startH, startM, endH, endM] = match;
 
-  const workingStartTime = `${startH.padStart(2, "0")}:${startM.padStart(2, "0")}:00`;
-  const workingEndTime = `${endH.padStart(2, "0")}:${endM.padStart(2, "0")}:00`;
+    const workingStartTime = `${startH.padStart(2, "0")}:${startM.padStart(2, "0")}:00`;
+    const workingEndTime = `${endH.padStart(2, "0")}:${endM.padStart(2, "0")}:00`;
 
-  return { workingStartTime, workingEndTime };
-}).brand<"WorkingHoursSchema">();
+    return { workingStartTime, workingEndTime };
+  },
+).brand<"WorkingHoursSchema">();
 
 export const ParsedEmploymentCountSchema = RawEmployeeCountSchema.transform(
   (val, ctx) => {
