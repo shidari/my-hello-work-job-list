@@ -41,12 +41,6 @@ export const RawWorkingHoursSchema = z
 
 export const RawEmployeeCountSchema = z.string();
 
-export const ISODateSchema = z
-  .string()
-  .refine((str) => !Number.isNaN(Date.parse(str)), {
-    message: "有効なISO 8601日付ではありません",
-  });
-
 export const JobInfoSchema = z.object({
   jobNumber: JobNumberSchema,
   companyName: CompanyNameSchema,

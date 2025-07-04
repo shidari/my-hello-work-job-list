@@ -1,7 +1,6 @@
 import z from "zod";
+import { JobInsertBodySchema } from "../job-store";
 import {
-  ISODateSchema,
-  JobInfoSchema,
   RawEmployeeCountSchema,
   RawExpiryDateSchema,
   RawReceivedDateShema,
@@ -85,30 +84,11 @@ export const ParsedEmploymentCountSchema = RawEmployeeCountSchema.transform(
     .int("Must be an integer")
     .nonnegative("Must be a non-negative number"),
 );
-
-export const JobInsertBodySchema = JobInfoSchema.omit({
-  wage: true,
-  workingHours: true,
-  receivedDate: true,
-  expiryDate: true,
-  employeeCount: true,
-}).extend({
-  wageMax: z.number(),
-  wageMin: z.number(),
-  workingStartTime: z.string(),
-  workingEndTime: z.string(),
-  receivedDate: ISODateSchema,
-  expiryDate: ISODateSchema,
-  employeeCount: z.number().int().nonnegative(),
-});
-
 export const JobSchema = JobInsertBodySchema.extend({
   createdAt: z.string(),
   updatedAt: z.string(),
   status: z.string(),
 });
-
-export type JobInsertBodySchema = z.infer<typeof JobInsertBodySchema>;
 
 export const JobSchemaForUI = JobSchema.omit({
   wageMax: true,
