@@ -1,4 +1,4 @@
-# Hello Work Searcher
+# Hello Work Searcher(未完成)
 
 求人情報の自動収集・管理システム
 
