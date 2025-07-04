@@ -36,7 +36,8 @@ export const RawWageSchema = z.string().min(1, "wage should not be empty");
 
 export const RawWorkingHoursSchema = z
   .string()
-  .min(1, "workingHours should not be empty.");
+  .min(1, "workingHours should not be empty.")
+  .optional();
 
 export const RawEmployeeCountSchema = z.string();
 
