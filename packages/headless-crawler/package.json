@@ -5,13 +5,10 @@
     "headless-crawler": "bin/headless-crawler.js"
   },
   "scripts": {
-    "build": "tsc",
-    "watch": "tsc -w",
+    "build": "tsc --build tsconfig.build.json",
     "test": "jest",
-    "cdk": "cdk",
     "bootstrap": "aws-vault exec cdk-bootstrap-user -- cdk bootstrap  --cloudformation-execution-policies arn:aws:iam::aws:policy/AdministratorAccess",
     "deploy": "aws-vault exec cdk-deploy -- cdk deploy",
-    "type-check": "tsc --noEmit",
     "verify:crawler": "ts-node lib/domains/crawler/playground/index.ts",
     "verify:scraper": "ts-node lib/domains/scraper/playground/index.ts"
   },
