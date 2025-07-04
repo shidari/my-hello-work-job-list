@@ -1,6 +1,6 @@
 import {
   JobInsertBodySchema,
-  JobInsertSuscessResponseSchema,
+  JobInsertSuccessResponseSchema,
 } from "@sho/schema";
 import { OpenAPIRoute } from "chanfana";
 import { HTTPException } from "hono/http-exception";
@@ -47,7 +47,7 @@ export class JobInsert extends OpenAPIRoute {
         description: "Returns the inserted Job",
         content: {
           "application/json": {
-            schema: JobInsertSuscessResponseSchema,
+            schema: JobInsertSuccessResponseSchema,
           },
         },
       },
