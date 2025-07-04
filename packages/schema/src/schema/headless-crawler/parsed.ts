@@ -47,6 +47,8 @@ export const ParsedWageSchema = RawWageSchema.transform((value) => {
   .brand<"WageSchema">();
 export const ParsedWorkingHoursSchema = RawWorkingHoursSchema.transform(
   (value) => {
+    if (!value)
+      return { workingStartTime: undefined, workingEndTime: undefined };
     const match = value.match(
       /^(\d{1,2})時(\d{1,2})分〜(\d{1,2})時(\d{1,2})分$/,
     );

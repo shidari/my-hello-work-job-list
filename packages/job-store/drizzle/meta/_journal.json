@@ -15,6 +15,13 @@
       "when": 1751501154649,
       "tag": "0001_windy_supreme_intelligence",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1751605925081,
+      "tag": "0002_short_slayback",
+      "breakpoints": true
     }
   ]
 }
