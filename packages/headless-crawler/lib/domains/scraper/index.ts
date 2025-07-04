@@ -2,7 +2,7 @@ import { Effect, LogLevel, Logger } from "effect";
 import { validateJobNumber } from "../shared/helper/validator";
 import { HelloWorkScraper, buildHelloWorkScrapingLayer } from "./scraper";
 import scrapingConfig from "./scraping.config";
-export function buildScrapingRunner(rawJobNumber: string) {
+export function buildScrapingResult(rawJobNumber: string) {
   return Effect.gen(function* () {
     const config = yield* Effect.promise(() => scrapingConfig);
     const layer = buildHelloWorkScrapingLayer(config);

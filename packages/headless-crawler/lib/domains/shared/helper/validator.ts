@@ -1,16 +1,17 @@
 import {
   CompanyNameSchema,
-  EmployeeCountSchema,
   EmploymentTypeSchema,
-  ExpiryDateSchema,
   HomePageSchema,
+  JobInsertSuccessResponseSchema,
   type JobListPage,
   JobNumberSchema,
   type JobSearchPage,
   OccupationSchema,
-  ReceivedDateShema,
-  WageSchema,
-  WorkingHoursSchema,
+  RawEmployeeCountSchema,
+  RawExpiryDateSchema,
+  RawReceivedDateShema,
+  RawWageSchema,
+  RawWorkingHoursSchema,
 } from "@sho/schema";
 import { Effect } from "effect";
 import type { Page } from "playwright";
@@ -21,6 +22,7 @@ import {
   EmploymentTypeValidationError,
   ExpiryDateValidationError,
   HomePageValidationError,
+  InsertJobSuccessResponseValidationError,
   JobListPageValidationError,
   JobNumberValidationError,
   JobSearchPageValidationError,
@@ -85,7 +87,7 @@ export function validateCompanyName(val: unknown) {
 
 export function validateReceivedDate(val: unknown) {
   return Effect.try({
-    try: () => ReceivedDateShema.parse(val),
+    try: () => RawReceivedDateShema.parse(val),
     catch: (e) =>
       e instanceof ZodError
         ? new ReceivedDateValidationError({ message: e.message })
@@ -96,7 +98,7 @@ export function validateReceivedDate(val: unknown) {
 }
 export function validateExpiryDate(val: unknown) {
   return Effect.try({
-    try: () => ExpiryDateSchema.parse(val),
+    try: () => RawExpiryDateSchema.parse(val),
     catch: (e) =>
       e instanceof ZodError
         ? new ExpiryDateValidationError({ message: e.message })
@@ -152,7 +154,7 @@ export function validateWage(val: unknown) {
       `calling validateWage. args=${JSON.stringify(val, null, 2)}`,
     );
     return yield* Effect.try({
-      try: () => WageSchema.parse(val),
+      try: () => RawWageSchema.parse(val),
       catch: (e) =>
         e instanceof ZodError
           ? new WageValidationError({ message: e.message })
@@ -165,7 +167,7 @@ export function validateWage(val: unknown) {
 
 export function validateWorkingHours(val: unknown) {
   return Effect.try({
-    try: () => WorkingHoursSchema.parse(val),
+    try: () => RawWorkingHoursSchema.parse(val),
     catch: (e) =>
       e instanceof ZodError
         ? new WorkingHoursValidationError({ message: e.message })
@@ -176,7 +178,7 @@ export function validateWorkingHours(val: unknown) {
 }
 export function validateEmployeeCount(val: unknown) {
   return Effect.try({
-    try: () => EmployeeCountSchema.parse(val),
+    try: () => RawEmployeeCountSchema.parse(val),
     catch: (e) =>
       e instanceof ZodError
         ? new EmployeeCountValidationError({ message: e.message })
@@ -204,4 +206,16 @@ export function validateJobListPage(page: Page) {
         : Effect.succeed(page as JobListPage),
     ),
   );
+}
+
+export function validateInsertJobSuccessResponse(val: unknown) {
+  return Effect.try({
+    try: () => {
+      JobInsertSuccessResponseSchema.parse(val);
+    },
+    catch: (e) =>
+      new InsertJobSuccessResponseValidationError({
+        message: `validate inserted job success response error.\n${String(e)}`,
+      }),
+  });
 }

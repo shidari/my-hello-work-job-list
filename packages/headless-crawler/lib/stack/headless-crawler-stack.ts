@@ -7,6 +7,8 @@ import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as sqs from "aws-cdk-lib/aws-sqs";
 import type { Construct } from "constructs";
+import * as dotenv from "dotenv";
+dotenv.config();
 
 export class HeadlessCrawlerStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -68,6 +70,9 @@ export class HeadlessCrawlerStack extends cdk.Stack {
           "./loader",
           "playwright-core",
         ], // Layer に含めるモジュールは除外
+      },
+      environment: {
+        JOB_STORE_ENDPOINT: process.env.JOB_STORE_ENDPOINT || "",
       },
     });
 

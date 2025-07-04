@@ -1,9 +1,9 @@
 import { Effect } from "effect";
-import { buildScrapingRunner } from "..";
+import { buildScrapingResult } from "..";
 
 async function main() {
-  const jobNumber = "01010-24884551";
-  const runnable = buildScrapingRunner(jobNumber);
+  const jobNumber = "01010-24871951";
+  const runnable = buildScrapingResult(jobNumber);
   Effect.runPromise(runnable).then((jobInfo) =>
     console.dir({ ...jobInfo }, { depth: null }),
   );
