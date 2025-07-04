@@ -1,8 +1,11 @@
-import { JobSchemaForUI } from "@sho/schema";
+import {
+  JObList404ResponseSchema,
+  JobListQueryParsedSchema,
+  JobListSuccessResponseSchema,
+} from "@sho/schema";
 import { OpenAPIRoute } from "chanfana";
 import { HTTPException } from "hono/http-exception";
 import { ResultAsync } from "neverthrow";
-import { z } from "zod";
 import { getDb } from "../db";
 import { jobs } from "../db/schema";
 import type {
@@ -17,25 +20,14 @@ export class JobList extends OpenAPIRoute {
   schema = {
     summary: "Fetch paginated Job List",
     request: {
-      query: z.object({
-        page: z
-          .string()
-          .regex(/^\d+$/)
-          .transform((strPage) => Number(strPage))
-          .optional(),
-        limit: z
-          .string()
-          .regex(/^\d+$/)
-          .transform((strLimit) => Number(strLimit))
-          .optional(),
-      }),
+      query: JobListQueryParsedSchema,
     },
     responses: {
       "200": {
         description: "Returns pagenated Job List",
         content: {
           "application/json": {
-            schema: z.array(JobSchemaForUI),
+            schema: JobListSuccessResponseSchema,
           },
         },
       },
@@ -43,9 +35,7 @@ export class JobList extends OpenAPIRoute {
         description: "JobList not found",
         content: {
           "application/json": {
-            schema: z.object({
-              message: z.string(),
-            }),
+            schema: JObList404ResponseSchema,
           },
         },
       },

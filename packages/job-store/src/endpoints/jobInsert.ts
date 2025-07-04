@@ -1,8 +1,11 @@
-import { JobInsertBodySchema, JobSchema } from "@sho/schema";
-import { Bool, OpenAPIRoute } from "chanfana";
+import {
+  JobInsertBodySchema,
+  JobInsertSuscessResponseSchema,
+} from "@sho/schema";
+import { OpenAPIRoute } from "chanfana";
 import { HTTPException } from "hono/http-exception";
 import { ResultAsync } from "neverthrow";
-import { z } from "zod";
+import type { z } from "zod";
 import { customLogger } from "..";
 import { getDb } from "../db";
 import { jobs } from "../db/schema";
@@ -44,12 +47,7 @@ export class JobInsert extends OpenAPIRoute {
         description: "Returns the inserted Job",
         content: {
           "application/json": {
-            schema: z.object({
-              success: Bool(),
-              result: z.object({
-                job: JobSchema,
-              }),
-            }),
+            schema: JobInsertSuscessResponseSchema,
           },
         },
       },

@@ -1,10 +1,13 @@
-import { JobSchemaForUI } from "@sho/schema";
+import {
+  JobFetch404ResponseSchema,
+  JobFetchParamSchema,
+  JobFetchSuccessResponseSchema,
+} from "@sho/schema";
 import { OpenAPIRoute } from "chanfana";
 import { eq } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { HTTPException } from "hono/http-exception";
 import { ResultAsync, errAsync, okAsync } from "neverthrow";
-import { z } from "zod";
 import { getDb } from "../db";
 import { jobs } from "../db/schema";
 import type {
@@ -18,18 +21,14 @@ export class JobFetch extends OpenAPIRoute {
   schema = {
     summary: "Fetch a Job",
     request: {
-      params: z.object({
-        jobNumber: z.string(),
-      }),
+      params: JobFetchParamSchema,
     },
     responses: {
       "200": {
         description: "Returns the Job data",
         content: {
           "application/json": {
-            schema: z.object({
-              job: JobSchemaForUI,
-            }),
+            schema: JobFetchSuccessResponseSchema,
           },
         },
       },
@@ -37,9 +36,7 @@ export class JobFetch extends OpenAPIRoute {
         description: "Job not found",
         content: {
           "application/json": {
-            schema: z.object({
-              message: z.string(),
-            }),
+            schema: JobFetch404ResponseSchema,
           },
         },
       },
