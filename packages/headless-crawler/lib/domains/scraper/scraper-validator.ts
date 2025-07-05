@@ -20,6 +20,7 @@ export function validateJobDetailPage(
       throw new JobDetailPageValidationError({
         message: `textContent of div.page_title should be 求人情報 but got: "${jobTitle}"`,
       });
-    return page as JobDetailPage;
+    // branded type　一旦型エラー抑制
+    return page as unknown as JobDetailPage;
   });
 }
