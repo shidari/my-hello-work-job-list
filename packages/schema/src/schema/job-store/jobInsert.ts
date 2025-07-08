@@ -1,11 +1,7 @@
 import { z } from "zod";
 import { JobInfoSchema, JobSchema } from "../headless-crawler";
+import { ISODateSchema } from "./../common";
 
-export const ISODateSchema = z
-  .string()
-  .refine((str) => !Number.isNaN(Date.parse(str)), {
-    message: "有効なISO 8601日付ではありません",
-  });
 export const JobInsertBodySchema = JobInfoSchema.omit({
   wage: true,
   workingHours: true,
