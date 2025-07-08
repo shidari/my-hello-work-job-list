@@ -50,7 +50,9 @@ export const eventToFirstRecordToJobNumber: TtoJobNumber = ({ Records }) => {
   return Effect.gen(function* () {
     const record = yield* toFirstRecord(Records);
     const { body } = record;
-    const { jobNumber } = yield* safeParseEventBody(body);
+    const {
+      job: { jobNumber },
+    } = yield* safeParseEventBody(body);
     return jobNumber as JobNumber;
   });
 };

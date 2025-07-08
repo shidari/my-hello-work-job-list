@@ -1,4 +1,8 @@
 import { Schema } from "effect";
 export const jobQueueEventBodySchema = Schema.parseJson(
-  Schema.Struct({ jobNumber: Schema.String }),
+  Schema.Struct({
+    job: Schema.Struct({
+      jobNumber: Schema.String,
+    }),
+  }),
 );
