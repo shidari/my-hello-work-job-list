@@ -17,9 +17,6 @@ export const JobInsertBodySchema = JobInfoSchema.omit({
   expiryDate: ISODateSchema,
   employeeCount: z.number().int().nonnegative(),
 });
-console.log(
-  `JobInsertBodySchema: ${JSON.stringify(JobInsertBodySchema, null, 2)}`,
-);
 
 export const JobInsertSuccessResponseSchema = z.object({
   success: z.boolean(),
