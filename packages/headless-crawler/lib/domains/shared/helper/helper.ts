@@ -66,7 +66,7 @@ export function createPage(context: BrowserContext) {
         catch: (e) =>
           new NewPageError({ message: `unexpected error.\n${String(e)}` }),
       });
-      page.setDefaultTimeout(10000);
+      page.setDefaultTimeout(20000);
       page.setDefaultNavigationTimeout(200000);
       return { page };
     }),
