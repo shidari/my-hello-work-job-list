@@ -38,13 +38,15 @@ export class HeadlessCrawlerStack extends cdk.Stack {
       code: lambda.Code.fromAsset("lib/functions/layer/playwright.zip"),
       compatibleRuntimes: [lambda.Runtime.NODEJS_22_X],
     });
-
     const crawler = new NodejsFunction(this, "CrawlingFunction", {
       runtime: lambda.Runtime.NODEJS_22_X,
       entry: "lib/functions/crawlerHandler/handler.ts",
       handler: "handler",
       memorySize: 1024,
       timeout: cdk.Duration.seconds(90),
+      environment: {
+        QUEUE_URL: process.env.QUEUE_URL || "",
+      },
       layers: [playwrightLayer],
       bundling: {
         externalModules: [
@@ -136,5 +138,7 @@ export class HeadlessCrawlerStack extends cdk.Stack {
     );
 
     rule.addTarget(new targets.LambdaFunction(crawler));
+
+    queue.grantSendMessages(crawler);
   }
 }
