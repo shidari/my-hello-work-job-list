@@ -1,25 +1,21 @@
 {
   "name": "@sho/schema",
   "version": "1.0.0",
-  "main": "./dist/index.js",
   "exports": {
     ".": {
       "import": "./dist/index.js",
-      "require": "./dist/index.cjs",
       "types": "./dist/index.d.ts"
     }
   },
   "scripts": {
-    "clean": "rimraf dist",
-    "build": "pnpm clean && tsc -p tsconfig.build.json"
+    "build": "tsup"
   },
   "dependencies": {
-    "chanfana": "^2.8.1",
-    "zod": "^3.25.67"
+    "zod": "^3.25.74"
   },
   "devDependencies": {
     "playwright": "^1.53.1",
-    "rimraf": "^6.0.1",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.3"
   }
 }

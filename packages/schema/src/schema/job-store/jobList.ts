@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 import { JobSchemaForUI } from "../headless-crawler";
 
 export const JobListQueryPageRawSchema = z.string().regex(/^\d+$/).optional();

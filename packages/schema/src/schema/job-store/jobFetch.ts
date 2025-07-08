@@ -1,4 +1,4 @@
-import z from "zod";
+import { z } from "zod";
 import { JobSchemaForUI } from "../headless-crawler";
 
 export const JobFetchParamSchema = z.object({

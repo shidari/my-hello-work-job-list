@@ -1,8 +1,7 @@
-import { Bool } from "chanfana";
-import z from "zod";
+import { z } from "zod";
 import { JobInfoSchema, JobSchema } from "../headless-crawler";
 
-const ISODateSchema = z
+export const ISODateSchema = z
   .string()
   .refine((str) => !Number.isNaN(Date.parse(str)), {
     message: "有効なISO 8601日付ではありません",
@@ -22,9 +21,12 @@ export const JobInsertBodySchema = JobInfoSchema.omit({
   expiryDate: ISODateSchema,
   employeeCount: z.number().int().nonnegative(),
 });
+console.log(
+  `JobInsertBodySchema: ${JSON.stringify(JobInsertBodySchema, null, 2)}`,
+);
 
 export const JobInsertSuccessResponseSchema = z.object({
-  success: Bool(),
+  success: z.boolean(),
   result: z.object({
     job: JobSchema,
   }),

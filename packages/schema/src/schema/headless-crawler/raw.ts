@@ -1,5 +1,4 @@
-import z from "zod";
-
+import * as z from "zod";
 export const JobNumberSchema = z
   .string()
   .regex(/^\d{5}-\d{0,8}$/, "jobNumber format invalid.")
