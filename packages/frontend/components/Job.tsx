@@ -1,7 +1,7 @@
 import { Link } from "@lazarv/react-server/navigation";
-import type { Job, TJobOverview } from "../type";
 import { FlexN } from "./Flex";
 import "./index.css";
+import type { TJobDetail, TJobOverview } from "@sho/schema";
 
 export function JobOverview({
   companyName,
@@ -56,7 +56,7 @@ export function JobOverviewList({ items }: { items: TJobOverview[] }) {
   );
 }
 
-export function JobDetail(props: { job: Job }) {
+export function JobDetail(props: { jobDetail: TJobDetail }) {
   const {
     jobNumber,
     companyName,
@@ -68,7 +68,7 @@ export function JobDetail(props: { job: Job }) {
     expiryDate,
     workingHours,
     qualifications,
-  } = props.job;
+  } = props.jobDetail;
   return (
     <article className="job-detail">
       <h2>求人番号: {jobNumber}</h2>
