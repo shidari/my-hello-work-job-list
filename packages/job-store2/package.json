@@ -1,0 +1,33 @@
+{
+	"name": "job-store2",
+	"version": "0.0.0",
+	"private": true,
+	"scripts": {
+		"deploy": "wrangler deploy",
+		"dev": "wrangler dev",
+		"start": "wrangler dev",
+		"test": "vitest",
+		"cf-typegen": "wrangler types"
+	},
+	"devDependencies": {
+		"@cloudflare/vitest-pool-workers": "^0.8.19",
+		"@types/node": "^24.0.15",
+		"drizzle-kit": "^0.31.4",
+		"tsx": "^4.20.3",
+		"typescript": "^5.5.2",
+		"vitest": "~3.2.0",
+		"wrangler": "^4.25.0"
+	},
+	"dependencies": {
+		"@hono/zod-openapi": "^1.0.2",
+		"@hono/zod-validator": "^0.7.2",
+		"chanfana": "^2.8.1",
+		"dotenv": "^17.0.0",
+		"drizzle-orm": "^0.44.2",
+		"hono": "^4.8.3",
+		"hono-openapi": "^0.4.8",
+		"neverthrow": "^8.2.0",
+		"valibot": "^1.1.0",
+		"zod": "~3.25.74"
+	}
+}
