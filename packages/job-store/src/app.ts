@@ -1,3 +1,10 @@
+import {
+  type JobInsertReqeustBody,
+  insertJobClientErrorResponseSchema,
+  insertJobRequestBodySchema,
+  insertJobServerErrorResponseSchema,
+  insertJobSuccessResponseSchema,
+} from "@sho/schema";
 import { OpenAPIRoute, contentJson, fromHono } from "chanfana";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { type Context, Hono } from "hono";
@@ -5,13 +12,6 @@ import { HTTPException } from "hono/http-exception";
 import { ResultAsync } from "neverthrow";
 import { getDb } from "./db";
 import { jobs } from "./db/schema";
-import {
-  type RequestBody,
-  clientErrorResponse,
-  requestBodySchema,
-  serverErrorResponse,
-  successResponseSchema,
-} from "./schema";
 
 export type Env = {
   // Example bindings, use your own
@@ -23,21 +23,21 @@ class JobInsertEndpoint extends OpenAPIRoute {
   schema = {
     request: {
       body: {
-        ...contentJson(requestBodySchema),
+        ...contentJson(insertJobRequestBodySchema),
       },
     },
     responses: {
       "200": {
         description: "Successful response",
-        ...contentJson(successResponseSchema),
+        ...contentJson(insertJobSuccessResponseSchema),
       },
       "400": {
         description: "client error response",
-        ...contentJson(clientErrorResponse),
+        ...contentJson(insertJobClientErrorResponseSchema),
       },
       "500": {
         description: "internal server error response",
-        ...contentJson(serverErrorResponse),
+        ...contentJson(insertJobServerErrorResponseSchema),
       },
     },
   };
@@ -99,7 +99,7 @@ const buildClient = (
   },
 ) => {
   return {
-    insertJob: (job: RequestBody) => {
+    insertJob: (job: JobInsertReqeustBody) => {
       const now = new Date();
       const insertingValues = {
         ...job,

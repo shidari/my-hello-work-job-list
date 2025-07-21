@@ -1,9 +1,10 @@
-import type { JobInfo, JobNumber } from "@sho/schema";
+import type { JobNumber, ScrapedJob } from "@sho/schema";
 import { Context, Effect, Layer } from "effect";
 import type {
-  HomePageExistsError,
+  HomePageElmNotFoundError,
   ListJobsError,
   NewPageError,
+  QualificatiosElmNotFoundError,
 } from "../shared/error";
 import {
   createContext,
@@ -41,7 +42,7 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
     readonly scrapeJobData: (
       jobNumber: JobNumber,
     ) => Effect.Effect<
-      JobInfo,
+      ScrapedJob,
       | ExtractTextContentOnScrapingError
       | ValidationOnScrapingError
       | ListJobsError
@@ -52,7 +53,8 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
       | SelectorConverterError
       | JobFieldFillingOnScrapingError
       | JobPropertyValidationError
-      | HomePageExistsError
+      | HomePageElmNotFoundError
+      | QualificatiosElmNotFoundError
     >;
   }
 >() {}

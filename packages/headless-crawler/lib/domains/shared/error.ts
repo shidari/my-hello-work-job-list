@@ -83,6 +83,22 @@ export class EmployeeCountValidationError extends Data.TaggedError(
 )<{
   readonly message: string;
 }> {}
+export class WorkPlaceValidationError extends Data.TaggedError(
+  "WorkPlaceValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class JobDescriptionValidationError extends Data.TaggedError(
+  "JobDescriptionValidationError",
+)<{
+  readonly message: string;
+}> {}
+export class QualificationValidationError extends Data.TaggedError(
+  "QualificationValidationError",
+)<{
+  readonly message: string;
+}> {}
+
 export class JobListPageValidationError extends Data.TaggedError(
   "JobListPageValidationError",
 )<{ readonly message: string }> {}
@@ -104,8 +120,11 @@ export class SearchThenGotoFirstJobListPageError extends Data.TaggedError(
 export class SearchThenGotoJobListPageError extends Data.TaggedError(
   "SearchThenGotoJobListPageError",
 )<{ readonly message: string }> {}
-export class HomePageExistsError extends Data.TaggedError(
-  "HomePageExistsError",
+export class HomePageElmNotFoundError extends Data.TaggedError(
+  "HomePageElmNotFoundError",
+)<{ readonly message: string }> {}
+export class QualificatiosElmNotFoundError extends Data.TaggedError(
+  "QualificationElmNotFoundError",
 )<{ readonly message: string }> {}
 export class GetEndPointError extends Data.TaggedError("GetEndPointError")<{
   readonly message: string;

@@ -57,6 +57,21 @@ export class ExtractEmployeeCountError extends Data.TaggedError(
 )<{
   readonly message: string;
 }> {}
+export class ExtractWorkPlaceError extends Data.TaggedError(
+  "ExtractWorkPlaceError",
+)<{
+  readonly message: string;
+}> {}
+export class ExtractJobDescriptionError extends Data.TaggedError(
+  "ExtractJobDescriptionError",
+)<{
+  readonly message: string;
+}> {}
+export class ExtractQualificationsError extends Data.TaggedError(
+  "ExtractQualificationsError",
+)<{
+  readonly message: string;
+}> {}
 
 export class JobDetailPagePagenationError extends Data.TaggedError(
   "JobDetailPagePagenationError",

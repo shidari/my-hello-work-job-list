@@ -1,18 +1,27 @@
-import type { JobDetailPage, JobInfo } from "@sho/schema";
+import type { JobDetailPage, ScrapedJob } from "@sho/schema";
 import { Effect } from "effect";
 import { ZodError } from "zod";
-import type { HomePageExistsError } from "../shared/error";
-import { homePageExists } from "../shared/helper/helper";
+import type {
+  HomePageElmNotFoundError,
+  QualificatiosElmNotFoundError,
+} from "../shared/error";
+import {
+  homePageElmExists,
+  qualificationsElmExists,
+} from "../shared/helper/helper";
 import {
   validateCompanyName,
   validateEmployeeCount,
   validateEmploymentType,
   validateExpiryDate,
   validateHomePage,
+  validateJobDescription,
   validateJobNumber,
   validateOccupation,
+  validateQualification,
   validateReceivedDate,
   validateWage,
+  validateWorkPlace,
   validateWorkingHours,
 } from "../shared/helper/validator";
 import {
@@ -21,10 +30,13 @@ import {
   ExtractExpiryDateError,
   ExtractHomePageError,
   ExtractJobCompanyNameError,
+  ExtractJobDescriptionError,
   ExtractJobInfoError,
   ExtractOccupationError,
+  ExtractQualificationsError,
   ExtractReceivedDateError,
   ExtractWageError,
+  ExtractWorkPlaceError,
   ExtractWorkingHoursError,
 } from "./scraper-error";
 import type {
@@ -116,7 +128,6 @@ function extractHomePage(page: JobDetailPage) {
     const homePageLoc = page.locator("#ID_hp");
     const rawHomePage = yield* Effect.tryPromise({
       try: async () => {
-        await page.pause();
         const text = await homePageLoc.textContent();
         return text;
       },
@@ -217,13 +228,68 @@ function extractEmployeeCount(page: JobDetailPage) {
   });
 }
 
+function extractWorkPlace(page: JobDetailPage) {
+  const workPlaceLoc = page.locator("#ID_shgBsJusho");
+  return Effect.gen(function* () {
+    const rawWorkPlace = yield* Effect.tryPromise({
+      try: async () => {
+        const text = await workPlaceLoc.textContent();
+        return text;
+      },
+      catch: (e) =>
+        new ExtractWorkPlaceError({
+          message: `unexpected error,\n${String(e)}`,
+        }),
+    });
+    const workPlace = yield* validateWorkPlace(rawWorkPlace);
+    return workPlace;
+  });
+}
+
+function extractJobDescription(page: JobDetailPage) {
+  const jobDescriptionLoc = page.locator("#ID_shigotoNy");
+  return Effect.gen(function* () {
+    const rawJobDescription = yield* Effect.tryPromise({
+      try: async () => {
+        const text = await jobDescriptionLoc.textContent();
+        return text;
+      },
+      catch: (e) =>
+        new ExtractJobDescriptionError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
+    });
+    const jobDescription = yield* validateJobDescription(rawJobDescription);
+    return jobDescription;
+  });
+}
+
+function extractQualifications(page: JobDetailPage) {
+  const qualificationsLoc = page.locator("#ID_hynaMenkyoSkku");
+  return Effect.gen(function* () {
+    const rawQualifications = yield* Effect.tryPromise({
+      try: async () => {
+        const text = await qualificationsLoc.textContent();
+        return text;
+      },
+      catch: (e) =>
+        new ExtractQualificationsError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
+    });
+    const qualifications = yield* validateQualification(rawQualifications);
+    return qualifications;
+  });
+}
+
 export function extractJobInfo(
   page: JobDetailPage,
 ): Effect.Effect<
-  JobInfo,
+  ScrapedJob,
   | ExtractTextContentOnScrapingError
   | JobPropertyValidationError
-  | HomePageExistsError
+  | HomePageElmNotFoundError
+  | QualificatiosElmNotFoundError
 > {
   return Effect.gen(function* () {
     const jobNumber = yield* extractJobNumber(page);
@@ -231,7 +297,7 @@ export function extractJobInfo(
     const receivedDate = yield* extractReceivedDate(page);
     const expiryDate = yield* extractExpiryDate(page);
     // そもそもURLを公開していないことがある
-    const homePage = (yield* homePageExists(page))
+    const homePage = (yield* homePageElmExists(page))
       ? yield* extractHomePage(page)
       : null;
     const occupation = yield* extractOccupation(page);
@@ -239,6 +305,11 @@ export function extractJobInfo(
     const wage = yield* extractWage(page);
     const workingHours = yield* extractWorkingHours(page);
     const employeeCount = yield* extractEmployeeCount(page);
+    const workPlace = yield* extractWorkPlace(page);
+    const jobDescription = yield* extractJobDescription(page);
+    const qualifications = (yield* qualificationsElmExists(page))
+      ? yield* extractQualifications(page)
+      : null;
     return {
       jobNumber,
       companyName,
@@ -250,6 +321,9 @@ export function extractJobInfo(
       wage,
       workingHours,
       employeeCount,
+      workPlace,
+      jobDescription,
+      qualifications,
     };
   });
 }
