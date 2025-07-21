@@ -6,13 +6,16 @@ import type {
   ExpiryDateValidationError,
   GoToJobSearchPageError,
   HomePageValidationError,
+  JobDescriptionValidationError,
   JobListPageValidationError,
   JobNumberValidationError,
   JobSearchPageValidationError,
   OccupationValidationError,
+  QualificationValidationError,
   ReceivedDateValidationError,
   SearchThenGotoFirstJobListPageError,
   WageValidationError,
+  WorkPlaceValidationError,
   WorkingHoursValidationError,
 } from "../shared/error";
 import type { JobFieldFillingError } from "../shared/type";
@@ -22,10 +25,13 @@ import type {
   ExtractExpiryDateError,
   ExtractHomePageError,
   ExtractJobCompanyNameError,
+  ExtractJobDescriptionError,
   ExtractJobInfoError,
   ExtractOccupationError,
+  ExtractQualificationsError,
   ExtractReceivedDateError,
   ExtractWageError,
+  ExtractWorkPlaceError,
   ExtractWorkingHoursError,
   FillJobNumberError,
   FromJobListToJobDetailPageError,
@@ -68,7 +74,10 @@ export type ExtractTextContentOnScrapingError =
   | ExtractEmployMentTypeError
   | ExtractWageError
   | ExtractWorkingHoursError
-  | ExtractEmployeeCountError;
+  | ExtractEmployeeCountError
+  | ExtractWorkPlaceError
+  | ExtractJobDescriptionError
+  | ExtractQualificationsError;
 
 export type JobPropertyValidationError =
   | JobNumberValidationError
@@ -80,7 +89,10 @@ export type JobPropertyValidationError =
   | EmploymentTypeValidationError
   | WageValidationError
   | WorkingHoursValidationError
-  | EmployeeCountValidationError;
+  | EmployeeCountValidationError
+  | WorkPlaceValidationError
+  | JobDescriptionValidationError
+  | QualificationValidationError;
 
 export type ValidationOnScrapingError =
   | PageValidationError

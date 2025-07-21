@@ -4,9 +4,9 @@ import type {
   EngineeringLabelSelectorOpenerSibling,
   EngineeringLabelSelectorRadioBtn,
   JobDetailPage,
-  JobInsertBodySchema,
   JobListPage,
   JobOverViewList,
+  insertJobRequestBodySchema,
 } from "@sho/schema";
 import { Effect } from "effect";
 import {
@@ -19,12 +19,13 @@ import type { z } from "zod";
 import {
   EngineeringLabelSelectorError,
   GetEndPointError,
-  HomePageExistsError,
+  HomePageElmNotFoundError,
   InsertJobError,
   LaunchBrowserError,
   ListJobsError,
   NewContextError,
   NewPageError,
+  QualificatiosElmNotFoundError,
 } from "../error";
 import { validateInsertJobSuccessResponse } from "./validator";
 
@@ -112,7 +113,7 @@ export function listJobOverviewElem(
   );
 }
 
-export function homePageExists(page: JobDetailPage) {
+export function homePageElmExists(page: JobDetailPage) {
   return Effect.tryPromise({
     try: async () => {
       const homePageLoc = page.locator("#ID_hp");
@@ -120,7 +121,22 @@ export function homePageExists(page: JobDetailPage) {
       return count === 1;
     },
     catch: (e) =>
-      new HomePageExistsError({ message: `unexpected error\n${String(e)}` }),
+      new HomePageElmNotFoundError({
+        message: `unexpected error\n${String(e)}`,
+      }),
+  });
+}
+export function qualificationsElmExists(page: JobDetailPage) {
+  return Effect.tryPromise({
+    try: async () => {
+      const homePageLoc = page.locator("#ID_hynaMenkyoSkku");
+      const count = await homePageLoc.count();
+      return count === 1;
+    },
+    catch: (e) =>
+      new QualificatiosElmNotFoundError({
+        message: `unexpected error\n${String(e)}`,
+      }),
   });
 }
 
@@ -138,7 +154,7 @@ export function buildJobStoreClient() {
   return Effect.gen(function* () {
     const endpoint = yield* getEndPoint();
     return {
-      insertJob: (job: z.infer<typeof JobInsertBodySchema>) =>
+      insertJob: (job: z.infer<typeof insertJobRequestBodySchema>) =>
         Effect.gen(function* () {
           yield* Effect.logDebug(
             `executing insert job api. job=${JSON.stringify(job, null, 2)}`,

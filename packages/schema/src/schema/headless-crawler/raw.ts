@@ -1,21 +1,19 @@
 import * as z from "zod";
-export const JobNumberSchema = z
+export const RawJobNumberSchema = z
   .string()
-  .regex(/^\d{5}-\d{0,8}$/, "jobNumber format invalid.")
-  .brand<"JobNumber">();
-export const CompanyNameSchema = z.string().brand<"CompanyNameSchema">();
+  .regex(/^\d{5}-\d{0,8}$/, "jobNumber format invalid.");
+export const RawCompanyNameSchema = z.string();
 
-export const HomePageSchema = z
+export const RawHomePageSchema = z.string().url("home page should be url");
+export const RawOccupationSchema = z
   .string()
-  .url("home page should be url")
-  .nullable();
-export const OccupationSchema = z
-  .string()
-  .min(1, "occupation should not be empty.")
-  .brand<"OccupationSchema">();
-export const EmploymentTypeSchema = z
-  .enum(["正社員", "パート労働者", "正社員以外", "有期雇用派遣労働者"])
-  .brand<"EmploymentTypeSchema">();
+  .min(1, "occupation should not be empty.");
+export const RawEmploymentTypeSchema = z.enum([
+  "正社員",
+  "パート労働者",
+  "正社員以外",
+  "有期雇用派遣労働者",
+]);
 
 export const RawReceivedDateShema = z
   .string()
@@ -35,20 +33,12 @@ export const RawWageSchema = z.string().min(1, "wage should not be empty");
 
 export const RawWorkingHoursSchema = z
   .string()
-  .min(1, "workingHours should not be empty.")
-  .optional();
+  .min(1, "workingHours should not be empty.");
+
+export const RawWorkPlaceSchema = z.string();
+
+export const RawJobDescriptionSchema = z.string();
+
+export const RawQualificationsSchema = z.string();
 
 export const RawEmployeeCountSchema = z.string();
-
-export const JobInfoSchema = z.object({
-  jobNumber: JobNumberSchema,
-  companyName: CompanyNameSchema,
-  receivedDate: RawReceivedDateShema,
-  expiryDate: RawExpiryDateSchema,
-  homePage: HomePageSchema,
-  occupation: OccupationSchema,
-  employmentType: EmploymentTypeSchema,
-  wage: RawWageSchema,
-  workingHours: RawWorkingHoursSchema,
-  employeeCount: RawEmployeeCountSchema,
-});

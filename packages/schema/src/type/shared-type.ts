@@ -1,8 +1,8 @@
 import type { Locator, Page } from "playwright";
 import type { z } from "zod";
-import type { JobNumberSchema } from "../schema";
+import type { BrandedJobNumberSchema } from "../schema";
 
-export type JobNumber = z.infer<typeof JobNumberSchema>;
+export type JobNumber = z.infer<typeof BrandedJobNumberSchema>;
 const jobSearchPage = Symbol();
 
 export type JobSearchPage = Page & {

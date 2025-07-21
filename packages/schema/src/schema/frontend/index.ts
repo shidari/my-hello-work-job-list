@@ -1,5 +1,4 @@
 import z from "zod";
-import { EmploymentTypeSchema } from "../headless-crawler";
 
 export const JobOverviewSchema = z.object({
   jobNumber: z.string(),
