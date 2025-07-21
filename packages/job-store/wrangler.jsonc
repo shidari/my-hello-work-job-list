@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "job-store2",
+  "name": "job-store",
   "main": "src/index.ts",
   "compatibility_date": "2025-07-19",
   "observability": {
@@ -24,8 +24,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "job-store-3",
-      "database_id": "a50e92a9-333e-4c08-b6b6-91133aae6b96"
+      "database_name": "job-store",
+      "database_id": "99b54ef6-2e19-436e-8676-b50ef2d98dda"
     }
   ]
   /**
