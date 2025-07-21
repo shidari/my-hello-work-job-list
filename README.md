@@ -60,7 +60,7 @@ hello-work-searcher/
   - D1 (SQLite)
   - Chanfana (OpenAPI生成)
 - **機能**:
-  - 求人情報の保存・取得
+  - 求人情報の保存
   - ページネーション対応
   - RESTful API提供
   - OpenAPI仕様書自動生成
@@ -68,9 +68,12 @@ hello-work-searcher/
 ##### `frontend`
 - **目的**: ユーザーインターフェース
 - **技術**:
-  - Next.js 15
+  - React Server（@lazarv/react-server）
   - React 19
-  - Turbopack
+  - TypeScript
+- **ビルド/実行**:
+  - `pnpm dev` で `react-server` を起動
+  - ビルドツールは未使用（TurbopackやVite等は使っていません）
 
 ## 開発環境セットアップ
 
