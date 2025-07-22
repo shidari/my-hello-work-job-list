@@ -1,15 +1,26 @@
 import z from "zod";
-import { ScrapedJobSchema } from "../headless-crawler";
+import {
+  BrandedParsedEmploymentCountSchema,
+  BrandedParsedExpiryDateSchema,
+  BrandedParsedReceivedDateSchema,
+  ScrapedJobSchema,
+} from "../headless-crawler";
 
 // API リクエスト用（作成時）
 export const insertJobRequestBodySchema = ScrapedJobSchema.omit({
   wage: true,
   workingHours: true,
+  receivedDate: true,
+  expiryDate: true,
+  employeeCount: true,
 }).extend({
   wageMax: z.number(),
   wageMin: z.number(),
   workingStartTime: z.string().optional(),
   workingEndTime: z.string().optional(),
+  receivedDate: BrandedParsedReceivedDateSchema,
+  expiryDate: BrandedParsedExpiryDateSchema,
+  employeeCount: BrandedParsedEmploymentCountSchema,
 });
 
 // DB/レスポンス用（createdAt なども含む）
