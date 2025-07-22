@@ -73,7 +73,6 @@ const app = new Hono<{ Bindings: Env }>();
 
 // Initialize Chanfana for Hono
 const openapi = fromHono(app, {
-  base: "/api/v1",
   schema: {
     info: {
       title: "Job Store API",
@@ -91,7 +90,7 @@ const openapi = fromHono(app, {
 app.get("/", (c) => {
   return c.redirect("/api/v1/docs", 302); // 302 Found でリダイレクト
 });
-openapi.post("/job", JobInsertEndpoint);
+openapi.post("/api/v1/job", JobInsertEndpoint);
 
 const buildClient = (
   db: DrizzleD1Database<Record<string, never>> & {
