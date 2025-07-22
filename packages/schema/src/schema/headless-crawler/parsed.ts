@@ -1,5 +1,18 @@
 import { z } from "zod";
 import {
+  BrandedCompanyNameSchema,
+  BrandedEmployeeCountSchema,
+  BrandedEmploymentTypeSchema,
+  BrandedExpiryDateSchema,
+  BrandedHomePageSchema,
+  BrandedJobDescriptionSchema,
+  BrandedJobNumberSchema,
+  BrandedOccupationSchema,
+  BrandedQualificationsSchema,
+  BrandedReceivedDateSchema,
+  BrandedWageSchema,
+  BrandedWorkPlaceSchema,
+  BrandedWorkingHoursSchema,
   RawCompanyNameSchema,
   RawEmployeeCountSchema,
   RawEmploymentTypeSchema,
@@ -90,19 +103,6 @@ export const ParsedEmploymentCountSchema = RawEmployeeCountSchema.transform(
     .nonnegative("Must be a non-negative number"),
 );
 
-export const BrandedJobNumberSchema = RawJobNumberSchema.brand("jobNumber");
-export const BrandedCompanyNameSchema =
-  RawCompanyNameSchema.brand("companyName");
-export const BrandedHomePageSchema = RawHomePageSchema.brand("homePage");
-export const BrandedOccupationSchema = RawOccupationSchema.brand("occupation");
-export const BrandedEmploymentTypeSchema =
-  RawEmploymentTypeSchema.brand("employmentType");
-export const BrandedWageSchema = RawWageSchema.brand("wage");
-export const BrandedWorkPlaceSchema = RawWorkPlaceSchema.brand("workPlace");
-export const BrandedJobDescriptionSchema =
-  RawJobDescriptionSchema.brand("jobDescription");
-export const BrandedQualificationsSchema =
-  RawQualificationsSchema.brand("qualifications");
 export const BrandedParsedExpiryDateSchema =
   ParsedExpiryDateSchema.brand("expiryDate(parsed)");
 export const BrandedParsedWageSchema = ParsedWageSchema.brand("wage(parsed)");
@@ -118,14 +118,14 @@ export const BrandedParsedReceivedDateSchema = ParsedReceivedDateSchema.brand(
 export const ScrapedJobSchema = z.object({
   jobNumber: BrandedJobNumberSchema,
   companyName: BrandedCompanyNameSchema,
-  receivedDate: BrandedParsedReceivedDateSchema,
-  expiryDate: BrandedParsedExpiryDateSchema,
+  receivedDate: BrandedReceivedDateSchema,
+  expiryDate: BrandedExpiryDateSchema,
   homePage: BrandedHomePageSchema.nullable(),
   occupation: BrandedOccupationSchema,
   employmentType: BrandedEmploymentTypeSchema,
   wage: BrandedWageSchema,
-  workingHours: BrandedParsedWorkingHoursSchema.optional(),
-  employeeCount: BrandedParsedEmploymentCountSchema,
+  workingHours: BrandedWorkingHoursSchema.optional(),
+  employeeCount: BrandedEmployeeCountSchema,
   workPlace: BrandedWorkPlaceSchema,
   jobDescription: BrandedJobDescriptionSchema,
   qualifications: BrandedQualificationsSchema.nullable(),

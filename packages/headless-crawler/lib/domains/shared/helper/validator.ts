@@ -1,24 +1,21 @@
 import {
   BrandedCompanyNameSchema,
+  BrandedEmployeeCountSchema,
   BrandedEmploymentTypeSchema,
+  BrandedExpiryDateSchema,
   BrandedHomePageSchema,
   BrandedJobDescriptionSchema,
   BrandedJobNumberSchema,
   BrandedOccupationSchema,
   BrandedParsedEmploymentCountSchema,
-  BrandedParsedExpiryDateSchema,
-  BrandedParsedReceivedDateSchema,
   BrandedParsedWorkingHoursSchema,
   BrandedQualificationsSchema,
+  BrandedReceivedDateSchema,
   BrandedWageSchema,
   BrandedWorkPlaceSchema,
+  BrandedWorkingHoursSchema,
   type JobListPage,
   type JobSearchPage,
-  RawEmployeeCountSchema,
-  RawExpiryDateSchema,
-  RawReceivedDateShema,
-  RawWageSchema,
-  RawWorkingHoursSchema,
   insertJobSuccessResponseSchema,
 } from "@sho/schema";
 import { Effect } from "effect";
@@ -99,7 +96,7 @@ export function validateCompanyName(val: unknown) {
 
 export function validateReceivedDate(val: unknown) {
   return Effect.try({
-    try: () => BrandedParsedReceivedDateSchema.parse(val),
+    try: () => BrandedReceivedDateSchema.parse(val),
     catch: (e) =>
       e instanceof ZodError
         ? new ReceivedDateValidationError({ message: e.message })
@@ -110,7 +107,7 @@ export function validateReceivedDate(val: unknown) {
 }
 export function validateExpiryDate(val: unknown) {
   return Effect.try({
-    try: () => BrandedParsedExpiryDateSchema.parse(val),
+    try: () => BrandedExpiryDateSchema.parse(val),
     catch: (e) =>
       e instanceof ZodError
         ? new ExpiryDateValidationError({ message: e.message })
@@ -179,7 +176,7 @@ export function validateWage(val: unknown) {
 
 export function validateWorkingHours(val: unknown) {
   return Effect.try({
-    try: () => BrandedParsedWorkingHoursSchema.parse(val),
+    try: () => BrandedWorkingHoursSchema.parse(val),
     catch: (e) =>
       e instanceof ZodError
         ? new WorkingHoursValidationError({ message: e.message })
@@ -190,7 +187,7 @@ export function validateWorkingHours(val: unknown) {
 }
 export function validateEmployeeCount(val: unknown) {
   return Effect.try({
-    try: () => BrandedParsedEmploymentCountSchema.parse(val),
+    try: () => BrandedEmployeeCountSchema.parse(val),
     catch: (e) =>
       e instanceof ZodError
         ? new EmployeeCountValidationError({ message: e.message })

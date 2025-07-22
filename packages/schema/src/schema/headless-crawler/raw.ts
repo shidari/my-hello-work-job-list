@@ -42,3 +42,25 @@ export const RawJobDescriptionSchema = z.string();
 export const RawQualificationsSchema = z.string();
 
 export const RawEmployeeCountSchema = z.string();
+
+export const BrandedJobNumberSchema = RawJobNumberSchema.brand("jobNumber");
+export const BrandedCompanyNameSchema =
+  RawCompanyNameSchema.brand("companyName");
+export const BrandedReceivedDateSchema =
+  RawReceivedDateShema.brand("receivedDate");
+export const BrandedExpiryDateSchema = RawExpiryDateSchema.brand("expiryDate");
+export const BrandedHomePageSchema = RawHomePageSchema.brand("homePage");
+export const BrandedOccupationSchema = RawOccupationSchema.brand("occupation");
+export const BrandedEmploymentTypeSchema =
+  RawEmploymentTypeSchema.brand("employmentType");
+export const BrandedWageSchema = RawWageSchema.brand("wage");
+export const BrandedWorkingHoursSchema =
+  RawWorkingHoursSchema.brand("workingHours");
+export const BrandedEmployeeCountSchema =
+  RawEmployeeCountSchema.brand("employeeCount");
+
+export const BrandedWorkPlaceSchema = RawWorkPlaceSchema.brand("workPlace");
+export const BrandedJobDescriptionSchema =
+  RawJobDescriptionSchema.brand("jobDescription");
+export const BrandedQualificationsSchema =
+  RawQualificationsSchema.brand("qualifications");
