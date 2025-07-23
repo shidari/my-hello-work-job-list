@@ -1,4 +1,4 @@
 import type z from "zod";
 import type { insertJobRequestBodySchema } from "../schema";
 
-export type JobInsertReqeustBody = z.infer<typeof insertJobRequestBodySchema>;
+export type InsertJobRequestBody = z.infer<typeof insertJobRequestBodySchema>;
