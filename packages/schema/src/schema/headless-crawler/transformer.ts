@@ -4,7 +4,7 @@ import {
   RawReceivedDateShema,
   RawWageSchema,
   RawWorkingHoursSchema,
-} from "../headless-crawler";
+} from "./raw";
 
 const r = Symbol();
 export type TransformedReceivedDate = string & { [r]: unknown };

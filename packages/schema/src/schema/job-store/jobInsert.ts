@@ -1,11 +1,7 @@
 import z from "zod";
 import { ScrapedJobSchema } from "../headless-crawler";
-import {
-  transformedEmployeeCountSchema,
-  transformedExpiryDateSchema,
-  transformedReceivedDateSchema,
-} from "./transformer";
-
+const ISO8601 =
+  /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[\+\-]\d{2}:\d{2})$/;
 export const insertJobRequestBodySchema = ScrapedJobSchema.omit({
   wage: true,
   receivedDate: true,
@@ -16,9 +12,9 @@ export const insertJobRequestBodySchema = ScrapedJobSchema.omit({
   wageMax: z.number(),
   workingStartTime: z.string(),
   workingEndTime: z.string(),
-  receivedDate: transformedReceivedDateSchema,
-  expiryDate: transformedExpiryDateSchema,
-  employeeCount: transformedEmployeeCountSchema,
+  receivedDate: z.string().regex(ISO8601),
+  expiryDate: z.string().regex(ISO8601),
+  employeeCount: z.number(),
 });
 
 export const insertJobResponseBodySchema = insertJobRequestBodySchema.extend({
