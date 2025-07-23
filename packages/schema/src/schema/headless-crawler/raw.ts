@@ -1,66 +1,52 @@
 import * as z from "zod";
-export const RawJobNumberSchema = z
+export const jobNumberSchema = z
   .string()
-  .regex(/^\d{5}-\d{0,8}$/, "jobNumber format invalid.");
-export const RawCompanyNameSchema = z.string();
+  .regex(/^\d{5}-\d{0,8}$/, "jobNumber format invalid.")
+  .brand("jobNumber");
+export const companyNameSchema = z.string().brand("companyName");
 
-export const RawHomePageSchema = z.string().url("home page should be url");
-export const RawOccupationSchema = z
+export const homePageSchema = z
   .string()
-  .min(1, "occupation should not be empty.");
-export const RawEmploymentTypeSchema = z.enum([
-  "正社員",
-  "パート労働者",
-  "正社員以外",
-  "有期雇用派遣労働者",
-]);
+  .url("home page should be url")
+  .brand("homePage");
+export const occupationSchema = z
+  .string()
+  .min(1, "occupation should not be empty.")
+  .brand("occupation");
+export const employmentTypeSchema = z
+  .enum(["正社員", "パート労働者", "正社員以外", "有期雇用派遣労働者"])
+  .brand("employmentType");
 
 export const RawReceivedDateShema = z
   .string()
   .regex(
     /^\d{4}年\d{1,2}月\d{1,2}日$/,
     "received date format invalid. should be yyyy年mm月dd日",
-  );
+  )
+  .brand("receivedDate(raw)");
 
 export const RawExpiryDateSchema = z
   .string()
   .regex(
     /^\d{4}年\d{1,2}月\d{1,2}日$/,
     "expiry date format invalid. should be yyyy年mm月dd日",
-  );
+  )
+  .brand("expiryDate(raw)");
 
-export const RawWageSchema = z.string().min(1, "wage should not be empty");
+export const RawWageSchema = z
+  .string()
+  .min(1, "wage should not be empty")
+  .brand("wage(raw)");
 
 export const RawWorkingHoursSchema = z
   .string()
-  .min(1, "workingHours should not be empty.");
+  .min(1, "workingHours should not be empty.")
+  .brand("workingHours(raw)");
 
-export const RawWorkPlaceSchema = z.string();
+export const workPlaceSchema = z.string().brand("workPlace");
 
-export const RawJobDescriptionSchema = z.string();
+export const jobDescriptionSchema = z.string().brand("jobDescription");
 
-export const RawQualificationsSchema = z.string();
+export const qualificationsSchema = z.string().brand("qualifications");
 
-export const RawEmployeeCountSchema = z.string();
-
-export const BrandedJobNumberSchema = RawJobNumberSchema.brand("jobNumber");
-export const BrandedCompanyNameSchema =
-  RawCompanyNameSchema.brand("companyName");
-export const BrandedReceivedDateSchema =
-  RawReceivedDateShema.brand("receivedDate");
-export const BrandedExpiryDateSchema = RawExpiryDateSchema.brand("expiryDate");
-export const BrandedHomePageSchema = RawHomePageSchema.brand("homePage");
-export const BrandedOccupationSchema = RawOccupationSchema.brand("occupation");
-export const BrandedEmploymentTypeSchema =
-  RawEmploymentTypeSchema.brand("employmentType");
-export const BrandedWageSchema = RawWageSchema.brand("wage");
-export const BrandedWorkingHoursSchema =
-  RawWorkingHoursSchema.brand("workingHours");
-export const BrandedEmployeeCountSchema =
-  RawEmployeeCountSchema.brand("employeeCount");
-
-export const BrandedWorkPlaceSchema = RawWorkPlaceSchema.brand("workPlace");
-export const BrandedJobDescriptionSchema =
-  RawJobDescriptionSchema.brand("jobDescription");
-export const BrandedQualificationsSchema =
-  RawQualificationsSchema.brand("qualifications");
+export const RawEmployeeCountSchema = z.string().brand("employeeCount(raw)");

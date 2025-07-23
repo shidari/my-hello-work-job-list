@@ -1,8 +1,7 @@
 import type { Locator, Page } from "playwright";
-import type { z } from "zod";
-import type { BrandedJobNumberSchema } from "../schema";
+import type z from "zod";
+import type { jobNumberSchema } from "../schema";
 
-export type JobNumber = z.infer<typeof BrandedJobNumberSchema>;
 const jobSearchPage = Symbol();
 
 export type JobSearchPage = Page & {
@@ -29,6 +28,7 @@ export type EngineeringLabel = "ソフトウェア開発技術者、プログラ
 
 type DirtyDesiredOccupation = EngineeringLabel;
 
+export type JobNumber = z.infer<typeof jobNumberSchema>;
 export type JobSearchCriteria = {
   jobNumber?: JobNumber;
   workLocation?: DirtyWorkLocation;

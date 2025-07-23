@@ -1,5 +1,5 @@
 import {
-  type JobInsertReqeustBody,
+  type InsertJobRequestBody,
   insertJobClientErrorResponseSchema,
   insertJobRequestBodySchema,
   insertJobServerErrorResponseSchema,
@@ -98,7 +98,7 @@ const buildClient = (
   },
 ) => {
   return {
-    insertJob: (job: JobInsertReqeustBody) => {
+    insertJob: (job: InsertJobRequestBody) => {
       const now = new Date();
       const insertingValues = {
         ...job,

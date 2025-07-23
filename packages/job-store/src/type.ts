@@ -1,5 +1,4 @@
-import type { JobInsertReqeustBody } from "@sho/schema";
-import type z from "zod";
+import type { InsertJobRequestBody } from "@sho/schema";
 import type { jobs } from "./db/schema";
 // drizzle の型推論（insert 型 or select 型）
 type JobDrizzle = typeof jobs.$inferInsert;
@@ -8,7 +7,7 @@ type RawInsertBody = Omit<
   "id" | "createdAt" | "updatedAt" | "status"
 >;
 // Zod の型
-type ZodRawInsertBody = JobInsertReqeustBody;
+type ZodRawInsertBody = InsertJobRequestBody;
 
 // 🔍 型チェック用ユーティリティ
 type KeysMustMatch<A, B> = Exclude<keyof A, keyof B> extends never
