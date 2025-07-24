@@ -16,6 +16,13 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+          
+      # スキーマパッケージのビルド
+      - name: Build schema package
+        working-directory: ./packages/schema
+        run: |
+          npm ci
+          npm run build
 
       # AWS 認証情報（ベース）設定
       - name: Configure AWS Credentials (base)
