@@ -10,7 +10,7 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.11.0",
+  "packageManager": "pnpm@10.13.1",
   "dependencies": {
     "@lazarv/react-server": "0.0.0-experimental-77fcecd-20250629-70347fa9",
     "@sho/schema": "workspace:*"
