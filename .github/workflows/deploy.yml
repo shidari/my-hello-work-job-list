@@ -12,19 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Node.js セットアップ（バージョン22）
+      # Node.js セットアップ（バージョン20）
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
-
-      # Cloudflare Worker デプロイ
-      - name: Deploy Cloudflare Worker (api)
-        working-directory: ./packages/job-store
-        run: |
-          npm install -g wrangler
-          wrangler deploy
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          node-version: 20
 
       # AWS 認証情報（ベース）設定
       - name: Configure AWS Credentials (base)
