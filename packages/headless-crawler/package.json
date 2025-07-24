@@ -13,22 +13,22 @@
     "type-check": "pnpm exec tsc --noEmit"
   },
   "devDependencies": {
-    "@sparticuz/chromium": "^137.0.1",
+    "@sparticuz/chromium": "^138.0.0",
     "@types/aws-lambda": "^8.10.149",
     "@types/jest": "^29.5.14",
-    "@types/node": "22.7.9",
+    "@types/node": "22.16.5",
     "aws-cdk": "2.1018.0",
     "esbuild": "^0.25.5",
     "jest": "^29.7.0",
     "ts-jest": "^29.2.5",
     "ts-node": "^10.9.2",
-    "typescript": "~5.6.3",
+    "typescript": "~5.8.0",
     "zod": "^3.25.74"
   },
   "dependencies": {
     "@aws-sdk/client-sqs": "^3.840.0",
     "@sho/schema": "workspace:*",
-    "aws-cdk-lib": "2.199.0",
+    "aws-cdk-lib": "2.206.0",
     "constructs": "^10.0.0",
     "dotenv": "^17.0.0",
     "effect": "^3.16.5",
