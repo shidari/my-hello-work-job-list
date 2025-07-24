@@ -31,3 +31,15 @@ export class ParsedWorkingHoursError extends Data.TaggedError(
 )<{
   readonly message: string;
 }> {}
+
+export class InsertJobError extends Data.TaggedError("InsertJobError")<{
+  readonly message: string;
+}> {}
+export class GetEndPointError extends Data.TaggedError("GetEndPointError")<{
+  readonly message: string;
+}> {}
+export class InsertJobSuccessResponseValidationError extends Data.TaggedError(
+  "InsertJobSuccessResponseValidationError",
+)<{
+  readonly message: string;
+}> {}

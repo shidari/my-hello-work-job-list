@@ -6,7 +6,6 @@ import type {
   JobDetailPage,
   JobListPage,
   JobOverViewList,
-  insertJobRequestBodySchema,
 } from "@sho/schema";
 import { Effect } from "effect";
 import {
@@ -15,19 +14,15 @@ import {
   type LaunchOptions,
   chromium,
 } from "playwright";
-import type { z } from "zod";
 import {
   EngineeringLabelSelectorError,
-  GetEndPointError,
   HomePageElmNotFoundError,
-  InsertJobError,
   LaunchBrowserError,
   ListJobsError,
   NewContextError,
   NewPageError,
   QualificatiosElmNotFoundError,
 } from "../error";
-import { validateInsertJobSuccessResponse } from "./validator";
 
 export function launchBrowser(options: LaunchOptions) {
   return Effect.acquireRelease(
@@ -137,58 +132,5 @@ export function qualificationsElmExists(page: JobDetailPage) {
       new QualificatiosElmNotFoundError({
         message: `unexpected error\n${String(e)}`,
       }),
-  });
-}
-
-const getEndPoint = () => {
-  const endpoint = process.env.JOB_STORE_ENDPOINT;
-  if (!endpoint)
-    return Effect.fail(
-      new GetEndPointError({
-        message: `cannot get endpoint. endpoint=${endpoint}`,
-      }),
-    );
-  return Effect.succeed(endpoint);
-};
-export function buildJobStoreClient() {
-  return Effect.gen(function* () {
-    const endpoint = yield* getEndPoint();
-    return {
-      insertJob: (job: z.infer<typeof insertJobRequestBodySchema>) =>
-        Effect.gen(function* () {
-          yield* Effect.logDebug(
-            `executing insert job api. job=${JSON.stringify(job, null, 2)}`,
-          );
-          const res = yield* Effect.tryPromise({
-            try: async () =>
-              fetch(`${endpoint}/jobs`, {
-                method: "POST",
-                body: JSON.stringify(job),
-                headers: { "content-type": "application/json" },
-              }),
-            catch: (e) =>
-              new InsertJobError({
-                message: `insert job response failed.\n${String(e)}`,
-              }),
-          });
-          if (!res.ok) {
-            throw new InsertJobError({
-              message: `insert job failed.\nstatus=${res.status}\nstatusText=${res.statusText}`,
-            });
-          }
-          const data = yield* Effect.tryPromise({
-            try: () => res.json(),
-            catch: (e) =>
-              new InsertJobError({
-                message: `insert job transforming json failed.\n${String(e)}`,
-              }),
-          });
-          yield* Effect.logDebug(
-            `response data. ${JSON.stringify(data, null, 2)}`,
-          );
-          const validated = yield* validateInsertJobSuccessResponse(data);
-          return validated;
-        }),
-    };
   });
 }
