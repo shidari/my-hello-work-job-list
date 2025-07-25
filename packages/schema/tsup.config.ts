@@ -7,6 +7,6 @@ export default defineConfig({
   dts: true,
   sourcemap: true,
   clean: true,
-  format: "cjs",
+  format: ["cjs", "esm"],
   target: "es2022",
 });
