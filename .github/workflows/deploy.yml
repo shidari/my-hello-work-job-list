@@ -53,6 +53,9 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
           AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
+          JOB_STORE_ENDPOINT: ${{secrets.JOB_STORE_ENDPOINT}}
+          MAIL_ADDRESS: ${{secrets.MAIL_ADDRESS}}
+          QUEUE_URL: ${{secrets.QUEUE_URL}}
         run: |
           pnpm install --frozen-lockfile
           pnpm exec cdk deploy --all --require-approval never
