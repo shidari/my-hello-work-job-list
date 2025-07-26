@@ -1,4 +1,4 @@
-name: Deploy Cloudflare & CDK with Assume Role
+name: Deploy CDK with Assume Role
 
 on:
   push:
