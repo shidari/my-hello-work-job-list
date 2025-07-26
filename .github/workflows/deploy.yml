@@ -5,6 +5,10 @@ on:
     branches:
       - main
 
+permissions:
+  id-token: write     # ← OIDCで必要
+  contents: read      # ← checkoutに必要
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -12,59 +16,33 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # Node.js セットアップ（バージョン20）
       - uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - uses: pnpm/action-setup@v2
         with:
           version: 9
-          
-      # スキーマパッケージのビルド
+
       - name: Build schema package
         working-directory: ./packages/schema
         run: |
           pnpm install --frozen-lockfile
           pnpm build
 
-      # AWS 認証情報（ベース）設定
-      - name: Configure AWS Credentials (base)
+      # 👇 OIDCによるAssumeRole
+      - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
         with:
-          aws-access-key-id: ${{ secrets.BASE_AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.BASE_AWS_SECRET_ACCESS_KEY }}
+          role-to-assume: ${{ secrets.ASSUME_ROLE_ARN }}
+          role-session-name: github-actions-oidc
           aws-region: ap-northeast-1
-
-      # Assume Role して一時クレデンシャル取得（マスク付き）
-      - name: Assume Role
-        id: assume-role
-        env:
-          ASSUME_ROLE_ARN: ${{ secrets.ASSUME_ROLE_ARN }}
-        run: |
-          CREDS_JSON=$(aws sts assume-role --role-arn $ASSUME_ROLE_ARN --role-session-name github-actions)
-
-          AWS_ACCESS_KEY_ID=$(echo $CREDS_JSON | jq -r '.Credentials.AccessKeyId')
-          AWS_SECRET_ACCESS_KEY=$(echo $CREDS_JSON | jq -r '.Credentials.SecretAccessKey')
-          AWS_SESSION_TOKEN=$(echo $CREDS_JSON | jq -r '.Credentials.SessionToken')
-
-          echo "::add-mask::$AWS_ACCESS_KEY_ID"
-          echo "::add-mask::$AWS_SECRET_ACCESS_KEY"
-          echo "::add-mask::$AWS_SESSION_TOKEN"
-
-          echo "AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID" >> $GITHUB_ENV
-          echo "AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY" >> $GITHUB_ENV
-          echo "AWS_SESSION_TOKEN=$AWS_SESSION_TOKEN" >> $GITHUB_ENV
-
-      # CDK デプロイ（Assume Role の一時クレデンシャルを利用）
       - name: Deploy AWS CDK
         working-directory: ./packages/headless-crawler
         env:
-          AWS_ACCESS_KEY_ID: ${{ env.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ env.AWS_SECRET_ACCESS_KEY }}
-          AWS_SESSION_TOKEN: ${{ env.AWS_SESSION_TOKEN }}
-          JOB_STORE_ENDPOINT: ${{ secrets.JOB_STORE_ENDPOINT }}
-          MAIL_ADDRESS: ${{ secrets.MAIL_ADDRESS }}
-          QUEUE_URL: ${{ secrets.QUEUE_URL }}
+          JOB_STORE_ENDPOINT: ${{secrets.JOB_STORE_ENDPOINT}}
+          MAIL_ADDRESS: ${{secrets.MAIL_ADDRESS}}
+          QUEUE_URL: ${{secrets.QUEUE_URL}}
         run: |
           pnpm install --frozen-lockfile
           pnpm exec cdk deploy --all --require-approval never
