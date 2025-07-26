@@ -27,6 +27,12 @@ jobs:
           pnpm install --frozen-lockfile
           pnpm build
 
+      - name: Build type package
+        working-directory: ./packages/types
+        run: |
+          pnpm install --frozen-lockfile
+          pnpm build
+
       # 👇 OIDCによるAssumeRole
       - name: Configure AWS Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
