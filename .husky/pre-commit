@@ -1,3 +1,5 @@
 pnpm exec lint-staged
 pnpm type-check
+pnpm --filter scripts run build
+pnpm --filter job-store run copy-schema
 pnpm --filter job-store run build

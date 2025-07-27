@@ -1,0 +1,27 @@
+{
+  "name": "@sho/scripts",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "bin": {
+    "copy-schema": "./dist/copy-schema.mjs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsup"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/fs-extra": "^11.0.4",
+    "@types/node": "^24.1.0",
+    "tsup": "^8.5.0",
+    "typescript": "^5.8.3"
+  },
+  "dependencies": {
+    "find-up": "^7.0.0",
+    "fs-extra": "^11.3.0",
+    "neverthrow": "^8.2.0"
+  }
+}
