@@ -4,7 +4,7 @@
   "description": "",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsup --dts-only --dts-resolve",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -14,7 +14,9 @@
     "@sho/schema": "workspace:*"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.52.9",
     "playwright": "^1.53.1",
+    "tsup": "^8.5.0",
     "typescript": "^5.8.3",
     "zod": "^4.0.10"
   }

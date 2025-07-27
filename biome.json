@@ -7,7 +7,11 @@
   },
   "files": {
     "ignoreUnknown": false,
-    "ignore": ["./*.json", "./packages/*/worker-configuration.d.ts"]
+    "ignore": [
+      "./*.json",
+      "./packages/*/worker-configuration.d.ts",
+      "./packages/types/dist/*.d.ts"
+    ]
   },
   "formatter": {
     "enabled": true,
