@@ -11,7 +11,8 @@
       "./*.json",
       "./packages/*/worker-configuration.d.ts",
       "./packages/types/dist/*.d.ts",
-      "./apps/hello-work-job-searcher/src/routeTree.gen.ts"
+      "./apps/hello-work-job-searcher/src/routeTree.gen.ts",
+      "./apps/hello-work-job-searcher/.output/**"
     ]
   },
   "formatter": {
