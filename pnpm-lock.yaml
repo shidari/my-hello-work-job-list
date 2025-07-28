@@ -32,7 +32,7 @@ importers:
         version: 0.0.0-experimental-77fcecd-20250629-70347fa9(@types/node@24.1.0)(acorn@8.15.0)(esbuild@0.25.8)(hono@4.8.9)(rollup@4.44.2)(terser@5.43.1)(tsx@4.20.3)(vite@6.3.5(@types/node@24.1.0)(lightningcss@1.30.1)(sass@1.89.2)(terser@5.43.1)(tsx@4.20.3)(yaml@2.8.0))(webpack@5.100.2(esbuild@0.25.8))(yaml@2.8.0)
       '@sho/schema':
         specifier: workspace:*
-        version: link:../schema
+        version: link:../models
     devDependencies:
       '@types/react':
         specifier: ^19.1.8
@@ -54,7 +54,7 @@ importers:
         version: 3.848.0
       '@sho/schema':
         specifier: workspace:*
-        version: link:../schema
+        version: link:../models
       aws-cdk-lib:
         specifier: 2.207.0
         version: 2.207.0(constructs@10.4.2)
@@ -115,7 +115,7 @@ importers:
         version: 0.7.2(hono@4.8.9)(zod@3.25.76)
       '@sho/schema':
         specifier: workspace:*
-        version: link:../schema
+        version: link:../models
       '@sho/scripts':
         specifier: workspace:*
         version: link:../scripts
@@ -169,7 +169,7 @@ importers:
         specifier: ^4.25.0
         version: 4.25.1
 
-  packages/schema:
+  packages/models:
     dependencies:
       zod:
         specifier: ^3.25.74
@@ -209,28 +209,6 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
-
-  packages/types:
-    dependencies:
-      '@sho/schema':
-        specifier: workspace:*
-        version: link:../schema
-    devDependencies:
-      '@microsoft/api-extractor':
-        specifier: ^7.52.9
-        version: 7.52.9(@types/node@24.1.0)
-      playwright:
-        specifier: ^1.53.1
-        version: 1.54.1
-      tsup:
-        specifier: ^8.5.0
-        version: 8.5.0(@microsoft/api-extractor@7.52.9(@types/node@24.1.0))(postcss@8.5.6)(tsx@4.20.3)(typescript@5.8.3)(yaml@2.8.0)
-      typescript:
-        specifier: ^5.8.3
-        version: 5.8.3
-      zod:
-        specifier: ^4.0.10
-        version: 4.0.10
 
 packages:
 
@@ -5744,9 +5722,6 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
-  zod@4.0.10:
-    resolution: {integrity: sha512-3vB+UU3/VmLL2lvwcY/4RV2i9z/YU0DTV/tDuYjrwmx5WeJ7hwy+rGEEx8glHp6Yxw7ibRbKSaIFBgReRPe5KA==}
-
   zwitch@2.0.4:
     resolution: {integrity: sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A==}
 
@@ -7381,6 +7356,7 @@ snapshots:
       '@rushstack/node-core-library': 5.14.0(@types/node@24.1.0)
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   '@microsoft/api-extractor@7.52.9(@types/node@24.1.0)':
     dependencies:
@@ -7399,6 +7375,7 @@ snapshots:
       typescript: 5.8.2
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   '@microsoft/tsdoc-config@0.17.1':
     dependencies:
@@ -7406,8 +7383,10 @@ snapshots:
       ajv: 8.12.0
       jju: 1.4.0
       resolve: 1.22.10
+    optional: true
 
-  '@microsoft/tsdoc@0.15.1': {}
+  '@microsoft/tsdoc@0.15.1':
+    optional: true
 
   '@modelcontextprotocol/sdk@1.16.0':
     dependencies:
@@ -7686,11 +7665,13 @@ snapshots:
       semver: 7.5.4
     optionalDependencies:
       '@types/node': 24.1.0
+    optional: true
 
   '@rushstack/rig-package@0.5.3':
     dependencies:
       resolve: 1.22.10
       strip-json-comments: 3.1.1
+    optional: true
 
   '@rushstack/terminal@0.15.4(@types/node@24.1.0)':
     dependencies:
@@ -7698,6 +7679,7 @@ snapshots:
       supports-color: 8.1.1
     optionalDependencies:
       '@types/node': 24.1.0
+    optional: true
 
   '@rushstack/ts-command-line@5.0.2(@types/node@24.1.0)':
     dependencies:
@@ -7707,6 +7689,7 @@ snapshots:
       string-argv: 0.3.2
     transitivePeerDependencies:
       - '@types/node'
+    optional: true
 
   '@sinclair/typebox@0.27.8': {}
 
@@ -8022,7 +8005,8 @@ snapshots:
       tslib: 2.8.1
     optional: true
 
-  '@types/argparse@1.0.38': {}
+  '@types/argparse@1.0.38':
+    optional: true
 
   '@types/aws-lambda@8.10.152': {}
 
@@ -8341,6 +8325,7 @@ snapshots:
   ajv-draft-04@1.0.0(ajv@8.13.0):
     optionalDependencies:
       ajv: 8.13.0
+    optional: true
 
   ajv-formats@2.1.1(ajv@8.17.1):
     optionalDependencies:
@@ -8349,6 +8334,7 @@ snapshots:
   ajv-formats@3.0.1(ajv@8.13.0):
     optionalDependencies:
       ajv: 8.13.0
+    optional: true
 
   ajv-keywords@5.1.0(ajv@8.17.1):
     dependencies:
@@ -8368,6 +8354,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
       uri-js: 4.4.1
+    optional: true
 
   ajv@8.13.0:
     dependencies:
@@ -8375,6 +8362,7 @@ snapshots:
       json-schema-traverse: 1.0.0
       require-from-string: 2.0.2
       uri-js: 4.4.1
+    optional: true
 
   ajv@8.17.1:
     dependencies:
@@ -9529,7 +9517,8 @@ snapshots:
 
   immutable@5.1.3: {}
 
-  import-lazy@4.0.0: {}
+  import-lazy@4.0.0:
+    optional: true
 
   import-local@3.2.0:
     dependencies:
@@ -10014,7 +10003,8 @@ snapshots:
       - supports-color
       - ts-node
 
-  jju@1.4.0: {}
+  jju@1.4.0:
+    optional: true
 
   joycon@3.1.1: {}
 
@@ -10147,7 +10137,8 @@ snapshots:
 
   lodash.sortby@4.7.0: {}
 
-  lodash@4.17.21: {}
+  lodash@4.17.21:
+    optional: true
 
   log-update@6.1.0:
     dependencies:
@@ -10170,6 +10161,7 @@ snapshots:
   lru-cache@6.0.0:
     dependencies:
       yallist: 4.0.0
+    optional: true
 
   magic-string@0.30.17:
     dependencies:
@@ -10584,6 +10576,7 @@ snapshots:
   minimatch@3.0.8:
     dependencies:
       brace-expansion: 1.1.12
+    optional: true
 
   minimatch@3.1.2:
     dependencies:
@@ -11169,6 +11162,7 @@ snapshots:
   semver@7.5.4:
     dependencies:
       lru-cache: 6.0.0
+    optional: true
 
   semver@7.7.2: {}
 
@@ -11657,7 +11651,8 @@ snapshots:
       media-typer: 1.1.0
       mime-types: 3.0.1
 
-  typescript@5.8.2: {}
+  typescript@5.8.2:
+    optional: true
 
   typescript@5.8.3: {}
 
@@ -11994,7 +11989,8 @@ snapshots:
 
   yallist@3.1.1: {}
 
-  yallist@4.0.0: {}
+  yallist@4.0.0:
+    optional: true
 
   yaml@2.8.0: {}
 
@@ -12040,7 +12036,5 @@ snapshots:
   zod@3.22.3: {}
 
   zod@3.25.76: {}
-
-  zod@4.0.10: {}
 
   zwitch@2.0.4: {}
