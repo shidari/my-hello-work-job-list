@@ -1,4 +1,5 @@
 import { integer, sqliteTable, text } from "drizzle-orm/sqlite-core";
+import z from "zod";
 
 export const jobs = sqliteTable("jobs", {
   id: integer("id").primaryKey({ autoIncrement: true }),
@@ -20,4 +21,26 @@ export const jobs = sqliteTable("jobs", {
   status: text("status").notNull().default("active"),
   createdAt: text("createdAt").notNull(),
   updatedAt: text("updatedAt").notNull(),
+});
+
+export const jobSelectSchema = z.object({
+  id: z.number().int(),
+  jobNumber: z.string(),
+  companyName: z.string(),
+  receivedDate: z.string(),
+  expiryDate: z.string(),
+  homePage: z.string().optional(),
+  occupation: z.string(),
+  employmentType: z.string(),
+  wageMin: z.string(),
+  wageMax: z.string(),
+  workingStartTime: z.string(),
+  workingEndTime: z.string(),
+  employeeCount: z.number(),
+  workPlace: z.string(),
+  jobDescription: z.string(),
+  qualifications: z.string(),
+  status: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string(),
 });
