@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite dev",
     "build": "vite build && tsc --noEmit",
-    "start": "node .output/server/index.mjs"
+    "start": "node .output/server/index.mjs",
+    "deploy": "npm run build && wrangler deploy"
   },
   "dependencies": {
     "@tanstack/react-router": "^1.130.2",
