@@ -1,6 +1,6 @@
 import type { Locator, Page } from "playwright";
 import type z from "zod";
-import type { jobNumberSchema } from "../../schema/src/schema";
+import type { jobNumberSchema } from "../../schemas";
 
 const jobSearchPage = Symbol();
 
