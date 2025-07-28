@@ -171,6 +171,9 @@ importers:
 
   packages/models:
     dependencies:
+      drizzle-orm:
+        specifier: ^0.44.2
+        version: 0.44.3
       zod:
         specifier: ^3.25.74
         version: 3.25.76
