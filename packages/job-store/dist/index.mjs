@@ -5907,6 +5907,7 @@ var getDb = (c) => {
 
 // src/db/schema.ts
 import { integer as integer2, sqliteTable as sqliteTable2, text as text2 } from "drizzle-orm/sqlite-core";
+import z from "zod";
 var jobs2 = sqliteTable2("jobs", {
   id: integer2("id").primaryKey({ autoIncrement: true }),
   jobNumber: text2("jobNumber").notNull().unique(),
@@ -5927,6 +5928,27 @@ var jobs2 = sqliteTable2("jobs", {
   status: text2("status").notNull().default("active"),
   createdAt: text2("createdAt").notNull(),
   updatedAt: text2("updatedAt").notNull()
+});
+var jobSelectSchema = z.object({
+  id: z.number().int(),
+  jobNumber: z.string(),
+  companyName: z.string(),
+  receivedDate: z.string(),
+  expiryDate: z.string(),
+  homePage: z.string().optional(),
+  occupation: z.string(),
+  employmentType: z.string(),
+  wageMin: z.string(),
+  wageMax: z.string(),
+  workingStartTime: z.string(),
+  workingEndTime: z.string(),
+  employeeCount: z.number(),
+  workPlace: z.string(),
+  jobDescription: z.string(),
+  qualifications: z.string(),
+  status: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string()
 });
 
 // src/endpoint/jobInsert.ts
