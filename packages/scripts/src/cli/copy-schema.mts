@@ -10,4 +10,7 @@ if (!targetPath) {
 
 const result = await checkTargetPath(targetPath).asyncAndThen((targetPath) => copyDrizzleSchema(targetPath))
 
-result.match(() => console.log("schema copy succeeded!"), (e) => console.error(e))
+result.match(() => console.log("schema copy succeeded!"), (e) => {
+    console.error(e)
+    process.exit(1)
+})
