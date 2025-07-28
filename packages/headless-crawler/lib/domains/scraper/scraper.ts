@@ -1,4 +1,4 @@
-import type { JobNumber, ScrapedJob } from "@sho/schema";
+import type { JobNumber, ScrapedJob } from "@sho/models";
 import { Context, Effect, Layer } from "effect";
 import type {
   HomePageElmNotFoundError,

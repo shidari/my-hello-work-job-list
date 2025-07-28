@@ -1,4 +1,4 @@
-import type { JobSearchCriteria } from "@sho/schema";
+import type { JobSearchCriteria } from "@sho/models";
 import type { LaunchOptions } from "playwright";
 export default defineHelloWorkCrawlingConfig(async () => {
   const isLambda = !!process.env.AWS_LAMBDA_FUNCTION_NAME;

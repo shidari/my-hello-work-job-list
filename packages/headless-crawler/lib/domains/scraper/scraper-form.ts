@@ -1,4 +1,4 @@
-import type { JobNumber, JobSearchPage } from "@sho/schema";
+import type { JobNumber, JobSearchPage } from "@sho/models";
 import { Effect } from "effect";
 import { FillJobNumberError } from "./scraper-error";
 

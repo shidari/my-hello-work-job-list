@@ -1,5 +1,5 @@
 import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
-import type { JobMetadata } from "@sho/schema";
+import type { JobMetadata } from "@sho/models";
 import { Effect } from "effect";
 import { SendSQSMessageError } from "./error";
 

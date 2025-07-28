@@ -1,4 +1,4 @@
-import type { JobDetailPage, ScrapedJob } from "@sho/schema";
+import type { JobDetailPage, ScrapedJob } from "@sho/models";
 import { Effect } from "effect";
 import { ZodError } from "zod";
 import type {

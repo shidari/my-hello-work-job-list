@@ -1,4 +1,4 @@
-import type { JobListPage } from "@sho/schema";
+import type { JobListPage } from "@sho/models";
 import { Chunk, Effect, Option } from "effect";
 import { listJobOverviewElem } from "../../../shared/helper/helper";
 import { delay } from "../../../shared/util";

@@ -21,11 +21,10 @@ hello-work-searcher/
 └── biome.json         # コードフォーマッター設定
 ```
 
-
-
 ### 技術スタック
 
 #### 共通
+
 - **パッケージマネージャー**: pnpm (workspace)
 - **言語**: TypeScript
 - **コードフォーマッター**: Biome
@@ -33,13 +32,15 @@ hello-work-searcher/
 
 #### 各パッケージ
 
-##### `@sho/schema`
+##### `@sho/models`
+
 - **目的**: 共通の型定義とスキーマ
-- **技術**: 
+- **技術**:
   - Zod (スキーマバリデーション)
   - Chanfana (型生成)
 
 ##### `headless-crawler`
+
 - **目的**: ハローワークサイトのクローリング・スクレイピング
 - **技術**:
   - Playwright (ブラウザ自動化)
@@ -52,6 +53,7 @@ hello-work-searcher/
   - AWS Lambda対応
 
 ##### `job-store`
+
 - **目的**: 求人情報のデータベース管理・API提供
 - **技術**:
   - Cloudflare Workers
@@ -66,6 +68,7 @@ hello-work-searcher/
   - OpenAPI仕様書自動生成
 
 ##### `frontend`
+
 - **目的**: ユーザーインターフェース
 - **技術**:
   - React Server（@lazarv/react-server）
@@ -78,6 +81,7 @@ hello-work-searcher/
 ## 開発環境セットアップ
 
 ### 前提条件
+
 - Node.js
 - pnpm
 - AWS CLI (headless-crawler使用時)
@@ -99,12 +103,14 @@ pnpm exec biome check --fix
 ### 各パッケージの開発
 
 #### フロントエンド
+
 ```bash
 cd packages/frontend
 pnpm dev
 ```
 
 #### クローラー
+
 ```bash
 cd packages/headless-crawler
 pnpm build
@@ -113,6 +119,7 @@ pnpm verify:scraper  # スクレイパー動作確認
 ```
 
 #### データベース・API
+
 ```bash
 cd packages/job-store
 pnpm migrate  # マイグレーション実行
@@ -122,6 +129,7 @@ pnpm dev      # ローカル開発サーバー
 ## デプロイ
 
 ### クローラー (AWS)
+
 ```bash
 cd packages/headless-crawler
 pnpm bootstrap  # 初回のみ
@@ -129,12 +137,14 @@ pnpm deploy
 ```
 
 ### データベース・API (Cloudflare)
+
 ```bash
 cd packages/job-store
 pnpm deploy
 ```
 
 ### フロントエンド
+
 ```bash
 cd packages/frontend
 pnpm build
@@ -166,4 +176,4 @@ pnpm build
 
 ## ライセンス
 
-ISC 
+ISC

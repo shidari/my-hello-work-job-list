@@ -6,9 +6,9 @@ import {
   transformedEmployeeCountSchema,
   transformedExpiryDateSchema,
   transformedReceivedDateSchema,
-} from "@sho/schema";
-import { transformedWageSchema } from "@sho/schema";
-import { transformedWorkingHoursSchema } from "@sho/schema";
+} from "@sho/models";
+import { transformedWageSchema } from "@sho/models";
+import { transformedWorkingHoursSchema } from "@sho/models";
 import { Effect, Schema } from "effect";
 import {
   GetEndPointError,

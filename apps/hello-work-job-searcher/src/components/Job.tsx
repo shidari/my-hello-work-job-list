@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { FlexN } from "./Flex";
 import "./index.css";
-import type { TJobDetail, TJobOverview } from "@sho/schema";
+import type { TJobDetail, TJobOverview } from "@sho/models";
 
 export function JobOverview({
   companyName,

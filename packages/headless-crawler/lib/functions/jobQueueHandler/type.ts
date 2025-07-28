@@ -1,4 +1,4 @@
-import type { JobNumber } from "@sho/schema";
+import type { JobNumber } from "@sho/models";
 import type { SQSEvent, SQSRecord } from "aws-lambda";
 import type { Effect } from "effect";
 import type { SafeParseEventBodyError, ToFirstRecordError } from "./error";

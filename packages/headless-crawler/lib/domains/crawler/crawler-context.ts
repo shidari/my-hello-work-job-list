@@ -1,4 +1,4 @@
-import type { JobMetadata } from "@sho/schema";
+import type { JobMetadata } from "@sho/models";
 import { Chunk, Context, Effect, Layer, Stream } from "effect";
 import type {
   EmploymentLabelToSelectorError,

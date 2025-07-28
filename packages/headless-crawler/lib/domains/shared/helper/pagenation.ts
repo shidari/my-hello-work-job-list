@@ -1,4 +1,4 @@
-import type { JobNumber, JobSearchCriteria, JobSearchPage } from "@sho/schema";
+import type { JobNumber, JobSearchCriteria, JobSearchPage } from "@sho/models";
 import { Effect } from "effect";
 import type { Page } from "playwright";
 import { fillJobNumber } from "../../scraper/scraper-form";

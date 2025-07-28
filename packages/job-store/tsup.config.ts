@@ -7,6 +7,6 @@ export default defineConfig({
   sourcemap: true,
   clean: true,
   format: ["esm"],
-  noExternal: ["@sho/schema"],
+  noExternal: ["@sho/models"],
   target: "es2022",
 });

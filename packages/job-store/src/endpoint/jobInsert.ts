@@ -4,7 +4,7 @@ import {
   insertJobRequestBodySchema,
   insertJobServerErrorResponseSchema,
   insertJobSuccessResponseSchema,
-} from "@sho/schema";
+} from "@sho/models";
 import { OpenAPIRoute, contentJson } from "chanfana";
 import { eq } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";

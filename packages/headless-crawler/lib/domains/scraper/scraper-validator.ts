@@ -1,4 +1,4 @@
-import type { JobDetailPage } from "@sho/schema";
+import type { JobDetailPage } from "@sho/models";
 import { Effect } from "effect";
 import type { Page } from "playwright";
 import { JobDetailPageValidationError } from "./scraper-error";

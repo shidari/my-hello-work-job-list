@@ -6,7 +6,7 @@ import type {
   JobDetailPage,
   JobListPage,
   JobOverViewList,
-} from "@sho/schema";
+} from "@sho/models";
 import { Effect } from "effect";
 import {
   type Browser,

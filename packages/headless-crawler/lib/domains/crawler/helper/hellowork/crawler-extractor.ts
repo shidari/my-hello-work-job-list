@@ -1,4 +1,4 @@
-import type { JobOverViewList } from "@sho/schema";
+import type { JobOverViewList } from "@sho/models";
 import { Effect } from "effect";
 import { ExtractJobNumbersError } from "../../../shared/error";
 import { validateJobNumber } from "../../../shared/helper/validator";

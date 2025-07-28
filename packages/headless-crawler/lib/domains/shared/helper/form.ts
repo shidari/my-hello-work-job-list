@@ -5,7 +5,7 @@ import type {
   EngineeringLabel,
   JobSearchCriteria,
   JobSearchPage,
-} from "@sho/schema";
+} from "@sho/models";
 import { Effect } from "effect";
 import {
   EmploymentLabelToSelectorError,

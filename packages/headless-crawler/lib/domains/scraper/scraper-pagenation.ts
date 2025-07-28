@@ -1,4 +1,4 @@
-import type { JobListPage } from "@sho/schema";
+import type { JobListPage } from "@sho/models";
 import { Effect } from "effect";
 import { assertSingleJobListed } from "./scraper-aserter";
 import { FromJobListToJobDetailPageError } from "./scraper-error";

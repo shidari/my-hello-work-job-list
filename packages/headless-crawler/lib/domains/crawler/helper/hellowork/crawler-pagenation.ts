@@ -1,6 +1,6 @@
 import { Effect } from "effect";
 
-import type { JobListPage } from "@sho/schema";
+import type { JobListPage } from "@sho/models";
 import {
   IsNextPageEnabledError,
   NextJobListPageError,

@@ -1,4 +1,4 @@
-import type { TJobDetail } from "@sho/schema";
+import type { TJobDetail } from "@sho/models";
 import { createFileRoute } from "@tanstack/react-router";
 import { FlexColumn, FlexN } from "~/components";
 import { JobDetail } from "~/components/Job";

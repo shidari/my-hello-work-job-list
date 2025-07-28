@@ -1,4 +1,4 @@
-import type { InsertJobRequestBody } from "@sho/schema";
+import type { InsertJobRequestBody } from "@sho/models";
 import type { jobs } from "./db/schema";
 // drizzle の型推論（insert 型 or select 型）
 type JobDrizzle = typeof jobs.$inferInsert;
