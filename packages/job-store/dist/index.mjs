@@ -9384,6 +9384,7 @@ var emplomentTypeSelector = Symbol();
 
 // src/endpoint/jobInsert/jobInsert.ts
 import { OpenAPIRoute, contentJson } from "chanfana";
+import { Effect as Effect2, Exit } from "effect";
 import { HTTPException } from "hono/http-exception";
 
 // ../../node_modules/.pnpm/drizzle-orm@0.44.3/node_modules/drizzle-orm/logger.js
@@ -9416,6 +9417,103 @@ var NoopLogger = class {
   logQuery() {
   }
 };
+
+// src/clientLayer.ts
+import { Context, Effect, Layer } from "effect";
+
+// src/db/schema.ts
+import z from "zod";
+var jobs2 = sqliteTable("jobs", {
+  id: integer("id").primaryKey({ autoIncrement: true }),
+  jobNumber: text("jobNumber").notNull().unique(),
+  companyName: text("companyName").notNull(),
+  receivedDate: text("receivedDate").notNull(),
+  expiryDate: text("expiryDate").notNull(),
+  homePage: text("homePage"),
+  occupation: text("occupation").notNull(),
+  employmentType: text("employmentType").notNull(),
+  wageMin: integer("wageMin").notNull(),
+  wageMax: integer("wageMax").notNull(),
+  workingStartTime: text("workingStartTime"),
+  workingEndTime: text("workingEndTime"),
+  employeeCount: integer("employeeCount").notNull(),
+  workPlace: text("workPlace"),
+  jobDescription: text("jobDescription"),
+  qualifications: text("qualifications"),
+  status: text("status").notNull().default("active"),
+  createdAt: text("createdAt").notNull(),
+  updatedAt: text("updatedAt").notNull()
+});
+var jobSelectSchema2 = z.object({
+  id: z.number().int(),
+  jobNumber: z.string(),
+  companyName: z.string(),
+  receivedDate: z.string(),
+  expiryDate: z.string(),
+  homePage: z.string().optional(),
+  occupation: z.string(),
+  employmentType: z.string(),
+  wageMin: z.string(),
+  wageMax: z.string(),
+  workingStartTime: z.string(),
+  workingEndTime: z.string(),
+  employeeCount: z.number(),
+  workPlace: z.string(),
+  jobDescription: z.string(),
+  qualifications: z.string(),
+  status: z.string(),
+  createdAt: z.string(),
+  updatedAt: z.string()
+});
+
+// src/endpoint/jobInsert/error.ts
+import { Data } from "effect";
+var InsertJobRequestValidationError = class extends Data.TaggedError(
+  "ValidationError"
+) {
+};
+var InsertJobDuplicationError = class extends Data.TaggedError(
+  "InsertJobDuplicationError"
+) {
+};
+var InsertJobError = class extends Data.TaggedError("InsertJobError") {
+};
+
+// src/clientLayer.ts
+var JobStoreClient = class extends Context.Tag("JobStoreClient")() {
+};
+function buildJobStoreClientLive(db) {
+  return Effect.succeed({
+    insertJob: (job) => Effect.tryPromise({
+      try: () => {
+        const now = /* @__PURE__ */ new Date();
+        const insertingValues = {
+          ...job,
+          createdAt: now.toISOString(),
+          updatedAt: now.toISOString(),
+          status: "active"
+        };
+        return db.insert(jobs2).values(insertingValues);
+      },
+      catch: (e2) => new InsertJobError({
+        message: `insert job failed.
+${String(e2)}`,
+        errorType: "server"
+      })
+    }).pipe(Effect.as(job)),
+    checkDuplicate: (jobNumber) => Effect.tryPromise({
+      try: () => db.select().from(jobs2).where(eq(jobs2.jobNumber, jobNumber)).limit(1).then((rows) => rows.length > 0),
+      catch: (e2) => new InsertJobDuplicationError({
+        message: `check duplicate failed. jobNumber=${jobNumber}
+${String(e2)}`,
+        errorType: "client"
+      })
+    })
+  });
+}
+function makeJobStoreClientLayer(db) {
+  return Layer.effect(JobStoreClient, buildJobStoreClientLive(db));
+}
 
 // ../../node_modules/.pnpm/drizzle-orm@0.44.3/node_modules/drizzle-orm/d1/session.js
 var SQLiteD1Session = class extends SQLiteSession {
@@ -9645,98 +9743,6 @@ var getDb = (c) => {
 };
 
 // src/endpoint/jobInsert/jobInsert.ts
-import { Effect as Effect2, Exit } from "effect";
-
-// src/endpoint/jobInsert/error.ts
-import { Data } from "effect";
-var InsertJobRequestValidationError = class extends Data.TaggedError("ValidationError") {
-};
-var InsertJobDuplicationError = class extends Data.TaggedError("InsertJobDuplicationError") {
-};
-var InsertJobError = class extends Data.TaggedError("InsertJobError") {
-};
-
-// src/clientLayer.ts
-import { Context, Effect, Layer } from "effect";
-
-// src/db/schema.ts
-import z from "zod";
-var jobs2 = sqliteTable("jobs", {
-  id: integer("id").primaryKey({ autoIncrement: true }),
-  jobNumber: text("jobNumber").notNull().unique(),
-  companyName: text("companyName").notNull(),
-  receivedDate: text("receivedDate").notNull(),
-  expiryDate: text("expiryDate").notNull(),
-  homePage: text("homePage"),
-  occupation: text("occupation").notNull(),
-  employmentType: text("employmentType").notNull(),
-  wageMin: integer("wageMin").notNull(),
-  wageMax: integer("wageMax").notNull(),
-  workingStartTime: text("workingStartTime"),
-  workingEndTime: text("workingEndTime"),
-  employeeCount: integer("employeeCount").notNull(),
-  workPlace: text("workPlace"),
-  jobDescription: text("jobDescription"),
-  qualifications: text("qualifications"),
-  status: text("status").notNull().default("active"),
-  createdAt: text("createdAt").notNull(),
-  updatedAt: text("updatedAt").notNull()
-});
-var jobSelectSchema2 = z.object({
-  id: z.number().int(),
-  jobNumber: z.string(),
-  companyName: z.string(),
-  receivedDate: z.string(),
-  expiryDate: z.string(),
-  homePage: z.string().optional(),
-  occupation: z.string(),
-  employmentType: z.string(),
-  wageMin: z.string(),
-  wageMax: z.string(),
-  workingStartTime: z.string(),
-  workingEndTime: z.string(),
-  employeeCount: z.number(),
-  workPlace: z.string(),
-  jobDescription: z.string(),
-  qualifications: z.string(),
-  status: z.string(),
-  createdAt: z.string(),
-  updatedAt: z.string()
-});
-
-// src/clientLayer.ts
-var JobStoreClient = class extends Context.Tag("JobStoreClient")() {
-};
-function buildJobStoreClientLive(db) {
-  return Effect.succeed(
-    {
-      insertJob: (job) => Effect.tryPromise({
-        try: () => {
-          const now = /* @__PURE__ */ new Date();
-          const insertingValues = {
-            ...job,
-            createdAt: now.toISOString(),
-            updatedAt: now.toISOString(),
-            status: "active"
-          };
-          return db.insert(jobs2).values(insertingValues);
-        },
-        catch: (e2) => new InsertJobError({ message: `insert job failed.
-${String(e2)}`, errorType: "server" })
-      }).pipe(Effect.as(job)),
-      checkDuplicate: (jobNumber) => Effect.tryPromise({
-        try: () => db.select().from(jobs2).where(eq(jobs2.jobNumber, jobNumber)).limit(1).then((rows) => rows.length > 0),
-        catch: (e2) => new InsertJobDuplicationError({ message: `check duplicate failed. jobNumber=${jobNumber}
-${String(e2)}`, errorType: "client" })
-      })
-    }
-  );
-}
-function makeJobStoreClientLayer(db) {
-  return Layer.effect(JobStoreClient, buildJobStoreClientLive(db));
-}
-
-// src/endpoint/jobInsert/jobInsert.ts
 var JobInsertEndpoint = class extends OpenAPIRoute {
   constructor() {
     super(...arguments);
@@ -9765,18 +9771,19 @@ var JobInsertEndpoint = class extends OpenAPIRoute {
   async handle(c) {
     const db = getDb(c);
     const self = this;
-    const program = Effect2.gen(
-      function* () {
-        const jobStoreClient = yield* JobStoreClient;
-        const validatedReqBody = yield* Effect2.tryPromise({
-          try: () => self.getValidatedData(),
-          catch: (e2) => new InsertJobRequestValidationError({ message: `schema validation failed.
-${String(e2)}`, errorType: "client" })
-        }).pipe(Effect2.map(({ body }) => body));
-        yield* jobStoreClient.insertJob(validatedReqBody);
-        return validatedReqBody;
-      }
-    );
+    const program = Effect2.gen(function* () {
+      const jobStoreClient = yield* JobStoreClient;
+      const validatedReqBody = yield* Effect2.tryPromise({
+        try: () => self.getValidatedData(),
+        catch: (e2) => new InsertJobRequestValidationError({
+          message: `schema validation failed.
+${String(e2)}`,
+          errorType: "client"
+        })
+      }).pipe(Effect2.map(({ body }) => body));
+      yield* jobStoreClient.insertJob(validatedReqBody);
+      return validatedReqBody;
+    });
     const runnable = Effect2.provide(program, makeJobStoreClientLayer(db));
     const exit = await Effect2.runPromiseExit(runnable);
     return Exit.match(exit, {
