@@ -1,6 +1,6 @@
 import { fromHono } from "chanfana";
 import { type Context, Hono } from "hono";
-import { JobInsertEndpoint } from "./endpoint/jobInsert";
+import { JobInsertEndpoint } from "./endpoint/jobInsert/jobInsert";
 
 export type Env = {
   // Example bindings, use your own
