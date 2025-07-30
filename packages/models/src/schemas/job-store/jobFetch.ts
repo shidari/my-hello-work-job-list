@@ -6,13 +6,13 @@ export const jobFetchParamSchema = z.object({
   jobNumber: jobNumberSchema,
 });
 
-const JobSchema = z.array(
+export const JobSchema = z.array(
   jobSelectSchema.omit({
     id: true,
   }),
 );
 
-export const jobFetchResponseSchema = JobSchema;
+export const jobFetchSuccessResponseSchema = JobSchema;
 
 export const jobFetchClientErrorResponseSchema = z.object({
   message: z.string(),
