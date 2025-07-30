@@ -9307,17 +9307,17 @@ var jobSelectSchema = zod_default.object({
   companyName: zod_default.string(),
   receivedDate: zod_default.string(),
   expiryDate: zod_default.string(),
-  homePage: zod_default.string().optional(),
+  homePage: zod_default.string().nullable(),
   occupation: zod_default.string(),
   employmentType: zod_default.string(),
-  wageMin: zod_default.string(),
-  wageMax: zod_default.string(),
-  workingStartTime: zod_default.string(),
-  workingEndTime: zod_default.string(),
+  wageMin: zod_default.number().int(),
+  wageMax: zod_default.number().int(),
+  workingStartTime: zod_default.string().nullable(),
+  workingEndTime: zod_default.string().nullable(),
   employeeCount: zod_default.number(),
-  workPlace: zod_default.string(),
-  jobDescription: zod_default.string(),
-  qualifications: zod_default.string(),
+  workPlace: zod_default.string().nullable(),
+  jobDescription: zod_default.string().nullable(),
+  qualifications: zod_default.string().nullable(),
   status: zod_default.string(),
   createdAt: zod_default.string(),
   updatedAt: zod_default.string()
@@ -9342,11 +9342,10 @@ var jobListServerErrorSchema = zod_default.object({
 var jobFetchParamSchema = zod_default.object({
   jobNumber: jobNumberSchema
 });
-var JobSchema = zod_default.array(
-  jobSelectSchema.omit({
-    id: true
-  })
-);
+var JobSchema = jobSelectSchema.omit({
+  id: true
+});
+var jobFetchSuccessResponseSchema = JobSchema;
 var jobFetchClientErrorResponseSchema = zod_default.object({
   message: zod_default.string()
 });
@@ -9432,7 +9431,7 @@ var NoopLogger = class {
   }
 };
 
-// src/clientLayer.ts
+// src/client/index.ts
 import { Context, Effect, Layer } from "effect";
 
 // src/db/schema.ts
@@ -9464,17 +9463,17 @@ var jobSelectSchema2 = z.object({
   companyName: z.string(),
   receivedDate: z.string(),
   expiryDate: z.string(),
-  homePage: z.string().optional(),
+  homePage: z.string().nullable(),
   occupation: z.string(),
   employmentType: z.string(),
-  wageMin: z.string(),
-  wageMax: z.string(),
-  workingStartTime: z.string(),
-  workingEndTime: z.string(),
+  wageMin: z.number().int(),
+  wageMax: z.number().int(),
+  workingStartTime: z.string().nullable(),
+  workingEndTime: z.string().nullable(),
   employeeCount: z.number(),
-  workPlace: z.string(),
-  jobDescription: z.string(),
-  qualifications: z.string(),
+  workPlace: z.string().nullable(),
+  jobDescription: z.string().nullable(),
+  qualifications: z.string().nullable(),
   status: z.string(),
   createdAt: z.string(),
   updatedAt: z.string()
@@ -9493,7 +9492,18 @@ var InsertJobDuplicationError = class extends Data.TaggedError(
 var InsertJobError = class extends Data.TaggedError("InsertJobError") {
 };
 
-// src/clientLayer.ts
+// src/client/error.ts
+import { Data as Data2 } from "effect";
+var JobNotFoundError = class extends Data2.TaggedError(
+  "JobNotFoundError"
+) {
+};
+var FetchJobError = class extends Data2.TaggedError(
+  "FetchJobError"
+) {
+};
+
+// src/client/index.ts
 var JobStoreClient = class extends Context.Tag("JobStoreClient")() {
 };
 function buildJobStoreClientLive(db) {
@@ -9522,7 +9532,21 @@ ${String(e2)}`,
 ${String(e2)}`,
         errorType: "client"
       })
-    })
+    }),
+    fetchJob: (jobNumber) => Effect.tryPromise({
+      try: () => db.select().from(jobs2).where(eq(jobs2.jobNumber, jobNumber)).limit(1),
+      catch: (e2) => new FetchJobError({
+        message: `fetch job failed. jobNumber=${jobNumber}
+${String(e2)}`
+      })
+    }).pipe(Effect.flatMap((rows) => {
+      if (rows.length === 0) {
+        return Effect.fail(new JobNotFoundError({
+          message: `Job not found for jobNumber=${jobNumber}`
+        }));
+      }
+      return Effect.succeed(rows[0]);
+    }))
   });
 }
 function makeJobStoreClientLayer(db) {
@@ -9820,6 +9844,79 @@ ${String(e2)}`,
   }
 };
 
+// src/endpoint/jobFetch/index.ts
+import { OpenAPIRoute as OpenAPIRoute2, contentJson as contentJson2 } from "chanfana";
+import { Effect as Effect3, Exit as Exit2 } from "effect";
+import { HTTPException as HTTPException2 } from "hono/http-exception";
+
+// src/endpoint/jobFetch/error.ts
+import { Data as Data3 } from "effect";
+var FetchJobValidationError = class extends Data3.TaggedError(
+  "FetchJobValidationError"
+) {
+};
+
+// src/endpoint/jobFetch/index.ts
+var JobFetchEndpoint = class extends OpenAPIRoute2 {
+  constructor() {
+    super(...arguments);
+    this.schema = {
+      request: {
+        params: jobFetchParamSchema
+      },
+      responses: {
+        "200": {
+          description: "Successful response",
+          ...contentJson2(jobFetchSuccessResponseSchema)
+        },
+        "400": {
+          description: "client error response",
+          ...contentJson2(jobFetchClientErrorResponseSchema)
+        },
+        "500": {
+          description: "internal server error response",
+          ...contentJson2(jobFetchServerErrorSchema)
+        }
+      }
+    };
+  }
+  async handle(c) {
+    const db = getDb(c);
+    const self = this;
+    const program = Effect3.gen(function* () {
+      const jobStoreClient = yield* JobStoreClient;
+      const jobNumber = yield* Effect3.tryPromise({
+        try: () => self.getValidatedData(),
+        catch: (e2) => new FetchJobValidationError({
+          message: `schema validation failed.
+${String(e2)}`
+        })
+      }).pipe(Effect3.map(({ params: { jobNumber: jobNumber2 } }) => jobNumber2));
+      const job = yield* jobStoreClient.fetchJob(jobNumber);
+      return job;
+    });
+    const runnable = Effect3.provide(program, makeJobStoreClientLayer(db));
+    const exit = await Effect3.runPromiseExit(runnable);
+    return Exit2.match(exit, {
+      onFailure: (error) => {
+        if (error instanceof FetchJobValidationError) {
+          throw new HTTPException2(400, { message: "invalid param" });
+        }
+        if (error instanceof JobNotFoundError) {
+          throw new HTTPException2(404, { message: "job not found" });
+        }
+        if (error instanceof FetchJobError) {
+          throw new HTTPException2(500, { message: "internal server error" });
+        }
+        throw new HTTPException2(500, { message: "internal server error" });
+      },
+      onSuccess: (data) => {
+        return c.json(data);
+      }
+    });
+  }
+};
+
 // src/app.ts
 var app = new Hono();
 var openapi = fromHono(app, {
@@ -9842,6 +9939,7 @@ app.get("/", (c) => {
   return c.redirect("/api/v1/docs", 302);
 });
 openapi.post("/api/v1/job", JobInsertEndpoint);
+openapi.get("/api/v1/job/:jobNumber", JobFetchEndpoint);
 
 // src/index.ts
 var index_default = {
