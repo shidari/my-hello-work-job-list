@@ -6,11 +6,9 @@ export const jobFetchParamSchema = z.object({
   jobNumber: jobNumberSchema,
 });
 
-export const JobSchema = z.array(
-  jobSelectSchema.omit({
-    id: true,
-  }),
-);
+export const JobSchema = jobSelectSchema.omit({
+  id: true,
+});
 
 export const jobFetchSuccessResponseSchema = JobSchema;
 

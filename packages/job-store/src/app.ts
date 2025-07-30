@@ -1,5 +1,6 @@
 import { fromHono } from "chanfana";
 import { type Context, Hono } from "hono";
+import { JobFetchEndpoint } from "./endpoint/jobFetch";
 import { JobInsertEndpoint } from "./endpoint/jobInsert/jobInsert";
 
 export type Env = {
@@ -30,5 +31,6 @@ app.get("/", (c) => {
   return c.redirect("/api/v1/docs", 302); // 302 Found でリダイレクト
 });
 openapi.post("/api/v1/job", JobInsertEndpoint);
+openapi.get("/api/v1/job/:jobNumber", JobFetchEndpoint);
 
 export { app };
