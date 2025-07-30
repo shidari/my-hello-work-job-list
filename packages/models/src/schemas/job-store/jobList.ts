@@ -5,7 +5,7 @@ export const jobListQuerySchema = z.object({
   nextToken: z.string().optional(),
 });
 
-const JobListSchema = z.array(
+export const JobListSchema = z.array(
   jobSelectSchema.omit({
     id: true,
     createdAt: true,
