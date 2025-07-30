@@ -9395,7 +9395,7 @@ var engineeringLabelSelectorOpener = Symbol();
 var jobOverviewList = Symbol();
 var emplomentTypeSelector = Symbol();
 
-// src/endpoint/jobInsert/jobInsert.ts
+// src/endpoint/jobFetch/index.ts
 import { OpenAPIRoute, contentJson } from "chanfana";
 import { Effect as Effect2, Exit } from "effect";
 import { HTTPException } from "hono/http-exception";
@@ -9494,13 +9494,9 @@ var InsertJobError = class extends Data.TaggedError("InsertJobError") {
 
 // src/client/error.ts
 import { Data as Data2 } from "effect";
-var JobNotFoundError = class extends Data2.TaggedError(
-  "JobNotFoundError"
-) {
+var JobNotFoundError = class extends Data2.TaggedError("JobNotFoundError") {
 };
-var FetchJobError = class extends Data2.TaggedError(
-  "FetchJobError"
-) {
+var FetchJobError = class extends Data2.TaggedError("FetchJobError") {
 };
 
 // src/client/index.ts
@@ -9539,14 +9535,18 @@ ${String(e2)}`,
         message: `fetch job failed. jobNumber=${jobNumber}
 ${String(e2)}`
       })
-    }).pipe(Effect.flatMap((rows) => {
-      if (rows.length === 0) {
-        return Effect.fail(new JobNotFoundError({
-          message: `Job not found for jobNumber=${jobNumber}`
-        }));
-      }
-      return Effect.succeed(rows[0]);
-    }))
+    }).pipe(
+      Effect.flatMap((rows) => {
+        if (rows.length === 0) {
+          return Effect.fail(
+            new JobNotFoundError({
+              message: `Job not found for jobNumber=${jobNumber}`
+            })
+          );
+        }
+        return Effect.succeed(rows[0]);
+      })
+    )
   });
 }
 function makeJobStoreClientLayer(db) {
@@ -9780,75 +9780,6 @@ var getDb = (c) => {
   return drizzle(DB);
 };
 
-// src/endpoint/jobInsert/jobInsert.ts
-var JobInsertEndpoint = class extends OpenAPIRoute {
-  constructor() {
-    super(...arguments);
-    this.schema = {
-      request: {
-        body: {
-          ...contentJson(insertJobRequestBodySchema)
-        }
-      },
-      responses: {
-        "200": {
-          description: "Successful response",
-          ...contentJson(insertJobSuccessResponseSchema)
-        },
-        "400": {
-          description: "client error response",
-          ...contentJson(insertJobClientErrorResponseSchema)
-        },
-        "500": {
-          description: "internal server error response",
-          ...contentJson(insertJobServerErrorResponseSchema)
-        }
-      }
-    };
-  }
-  async handle(c) {
-    const db = getDb(c);
-    const self = this;
-    const program = Effect2.gen(function* () {
-      const jobStoreClient = yield* JobStoreClient;
-      const validatedReqBody = yield* Effect2.tryPromise({
-        try: () => self.getValidatedData(),
-        catch: (e2) => new InsertJobRequestValidationError({
-          message: `schema validation failed.
-${String(e2)}`,
-          errorType: "client"
-        })
-      }).pipe(Effect2.map(({ body }) => body));
-      yield* jobStoreClient.insertJob(validatedReqBody);
-      return validatedReqBody;
-    });
-    const runnable = Effect2.provide(program, makeJobStoreClientLayer(db));
-    const exit = await Effect2.runPromiseExit(runnable);
-    return Exit.match(exit, {
-      onFailure: (error) => {
-        if (error instanceof InsertJobRequestValidationError) {
-          throw new HTTPException(400, { message: "invalid req body" });
-        }
-        if (error instanceof InsertJobDuplicationError) {
-          throw new HTTPException(400, { message: "duplicated jobNumber" });
-        }
-        if (error instanceof InsertJobError) {
-          throw new HTTPException(500, { message: "internal server error" });
-        }
-        throw new HTTPException(500, { message: "internal server error" });
-      },
-      onSuccess: (data) => {
-        return c.json({ success: true, result: data });
-      }
-    });
-  }
-};
-
-// src/endpoint/jobFetch/index.ts
-import { OpenAPIRoute as OpenAPIRoute2, contentJson as contentJson2 } from "chanfana";
-import { Effect as Effect3, Exit as Exit2 } from "effect";
-import { HTTPException as HTTPException2 } from "hono/http-exception";
-
 // src/endpoint/jobFetch/error.ts
 import { Data as Data3 } from "effect";
 var FetchJobValidationError = class extends Data3.TaggedError(
@@ -9857,7 +9788,7 @@ var FetchJobValidationError = class extends Data3.TaggedError(
 };
 
 // src/endpoint/jobFetch/index.ts
-var JobFetchEndpoint = class extends OpenAPIRoute2 {
+var JobFetchEndpoint = class extends OpenAPIRoute {
   constructor() {
     super(...arguments);
     this.schema = {
@@ -9867,15 +9798,81 @@ var JobFetchEndpoint = class extends OpenAPIRoute2 {
       responses: {
         "200": {
           description: "Successful response",
-          ...contentJson2(jobFetchSuccessResponseSchema)
+          ...contentJson(jobFetchSuccessResponseSchema)
         },
         "400": {
           description: "client error response",
-          ...contentJson2(jobFetchClientErrorResponseSchema)
+          ...contentJson(jobFetchClientErrorResponseSchema)
         },
         "500": {
           description: "internal server error response",
-          ...contentJson2(jobFetchServerErrorSchema)
+          ...contentJson(jobFetchServerErrorSchema)
+        }
+      }
+    };
+  }
+  async handle(c) {
+    const db = getDb(c);
+    const self = this;
+    const program = Effect2.gen(function* () {
+      const jobStoreClient = yield* JobStoreClient;
+      const jobNumber = yield* Effect2.tryPromise({
+        try: () => self.getValidatedData(),
+        catch: (e2) => new FetchJobValidationError({
+          message: `schema validation failed.
+${String(e2)}`
+        })
+      }).pipe(Effect2.map(({ params: { jobNumber: jobNumber2 } }) => jobNumber2));
+      const job = yield* jobStoreClient.fetchJob(jobNumber);
+      return job;
+    });
+    const runnable = Effect2.provide(program, makeJobStoreClientLayer(db));
+    const exit = await Effect2.runPromiseExit(runnable);
+    return Exit.match(exit, {
+      onFailure: (error) => {
+        if (error instanceof FetchJobValidationError) {
+          throw new HTTPException(400, { message: "invalid param" });
+        }
+        if (error instanceof JobNotFoundError) {
+          throw new HTTPException(404, { message: "job not found" });
+        }
+        if (error instanceof FetchJobError) {
+          throw new HTTPException(500, { message: "internal server error" });
+        }
+        throw new HTTPException(500, { message: "internal server error" });
+      },
+      onSuccess: (data) => {
+        return c.json(data);
+      }
+    });
+  }
+};
+
+// src/endpoint/jobInsert/jobInsert.ts
+import { OpenAPIRoute as OpenAPIRoute2, contentJson as contentJson2 } from "chanfana";
+import { Effect as Effect3, Exit as Exit2 } from "effect";
+import { HTTPException as HTTPException2 } from "hono/http-exception";
+var JobInsertEndpoint = class extends OpenAPIRoute2 {
+  constructor() {
+    super(...arguments);
+    this.schema = {
+      request: {
+        body: {
+          ...contentJson2(insertJobRequestBodySchema)
+        }
+      },
+      responses: {
+        "200": {
+          description: "Successful response",
+          ...contentJson2(insertJobSuccessResponseSchema)
+        },
+        "400": {
+          description: "client error response",
+          ...contentJson2(insertJobClientErrorResponseSchema)
+        },
+        "500": {
+          description: "internal server error response",
+          ...contentJson2(insertJobServerErrorResponseSchema)
         }
       }
     };
@@ -9885,33 +9882,34 @@ var JobFetchEndpoint = class extends OpenAPIRoute2 {
     const self = this;
     const program = Effect3.gen(function* () {
       const jobStoreClient = yield* JobStoreClient;
-      const jobNumber = yield* Effect3.tryPromise({
+      const validatedReqBody = yield* Effect3.tryPromise({
         try: () => self.getValidatedData(),
-        catch: (e2) => new FetchJobValidationError({
+        catch: (e2) => new InsertJobRequestValidationError({
           message: `schema validation failed.
-${String(e2)}`
+${String(e2)}`,
+          errorType: "client"
         })
-      }).pipe(Effect3.map(({ params: { jobNumber: jobNumber2 } }) => jobNumber2));
-      const job = yield* jobStoreClient.fetchJob(jobNumber);
-      return job;
+      }).pipe(Effect3.map(({ body }) => body));
+      yield* jobStoreClient.insertJob(validatedReqBody);
+      return validatedReqBody;
     });
     const runnable = Effect3.provide(program, makeJobStoreClientLayer(db));
     const exit = await Effect3.runPromiseExit(runnable);
     return Exit2.match(exit, {
       onFailure: (error) => {
-        if (error instanceof FetchJobValidationError) {
-          throw new HTTPException2(400, { message: "invalid param" });
+        if (error instanceof InsertJobRequestValidationError) {
+          throw new HTTPException2(400, { message: "invalid req body" });
         }
-        if (error instanceof JobNotFoundError) {
-          throw new HTTPException2(404, { message: "job not found" });
+        if (error instanceof InsertJobDuplicationError) {
+          throw new HTTPException2(400, { message: "duplicated jobNumber" });
         }
-        if (error instanceof FetchJobError) {
+        if (error instanceof InsertJobError) {
           throw new HTTPException2(500, { message: "internal server error" });
         }
         throw new HTTPException2(500, { message: "internal server error" });
       },
       onSuccess: (data) => {
-        return c.json(data);
+        return c.json({ success: true, result: data });
       }
     });
   }
