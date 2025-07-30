@@ -9339,6 +9339,20 @@ var jobListClientErrorResponseSchema = zod_default.object({
 var jobListServerErrorSchema = zod_default.object({
   message: zod_default.string()
 });
+var jobFetchParamSchema = zod_default.object({
+  jobNumber: jobNumberSchema
+});
+var JobSchema = zod_default.array(
+  jobSelectSchema.omit({
+    id: true
+  })
+);
+var jobFetchClientErrorResponseSchema = zod_default.object({
+  message: zod_default.string()
+});
+var jobFetchServerErrorSchema = zod_default.object({
+  message: zod_default.string()
+});
 var JobOverviewSchema = zod_default.object({
   jobNumber: zod_default.string(),
   companyName: zod_default.string(),
