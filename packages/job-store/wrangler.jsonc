@@ -5,7 +5,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "job-store",
-  "main": "dist/index.mjs",
+  "main": "src/index.ts",
   "compatibility_date": "2025-07-19",
   "observability": {
     "enabled": true
