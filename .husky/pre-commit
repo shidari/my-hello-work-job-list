@@ -1,7 +1,5 @@
-pnpm --filter scripts run build
+pnpm -r build
 pnpm --filter job-store run copy-schema
-pnpm --filter job-store run build
-pnpm --filter hello-work-job-searcher run build
 git add .
 pnpm exec lint-staged
 pnpm type-check
