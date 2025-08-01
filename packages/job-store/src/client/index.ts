@@ -1,5 +1,5 @@
 import type { InsertJobRequestBody, Job } from "@sho/models";
-import { eq } from "drizzle-orm";
+import { eq, gt } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { Context, Effect, Layer } from "effect";
 import { jobs } from "../db/schema";

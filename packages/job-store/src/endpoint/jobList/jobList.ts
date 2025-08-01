@@ -21,8 +21,10 @@ import {
   JWTSignatureError,
 } from "./error";
 
+const INITIAL_JOB_ID = 1; // 初期のcursorとして使用するjobId
+
 const j = Symbol();
-type JWTSecret = string & { j: unknown };
+type JWTSecret = string & { [j]: unknown };
 
 export class JobListEndpoint extends OpenAPIRoute {
   schema = {
