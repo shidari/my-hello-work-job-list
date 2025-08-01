@@ -7,3 +7,6 @@ export class JobNotFoundError extends Data.TaggedError("JobNotFoundError")<{
 export class FetchJobError extends Data.TaggedError("FetchJobError")<{
   message: string;
 }> {}
+export class FetchJobListError extends Data.TaggedError("FetchJobListError")<{
+  message: string;
+}> {}

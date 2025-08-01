@@ -7,7 +7,7 @@ import {
   InsertJobDuplicationError,
   InsertJobError,
 } from "../endpoint/jobInsert/error";
-import { FetchJobError, JobNotFoundError } from "./error";
+import { FetchJobError, FetchJobListError, JobNotFoundError } from "./error";
 
 export class JobStoreClient extends Context.Tag("JobStoreClient")<
   JobStoreClient,
@@ -24,6 +24,16 @@ export class JobStoreClient extends Context.Tag("JobStoreClient")<
     readonly fetchJob: (
       jobNumber: string,
     ) => Effect.Effect<Job, FetchJobError | JobNotFoundError>;
+    readonly fetchJobList: ({
+      cursor,
+      limit,
+    }: {
+      cursor?: { jobId: number };
+      limit: number;
+    }) => Effect.Effect<
+      { jobs: Job[]; cursor: { jobId: number } },
+      FetchJobListError
+    >;
   }
 >() {}
 
@@ -84,6 +94,31 @@ function buildJobStoreClientLive(
             );
           }
           return Effect.succeed(rows[0]);
+        }),
+      ),
+    fetchJobList: ({
+      limit = 20,
+      cursor,
+    }: { cursor?: { jobId: number }; limit: number }) =>
+      Effect.tryPromise({
+        try: () =>
+          cursor
+            ? db
+                .select()
+                .from(jobs)
+                .where(gt(jobs.id, cursor.jobId))
+                .limit(limit)
+            : db.select().from(jobs).limit(limit),
+        catch: (e) =>
+          new FetchJobListError({
+            message: `fetch job list failed.\n${String(e)}`,
+          }),
+      }).pipe(
+        Effect.map((jobs) => {
+          return {
+            jobs: jobs,
+            cursor: { jobId: jobs.length > 0 ? jobs[jobs.length - 1].id : 1 },
+          };
         }),
       ),
   });
