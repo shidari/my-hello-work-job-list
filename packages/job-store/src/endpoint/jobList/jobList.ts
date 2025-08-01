@@ -108,7 +108,7 @@ export class JobListEndpoint extends OpenAPIRoute {
       })();
       const now = Math.floor(Date.now() / 1000);
       if (validatedPayload.exp && validatedPayload.exp < now)
-        return new JWTExpiredError({ message: "JWT expired" });
+        return Effect.fail(new JWTExpiredError({ message: "JWT expired" }));
       const jobListData = yield* jobStoreClient.fetchJobList({
         cursor: { jobId: validatedPayload.cursor.jobId },
         limit: 20,
