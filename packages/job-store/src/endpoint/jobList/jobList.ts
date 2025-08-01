@@ -146,7 +146,7 @@ export class JobListEndpoint extends OpenAPIRoute {
           throw new HTTPException(500, { message: "internal server error" });
         }
         if (error instanceof JWTDecodeError) {
-          throw new HTTPException(500, { message: "internal server error" });
+          throw new HTTPException(400, { message: "invalid JWT token" });
         }
         if (error instanceof DecodeJWTPayloadError) {
           throw new HTTPException(500, { message: "internal server error" });
