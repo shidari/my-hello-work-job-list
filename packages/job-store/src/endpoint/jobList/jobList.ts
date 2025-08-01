@@ -73,7 +73,7 @@ export class JobListEndpoint extends OpenAPIRoute {
           jobs,
           cursor: { jobId },
         } = yield* jobStoreClient.fetchJobList({
-          cursor: { jobId: 1 },
+          cursor: { jobId: INITIAL_JOB_ID },
           limit: 20,
         });
         const signed = yield* Effect.tryPromise({
