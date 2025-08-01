@@ -56,7 +56,7 @@ export class JobListEndpoint extends OpenAPIRoute {
         const secret = process.env.JWT_SECRET;
         if (!secret)
           return Effect.fail(
-            new GetJWTSecretError({ message: "gettting jwt secret failed" }),
+            new GetJWTSecretError({ message: "getting jwt secret failed" }),
           );
         return Effect.succeed(secret as JWTSecret);
       })();
