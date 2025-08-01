@@ -152,7 +152,7 @@ export class JobListEndpoint extends OpenAPIRoute {
           throw new HTTPException(500, { message: "internal server error" });
         }
         if (error instanceof JWTExpiredError) {
-          throw new HTTPException(500, { message: "internal server error" });
+          throw new HTTPException(400, { message: "token expired" });
         }
         throw new HTTPException(500, { message: "internal server error" });
       },
