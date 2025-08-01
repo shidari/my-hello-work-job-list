@@ -88,14 +88,15 @@ graph TD
   - Chanfanaによる自動OpenAPI生成でAPI仕様の一元管理
   - HonoによるモダンなWebフレームワーク
 - **現状の機能**:
-  - 求人情報の保存API
-  - ページネーション対応
-  - RESTful API提供
+  - 求人情報の保存・取得API
+  - JWTベースのページネーション機能
+  - RESTful API提供（求人一覧・詳細取得）
   - OpenAPI仕様書自動生成
 - **工夫点**:
   - drizzleでDBスキーマの型を持ち、openapiと整合性を常に持たせたかった
   - Cloudflare D1の制約を考慮した設計
   - Effect-tsによる堅牢なエラーハンドリング
+  - JWTを使用したセキュアなページネーション実装
 
 ### 4. hello-work-job-searcher (apps/)
 

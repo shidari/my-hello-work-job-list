@@ -1,4 +1,4 @@
-# Hello Work Searcher(未完成)
+h# Hello Work Searcher(未完成)
 
 求人情報の自動収集・管理システム
 
@@ -67,9 +67,9 @@ hello-work-searcher/
   - Effect (関数型プログラミング)
   - Vitest (テスト)
 - **機能**:
-  - 求人情報の保存
-  - ページネーション対応
-  - RESTful API提供
+  - 求人情報の保存・取得
+  - JWTベースのページネーション機能
+  - RESTful API提供（求人一覧・詳細取得）
   - OpenAPI仕様書自動生成
 
 ##### `hello-work-job-searcher`
@@ -174,6 +174,7 @@ pnpm deploy  # Cloudflare Workersにデプロイ
 - 求人検索条件に基づく自動クローリング
 - 求人詳細情報の自動スクレイピング
 - 求人情報のデータベース管理（`job-store`によるAPI提供）
+- JWTベースのページネーション機能付き求人一覧API
 
 ### 開発中
 
