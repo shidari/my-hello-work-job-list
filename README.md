@@ -12,11 +12,13 @@
 
 ```
 hello-work-searcher/
+├── apps/
+│   └── hello-work-job-searcher/ # フロントエンドアプリケーション
 ├── packages/
-│   ├── schema/          # 共通スキーマ定義
+│   ├── models/          # 共通スキーマ・型定義
 │   ├── headless-crawler/ # ハローワーククローラー
 │   ├── job-store/       # 求人情報データベース・API
-│   └── frontend/       # フロントエンド
+│   └── scripts/         # 共通スクリプト
 ├── pnpm-workspace.yaml # モノレポ設定
 └── biome.json         # コードフォーマッター設定
 ```
@@ -37,7 +39,8 @@ hello-work-searcher/
 - **目的**: 共通の型定義とスキーマ
 - **技術**:
   - Zod (スキーマバリデーション)
-  - Chanfana (型生成)
+  - Drizzle ORM (データベーススキーマ)
+  - TypeScript (型定義)
 
 ##### `headless-crawler`
 
@@ -61,22 +64,28 @@ hello-work-searcher/
   - Hono (Webフレームワーク)
   - D1 (SQLite)
   - Chanfana (OpenAPI生成)
+  - Effect (関数型プログラミング)
+  - Vitest (テスト)
 - **機能**:
   - 求人情報の保存
   - ページネーション対応
   - RESTful API提供
   - OpenAPI仕様書自動生成
 
-##### `frontend`
+##### `hello-work-job-searcher`
 
-- **目的**: ユーザーインターフェース
+- **目的**: ユーザーインターフェース（開発中）
 - **技術**:
-  - React Server（@lazarv/react-server）
   - React 19
+  - TanStack Router (ルーティング)
+  - TanStack Start (フルスタックフレームワーク)
+  - Vite (ビルドツール)
   - TypeScript
-- **ビルド/実行**:
-  - `pnpm dev` で `react-server` を起動
-  - ビルドツールは未使用（TurbopackやVite等は使っていません）
+  - Cloudflare Workers (デプロイ先)
+- **現在の状況**:
+  - モックデータを使用した基本的な表示機能
+  - UIは未完成（バックエンド構築を優先中）
+  - 求人検索・表示の基本機能を実装中
 
 ## 開発環境セットアップ
 
@@ -105,7 +114,7 @@ pnpm exec biome check --fix
 #### フロントエンド
 
 ```bash
-cd packages/frontend
+cd apps/hello-work-job-searcher
 pnpm dev
 ```
 
@@ -113,17 +122,17 @@ pnpm dev
 
 ```bash
 cd packages/headless-crawler
-pnpm build
 pnpm verify:crawler  # クローラー動作確認
 pnpm verify:scraper  # スクレイパー動作確認
+pnpm type-check      # 型チェック
 ```
 
 #### データベース・API
 
 ```bash
 cd packages/job-store
-pnpm migrate  # マイグレーション実行
 pnpm dev      # ローカル開発サーバー
+pnpm test     # テスト実行
 ```
 
 ## デプロイ
@@ -146,9 +155,9 @@ pnpm deploy
 ### フロントエンド
 
 ```bash
-cd packages/frontend
+cd apps/hello-work-job-searcher
 pnpm build
-# Vercel等にデプロイ
+pnpm deploy  # Cloudflare Workersにデプロイ
 ```
 
 ## データフロー
@@ -156,15 +165,26 @@ pnpm build
 1. **クローリング**: `headless-crawler`がハローワークサイトから求人情報を収集
 2. **データ保存**: 収集したデータを`job-store`に保存
 3. **API提供**: `job-store`がフロントエンドにデータを提供
-4. **表示**: `frontend`でユーザーに求人情報を表示
+4. **表示**: `hello-work-job-searcher`でユーザーに求人情報を表示
 
 ## 主要機能
 
+### 完成済み
+
 - 求人検索条件に基づく自動クローリング
 - 求人詳細情報の自動スクレイピング
-- 求人情報のデータベース管理
-- 求人検索・フィルタリング機能
-- レスポンシブなWeb UI
+- 求人情報のデータベース管理（`job-store`によるAPI提供）
+
+### 開発中
+
+- 求人検索・フィルタリング機能（モックデータで基本機能実装中）
+- レスポンシブなWeb UI（UIは未完成、バックエンド構築を優先中）
+
+### 今後の予定
+
+- フロントエンドと`job-store` APIの連携
+- UIの改善・完成
+- 高度な検索・フィルタリング機能
 
 ## 開発ガイドライン
 
