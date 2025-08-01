@@ -106,7 +106,7 @@ function buildJobStoreClientLive(
             ? db
                 .select()
                 .from(jobs)
-                .where(eq(jobs.id, cursor.jobId))
+                .where(gt(jobs.id, cursor.jobId))
                 .limit(limit)
             : db.select().from(jobs).limit(limit),
         catch: (e) =>
