@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import Link from "next/link";
 import { FlexN } from "./Flex";
 import "./index.css";
 import type { TJobDetail, TJobOverview } from "@sho/models";
@@ -38,7 +38,7 @@ export function JobOverviewList({ items }: { items: TJobOverview[] }) {
           return (
             <FlexN n={(1 / items.length) * 10} key={i.toString()}>
               <section className="job-overview">
-                <Link to={"/jobs/$jobNumber"} params={{ jobNumber }}>
+                <Link href={`/jobs/${jobNumber}`}>
                   <JobOverview
                     jobNumber={jobNumber}
                     companyName={companyName}
