@@ -2,6 +2,7 @@ import { fromHono } from "chanfana";
 import { type Context, Hono } from "hono";
 import { JobFetchEndpoint } from "./endpoint/jobFetch";
 import { JobInsertEndpoint } from "./endpoint/jobInsert/jobInsert";
+import { JobListEndpoint } from "./endpoint/jobList/jobList";
 
 export type Env = {
   // Example bindings, use your own
@@ -32,5 +33,6 @@ app.get("/", (c) => {
 });
 openapi.post("/api/v1/job", JobInsertEndpoint);
 openapi.get("/api/v1/job/:jobNumber", JobFetchEndpoint);
+openapi.get("/api/v1/jobs", JobListEndpoint);
 
 export { app };
