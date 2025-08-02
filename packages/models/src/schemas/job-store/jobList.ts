@@ -21,7 +21,10 @@ export const JobListSchema = z.array(
   }),
 );
 
-export const jobListSuccessResponseSchema = JobListSchema;
+export const jobListSuccessResponseSchema = z.object({
+  jobs: JobListSchema,
+  nextToken: z.string().optional(),
+});
 
 export const jobListClientErrorResponseSchema = z.object({
   message: z.string(),
