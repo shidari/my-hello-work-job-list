@@ -6,7 +6,9 @@ import {
   jobListSuccessResponseSchema,
 } from "@sho/models";
 import { OpenAPIRoute, contentJson } from "chanfana";
-import { Effect, Exit } from "effect";
+import { Cause, Effect, Either, Exit } from "effect";
+import { runPromiseExit } from "effect/Effect";
+import { runPromise, runSync } from "effect/Runtime";
 import { HTTPException } from "hono/http-exception";
 import { decode, sign } from "hono/jwt";
 import type { AppContext } from "../../app";
@@ -133,29 +135,24 @@ export class JobListEndpoint extends OpenAPIRoute {
     });
     const runnable = Effect.provide(program, makeJobStoreClientLayer(db));
 
-    const exit = await Effect.runPromiseExit(runnable);
+    const exit = await runPromiseExit(runnable);
 
     return Exit.match(exit, {
-      onFailure: (error) => {
-        console.error("JobListEndpoint error:", error);
-        // そのうちここ綺麗にしたい
-        if (error instanceof FetchJobListError) {
-          throw new HTTPException(500, { message: "internal server error" });
-        }
-        if (error instanceof GetJWTSecretError) {
-          throw new HTTPException(500, { message: "internal server error" });
-        }
-        if (error instanceof JWTSignatureError) {
-          throw new HTTPException(500, { message: "internal server error" });
-        }
-        if (error instanceof JWTDecodeError) {
-          throw new HTTPException(400, { message: "invalid JWT token" });
-        }
-        if (error instanceof DecodeJWTPayloadError) {
-          throw new HTTPException(400, { message: "malformed JWT payload" });
-        }
-        if (error instanceof JWTExpiredError) {
-          throw new HTTPException(400, { message: "token expired" });
+      onFailure: (cause) => {
+        console.error(`Exited with failure state: ${Cause.pretty(cause)}`);
+        if (Cause.isFailType(cause)) {
+          switch (cause.error._tag) {
+            case "GetJWTSecretError":
+            case "JWTDecodeError":
+            case "JWTSignatureError":
+              throw new HTTPException(400, { message: cause.error.message });
+            case "FetchJobListError":
+              throw new HTTPException(500, { message: cause.error.message });
+            default:
+              throw new HTTPException(500, {
+                message: "internal server error",
+              });
+          }
         }
         throw new HTTPException(500, { message: "internal server error" });
       },
