@@ -1,11 +1,7 @@
+import { FlexColumn, FlexN } from "@/app/components";
+import { JobDetail } from "@/app/components/Job";
 import type { TJobDetail } from "@sho/models";
-import { createFileRoute } from "@tanstack/react-router";
-import { FlexColumn, FlexN } from "~/components";
-import { JobDetail } from "~/components/Job";
 
-export const Route = createFileRoute("/jobs/$jobNumber/")({
-  component: Page,
-});
 export default function Page() {
   const dummyJobDetail: TJobDetail = {
     jobNumber: "24010-06782951",

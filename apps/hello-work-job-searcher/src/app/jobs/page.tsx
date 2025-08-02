@@ -1,10 +1,6 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { FlexColumn, FlexN } from "~/components";
-import { JobOverviewList } from "~/components/Job";
+import { FlexColumn, FlexN } from "../components";
+import { JobOverviewList } from "../components/Job";
 
-export const Route = createFileRoute("/jobs/")({
-  component: Page,
-});
 export default function Page() {
   const items = Array.from({ length: 5 }, (_) => ({
     jobNumber: "dummy",
