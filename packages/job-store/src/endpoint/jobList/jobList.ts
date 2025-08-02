@@ -137,6 +137,7 @@ export class JobListEndpoint extends OpenAPIRoute {
 
     return Exit.match(exit, {
       onFailure: (error) => {
+        console.error("JobListEndpoint error:", error);
         // そのうちここ綺麗にしたい
         if (error instanceof FetchJobListError) {
           throw new HTTPException(500, { message: "internal server error" });
