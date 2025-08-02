@@ -141,15 +141,15 @@ pnpm test     # テスト実行
 
 ```bash
 cd packages/headless-crawler
-pnpm bootstrap  # 初回のみ
-pnpm deploy
+pnpm bootstrap      # 初回のみ（CDK Bootstrap）
+pnpm run deploy     # AWS Lambda + SQSにデプロイ
 ```
 
 ### データベース・API (Cloudflare)
 
 ```bash
 cd packages/job-store
-pnpm deploy
+pnpm run deploy     # Cloudflare Workersにデプロイ
 ```
 
 ### フロントエンド
