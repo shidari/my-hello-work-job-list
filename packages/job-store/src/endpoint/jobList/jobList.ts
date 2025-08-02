@@ -6,9 +6,8 @@ import {
   jobListSuccessResponseSchema,
 } from "@sho/models";
 import { OpenAPIRoute, contentJson } from "chanfana";
-import { Cause, Effect, Either, Exit } from "effect";
+import { Cause, Effect, Exit } from "effect";
 import { runPromiseExit } from "effect/Effect";
-import { runPromise, runSync } from "effect/Runtime";
 import { HTTPException } from "hono/http-exception";
 import { decode, sign } from "hono/jwt";
 import type { AppContext } from "../../app";
@@ -17,16 +16,12 @@ import { FetchJobListError } from "../../client/error";
 import { getDb } from "../../db";
 import {
   DecodeJWTPayloadError,
-  GetJWTSecretError,
   JWTDecodeError,
   JWTExpiredError,
   JWTSignatureError,
 } from "./error";
 
 const INITIAL_JOB_ID = 1; // 初期のcursorとして使用するjobId
-
-const j = Symbol();
-type JWTSecret = string & { [j]: unknown };
 
 export class JobListEndpoint extends OpenAPIRoute {
   schema = {
@@ -56,22 +51,16 @@ export class JobListEndpoint extends OpenAPIRoute {
     const program = Effect.gen(function* () {
       const jobStoreClient = yield* JobStoreClient;
       // jwtを使ってnextToken作る
-      const jwtSecret = yield* (() => {
-        const secret = process.env.JWT_SECRET;
-        if (!secret)
-          return Effect.fail(
-            new GetJWTSecretError({ message: "getting jwt secret failed" }),
-          );
-        return Effect.succeed(secret as JWTSecret);
-      })();
+      const jwtSecret = c.env.JWT_SECRET;
 
       const nextTokenOrNot = yield* Effect.tryPromise({
         try: () => self.getValidatedData<typeof self.schema>(),
         catch: (e) =>
-          new FetchJobListError({ message: "Fetch JobList validation failed" }),
+          new FetchJobListError({
+            message: `Fetch JobList validation failed\n${String(e)}`,
+          }),
       }).pipe(Effect.map(({ query }) => query.nextToken));
 
-      // ここ、どうしてもいい処理が思いつかないので一旦汚く
       if (!nextTokenOrNot) {
         const {
           jobs,
@@ -142,7 +131,6 @@ export class JobListEndpoint extends OpenAPIRoute {
         console.error(`Exited with failure state: ${Cause.pretty(cause)}`);
         if (Cause.isFailType(cause)) {
           switch (cause.error._tag) {
-            case "GetJWTSecretError":
             case "JWTDecodeError":
             case "JWTSignatureError":
               throw new HTTPException(400, { message: cause.error.message });

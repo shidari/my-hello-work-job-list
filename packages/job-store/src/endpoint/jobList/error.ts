@@ -1,7 +1,4 @@
 import { Data } from "effect";
-export class GetJWTSecretError extends Data.TaggedError("GetJWTSecretError")<{
-  message: string;
-}> {}
 export class FetchJobListValidationError extends Data.TaggedError(
   "FetchJobListValidationError",
 )<{ message: string }> {}

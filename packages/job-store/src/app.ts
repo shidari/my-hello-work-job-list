@@ -4,9 +4,13 @@ import { JobFetchEndpoint } from "./endpoint/jobFetch";
 import { JobInsertEndpoint } from "./endpoint/jobInsert/jobInsert";
 import { JobListEndpoint } from "./endpoint/jobList/jobList";
 
+const j = Symbol();
+type JWTSecret = string & { [j]: unknown };
+
 export type Env = {
   // Example bindings, use your own
   DB: D1Database;
+  JWT_SECRET: JWTSecret; // JWTのシークレットキー
 };
 export type AppContext = Context<{ Bindings: Env }>;
 
