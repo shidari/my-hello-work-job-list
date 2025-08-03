@@ -1,4 +1,4 @@
-h# Hello Work Searcher(未完成)
+# Hello Work Searcher(未完成)
 
 求人情報の自動収集・管理システム
 
@@ -31,6 +31,7 @@ hello-work-searcher/
 - **言語**: TypeScript
 - **コードフォーマッター**: Biome
 - **Git Hooks**: Husky + lint-staged
+- **依存関係管理**: Renovate
 
 #### 各パッケージ
 
@@ -41,6 +42,7 @@ hello-work-searcher/
   - Zod (スキーマバリデーション)
   - Drizzle ORM (データベーススキーマ)
   - TypeScript (型定義)
+  - tsup (ビルドツール)
 
 ##### `headless-crawler`
 
@@ -50,10 +52,11 @@ hello-work-searcher/
   - AWS CDK (インフラ管理)
   - Effect (関数型プログラミング)
   - Jest (テスト)
+  - AWS Lambda + SQS (実行環境)
 - **機能**:
   - 求人検索条件に基づく求人一覧取得
   - 個別求人詳細情報のスクレイピング
-  - AWS Lambda対応
+  - SQS連携による非同期ジョブ処理
 
 ##### `job-store`
 
@@ -77,15 +80,23 @@ hello-work-searcher/
 - **目的**: ユーザーインターフェース（開発中）
 - **技術**:
   - React 19
-  - TanStack Router (ルーティング)
-  - TanStack Start (フルスタックフレームワーク)
-  - Vite (ビルドツール)
+  - Next.js 15 (App Router)
   - TypeScript
-  - Cloudflare Workers (デプロイ先)
+  - Turbopack (開発時高速化)
 - **現在の状況**:
   - モックデータを使用した基本的な表示機能
-  - UIは未完成（バックエンド構築を優先中）
   - 求人検索・表示の基本機能を実装中
+  - UIコンポーネントの構築中
+
+##### `@sho/scripts`
+
+- **目的**: 共通スクリプト・ユーティリティ
+- **技術**:
+  - TypeScript
+  - tsup (ビルドツール)
+  - fs-extra (ファイル操作)
+- **機能**:
+  - スキーマコピー等の開発支援スクリプト
 
 ## 開発環境セットアップ
 
