@@ -4,6 +4,7 @@
 	"private": true,
 	"scripts": {
 		"deploy": "pnpm build && wrangler deploy",
+		"no-main-deploy": "wrangler versions upload",
 		"build": "tsup",
 		"dev": "wrangler dev",
 		"start": "wrangler dev",
