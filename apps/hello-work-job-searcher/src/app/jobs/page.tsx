@@ -1,13 +1,20 @@
+import { jobListSuccessResponseSchema } from "@sho/models";
 import { FlexColumn, FlexN } from "../components";
 import { JobOverviewList } from "../components/Job";
 
-export default function Page() {
-  const items = Array.from({ length: 5 }, (_) => ({
-    jobNumber: "dummy",
-    companyName: "ジャパンカンパニー",
-    workPlace: "杉並区",
-    jobTitle: "ソフトウェアエンジニア",
-    employmentType: "パート",
+export default async function Page() {
+  const endpoint = process.env.JOB_STORE_ENDPOINT;
+  if (!endpoint) {
+    throw new Error("JOB_STORE_ENDPOINT is not defined");
+  }
+  const data = await fetch(`${endpoint}/jobs`).then((res) => res.json());
+  const validatedData = jobListSuccessResponseSchema.parse(data).jobs;
+  const items = validatedData.map((job) => ({
+    jobNumber: job.jobNumber,
+    companyName: job.companyName,
+    jobTitle: job.occupation,
+    employmentType: job.employmentType,
+    workPlace: job.workPlace || "勤務地不明",
   }));
   return (
     <main style={{ height: "100%" }}>
