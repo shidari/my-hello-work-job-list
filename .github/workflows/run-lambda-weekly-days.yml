@@ -9,15 +9,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Configure AWS credentials (OIDC)
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.HELLO_WORK_CRAWLER_INVOCATION_ROLE_ARN }}
           aws-region: ap-northeast-1
 
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y awscli
+
       - name: Invoke Lambda function
         run: |
           aws lambda invoke \
-            --function-name YourLambdaFunctionName \
+            --function-name HeadlessCrawlerStack-CrawlingFunctionDA39E31E-o6IdHOZ3QvEB \
             --payload '{}' \
-            output.json
+            response.json
