@@ -28,6 +28,9 @@ jobs:
       - name: Enable corepack
         run: corepack enable
 
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
       - name: Build all packages
         run: |
           pnpm -r build
@@ -46,5 +49,4 @@ jobs:
           MAIL_ADDRESS: ${{ secrets.MAIL_ADDRESS }}
           QUEUE_URL: ${{ secrets.QUEUE_URL }}
         run: |
-          pnpm install --frozen-lockfile
           pnpm exec cdk deploy --all --require-approval never
