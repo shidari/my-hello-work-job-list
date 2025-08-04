@@ -9,7 +9,7 @@ export const JobOverviewSchema = z.object({
 });
 
 export const JobDetailSchema = JobOverviewSchema.extend({
-  salaly: z.string(),
+  salary: z.string(),
   jobDescription: z.string(),
   expiryDate: z.string(),
   workingHours: z.string(),

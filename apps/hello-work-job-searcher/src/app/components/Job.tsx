@@ -62,7 +62,7 @@ export function JobDetail(props: { jobDetail: TJobDetail }) {
     companyName,
     jobTitle,
     employmentType,
-    salaly,
+    salary,
     workPlace,
     jobDescription,
     expiryDate,
@@ -85,8 +85,8 @@ export function JobDetail(props: { jobDetail: TJobDetail }) {
         <li data-label="job-description" data-value={jobDescription}>
           職務概要: {jobDescription}
         </li>
-        <li data-label="salaly" data-value={salaly}>
-          賃金: {salaly}
+        <li data-label="salary" data-value={salary}>
+          賃金: {salary}
         </li>
         <li data-label="work-place" data-value={workPlace} />
         就業場所: {workPlace}

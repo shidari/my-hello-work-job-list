@@ -2,6 +2,7 @@
   "name": "@sho/scripts",
   "version": "1.0.0",
   "description": "",
+  "type": "module",
   "main": "index.js",
   "directories": {
     "bin": "bin"

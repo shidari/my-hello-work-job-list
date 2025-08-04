@@ -1,21 +1,32 @@
 import { FlexColumn, FlexN } from "@/app/components";
 import { JobDetail } from "@/app/components/Job";
-import type { TJobDetail } from "@sho/models";
+import { jobFetchSuccessResponseSchema } from "@sho/models";
 
-export default function Page() {
-  const dummyJobDetail: TJobDetail = {
-    jobNumber: "24010-06782951",
-    companyName: "株式会社ジャパロジ",
-    jobTitle: "銀行システム運用・保守",
-    salaly: "月給 350,000円〜500,000円",
-    employmentType: "正社員以外",
-    workPlace: "愛媛県松山市高砂町２丁目２－５",
-    jobDescription:
-      "金融機関の次期基幹システム更改に伴うデータ移行やパッチ処理の設計・開発業務（COBOL、PLI、ASM）。",
-    expiryDate: "2025-07-31",
-    workingHours: "09:00〜18:00（休憩60分）",
-    qualifications: "COBOLまたはPLIの経験、客先常駐経験があれば尚可",
+interface PageProps {
+  params: Promise<{ jobNumber: string }>;
+}
+
+export default async function Page({ params }: PageProps) {
+  const { jobNumber } = await params;
+
+  const endpoint = process.env.JOB_STORE_ENDPOINT;
+  if (!endpoint) {
+    throw new Error("JOB_STORE_ENDPOINT is not defined");
+  }
+  const data = await fetch(`${endpoint}/job/${jobNumber}`).then((res) =>
+    res.json(),
+  );
+  const validatedData = jobFetchSuccessResponseSchema.parse(data);
+  const jobDetail = {
+    ...validatedData,
+    workingHours: `${validatedData.workingStartTime}〜${validatedData.workingEndTime}`,
+    jobTitle: validatedData.occupation,
+    salary: `${validatedData.wageMin}円〜${validatedData.wageMax}円`,
+    workPlace: validatedData.workPlace ?? "未記載",
+    jobDescription: validatedData.jobDescription ?? "未記載",
+    qualifications: validatedData.qualifications ?? "未記載",
   };
+
   return (
     <main>
       <FlexColumn>
@@ -23,7 +34,7 @@ export default function Page() {
           <h1>求人情報一覧</h1>
         </FlexN>
         <FlexN n={9}>
-          <JobDetail jobDetail={dummyJobDetail} />
+          <JobDetail jobDetail={jobDetail} />
         </FlexN>
       </FlexColumn>
     </main>
