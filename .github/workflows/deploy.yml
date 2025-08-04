@@ -28,12 +28,9 @@ jobs:
       - name: Enable corepack
         run: corepack enable
 
-      - name: Build models package
-        working-directory: ./packages/models
+      - name: Build all packages
         run: |
-          pnpm install --frozen-lockfile
-          pnpm build
-
+          pnpm -r build
       # 👇 OIDCによるAssumeRole
       - name: Configure AWS CDK Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
