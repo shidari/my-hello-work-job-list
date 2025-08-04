@@ -31,9 +31,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Build all packages
+      - name: Build models and scripts packages 
         run: |
-          pnpm -r build
+          pnpm -r --filter='!hello-work-job-searcher' --filter='!job-store' build
       # 👇 OIDCによるAssumeRole
       - name: Configure AWS CDK Credentials via OIDC
         uses: aws-actions/configure-aws-credentials@v4
