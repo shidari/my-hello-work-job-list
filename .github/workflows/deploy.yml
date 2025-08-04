@@ -1,4 +1,4 @@
-name: Deploy CDK and Check Crawler with Assume Role
+name: Deploy CDK
 
 on:
   push:
