@@ -1,21 +1,69 @@
 "use client";
 
-import type { TJobOverview } from "@sho/models";
+import { type TJobOverview, jobListSuccessResponseSchema } from "@sho/models";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Link from "next/link";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { JobOverview } from "../Job";
-
-export function JobOverviewList({ items }: { items: TJobOverview[] }) {
+export function JobOverviewList({
+  initialItems,
+  nextToken,
+}: { initialItems: TJobOverview[]; nextToken?: string }) {
+  const [jobListInfo, setJobListInfo] = useState({
+    items: initialItems,
+    nextToken: nextToken,
+  });
   const parentRef = React.useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
-    count: items.length,
+    count: jobListInfo.items.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 250, // 内部計算用はpxのまま
   });
 
   const totalSize = rowVirtualizer.getTotalSize();
+
+  useEffect(() => {
+    const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+    if (!lastItem) {
+      return;
+    }
+    if (lastItem.index >= jobListInfo.items.length - 1) {
+      (async () => {
+        const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
+        if (!lastItem) {
+          return;
+        }
+        if (lastItem.index >= jobListInfo.items.length - 1) {
+          console.log("Fetching more items...");
+          const baseUrl = process.env.VERCEL_URL
+            ? `https://${process.env.VERCEL_URL}` // Vercel環境
+            : "http://localhost:9002";
+          const res = await fetch(
+            `${baseUrl}/api/proxy/job-store/jobs?nextToken=${jobListInfo.nextToken}`,
+          );
+          const data = await res.json();
+          const validatedData = jobListSuccessResponseSchema.parse(data);
+          const nextItems: TJobOverview[] = validatedData.jobs.map((job) => ({
+            jobNumber: job.jobNumber,
+            companyName: job.companyName,
+            jobTitle: job.occupation,
+            employmentType: job.employmentType,
+            workPlace: job.workPlace || "不明",
+          }));
+          const newNextToken = validatedData.nextToken;
+          if (!newNextToken) {
+            return;
+          }
+          setJobListInfo((prev) => ({
+            items: [...prev.items, ...nextItems],
+            nextToken: newNextToken,
+          }));
+          rowVirtualizer.scrollToIndex(jobListInfo.items.length);
+        }
+      })();
+    }
+  });
 
   return (
     <div ref={parentRef} style={{ height: "100%", overflow: "auto" }}>
@@ -27,7 +75,7 @@ export function JobOverviewList({ items }: { items: TJobOverview[] }) {
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-          const item = items[virtualItem.index];
+          const item = jobListInfo.items[virtualItem.index];
           return (
             <div
               key={item.jobNumber}
