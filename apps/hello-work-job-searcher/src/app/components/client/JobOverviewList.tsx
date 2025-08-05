@@ -63,7 +63,7 @@ export function JobOverviewList({
         }
       })();
     }
-  });
+  }, [lastVirtualItemIndex, jobListInfo.items.length, jobListInfo.nextToken]);
 
   return (
     <div ref={parentRef} style={{ height: "100%", overflow: "auto" }}>
