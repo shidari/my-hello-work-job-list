@@ -1,7 +1,6 @@
 import { jobListSuccessResponseSchema } from "@sho/models";
 import { FlexColumn, FlexN } from "../components";
-import { JobOverviewList } from "../components/Job";
-
+import { JobOverviewList } from "../components/client/JobOverviewList";
 export default async function Page() {
   const endpoint = process.env.JOB_STORE_ENDPOINT;
   if (!endpoint) {

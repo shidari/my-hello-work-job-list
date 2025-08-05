@@ -28,14 +28,6 @@
   /* 親要素の文字色を継承する */
 }
 
-.job-overview-list {
-  display: flex;
-  flex-direction: column;
-  gap: 13em;
-  height: 100%;
-  overflow: scroll;
-}
-
 .job-detail {
   border: 0.1em solid gainsboro;
   padding: 1em;
