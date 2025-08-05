@@ -32,11 +32,8 @@ export function JobOverviewList({
       (async () => {
         // Use lastItem from outer scope, no need to recalculate
         console.log("Fetching more items...");
-        const baseUrl = process.env.VERCEL_URL
-          ? `https://${process.env.VERCEL_URL}` // Vercel環境
-          : "http://localhost:9002";
         const res = await fetch(
-          `${baseUrl}/api/proxy/job-store/jobs?nextToken=${jobListInfo.nextToken}`,
+          `/api/proxy/job-store/jobs?nextToken=${jobListInfo.nextToken}`,
         );
         const data = await res.json();
         const validatedData = jobListSuccessResponseSchema.parse(data);
