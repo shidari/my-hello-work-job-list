@@ -8,6 +8,7 @@ export default async function Page() {
   const baseUrl = process.env.VERCEL_URL
     ? `https://${process.env.VERCEL_URL}`
     : "http://localhost:9002";
+  console.log({ endpoint: baseUrl });
   const res = await fetch(`${baseUrl}/api/proxy/job-store/jobs`);
   const data = await res.json();
   const validatedData = jobListSuccessResponseSchema.parse(data);
