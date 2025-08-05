@@ -30,37 +30,32 @@ export function JobOverviewList({
     }
     if (lastItem.index >= jobListInfo.items.length - 1) {
       (async () => {
-        const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
-        if (!lastItem) {
+        // Use lastItem from outer scope, no need to recalculate
+        console.log("Fetching more items...");
+        const baseUrl = process.env.VERCEL_URL
+          ? `https://${process.env.VERCEL_URL}` // Vercel環境
+          : "http://localhost:9002";
+        const res = await fetch(
+          `${baseUrl}/api/proxy/job-store/jobs?nextToken=${jobListInfo.nextToken}`,
+        );
+        const data = await res.json();
+        const validatedData = jobListSuccessResponseSchema.parse(data);
+        const nextItems: TJobOverview[] = validatedData.jobs.map((job) => ({
+          jobNumber: job.jobNumber,
+          companyName: job.companyName,
+          jobTitle: job.occupation,
+          employmentType: job.employmentType,
+          workPlace: job.workPlace || "不明",
+        }));
+        const newNextToken = validatedData.nextToken;
+        if (!newNextToken) {
           return;
         }
-        if (lastItem.index >= jobListInfo.items.length - 1) {
-          console.log("Fetching more items...");
-          const baseUrl = process.env.VERCEL_URL
-            ? `https://${process.env.VERCEL_URL}` // Vercel環境
-            : "http://localhost:9002";
-          const res = await fetch(
-            `${baseUrl}/api/proxy/job-store/jobs?nextToken=${jobListInfo.nextToken}`,
-          );
-          const data = await res.json();
-          const validatedData = jobListSuccessResponseSchema.parse(data);
-          const nextItems: TJobOverview[] = validatedData.jobs.map((job) => ({
-            jobNumber: job.jobNumber,
-            companyName: job.companyName,
-            jobTitle: job.occupation,
-            employmentType: job.employmentType,
-            workPlace: job.workPlace || "不明",
-          }));
-          const newNextToken = validatedData.nextToken;
-          if (!newNextToken) {
-            return;
-          }
-          setJobListInfo((prev) => ({
-            items: [...prev.items, ...nextItems],
-            nextToken: newNextToken,
-          }));
-          rowVirtualizer.scrollToIndex(jobListInfo.items.length);
-        }
+        setJobListInfo((prev) => ({
+          items: [...prev.items, ...nextItems],
+          nextToken: newNextToken,
+        }));
+        rowVirtualizer.scrollToIndex(jobListInfo.items.length);
       })();
     }
   }, [lastVirtualItemIndex, jobListInfo.items.length, jobListInfo.nextToken]);
