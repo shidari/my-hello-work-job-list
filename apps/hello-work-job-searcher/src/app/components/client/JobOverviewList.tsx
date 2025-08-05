@@ -58,7 +58,7 @@ export function JobOverviewList({
         rowVirtualizer.scrollToIndex(jobListInfo.items.length);
       })();
     }
-  }, [lastVirtualItemIndex, jobListInfo.items.length, jobListInfo.nextToken]);
+  }, [jobListInfo.items.length, jobListInfo.nextToken, rowVirtualizer]);
 
   return (
     <div ref={parentRef} style={{ height: "100%", overflow: "auto" }}>
