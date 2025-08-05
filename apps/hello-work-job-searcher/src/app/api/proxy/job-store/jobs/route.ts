@@ -25,7 +25,6 @@ export async function GET(request: NextRequest) {
     const validatedData = jobListSuccessResponseSchema.parse(data);
     return Response.json(validatedData);
   } catch (error) {
-    // ...
     console.error("Error fetching job data:", error);
     return Response.json(
       { error: "Failed to fetch job data" },
