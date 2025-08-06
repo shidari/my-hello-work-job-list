@@ -1,17 +1,14 @@
 export const dynamic = "force-dynamic";
 
 import { type TJobOverview, jobListSuccessResponseSchema } from "@sho/models";
+import { jobStoreClient } from "../client";
 import { FlexColumn, FlexN } from "../components";
 import { JobOverviewList } from "../components/client/JobOverviewList";
 
 export default async function Page() {
-  const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:9002";
-  const res = await fetch(`${baseUrl}/api/proxy/job-store/jobs`);
-  const data = await res.json();
-  const validatedData = jobListSuccessResponseSchema.parse(data);
-  const initialItems: TJobOverview[] = validatedData.jobs.map((job) => ({
+  // 一旦対応めんどいからunsafeUnwrapを使う
+  const data = (await jobStoreClient.getJobs())._unsafeUnwrap();
+  const initialItems: TJobOverview[] = data.jobs.map((job) => ({
     jobNumber: job.jobNumber,
     companyName: job.companyName,
     jobTitle: job.occupation,
@@ -27,7 +24,7 @@ export default async function Page() {
         <FlexN n={9}>
           <JobOverviewList
             initialItems={initialItems}
-            nextToken={validatedData.nextToken}
+            nextToken={data.nextToken}
           />
         </FlexN>
       </FlexColumn>
