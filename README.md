@@ -17,10 +17,10 @@ hello-work-searcher/
 ├── apps/
 │   └── hello-work-job-searcher/ # フロントエンドアプリケーション (Next.js 15)
 ├── packages/
-│   ├── models/          # 共通スキーマ・型定義
+│   ├── models/          # 共通スキーマ・型定義 (@sho/models)
 │   ├── headless-crawler/ # ハローワーククローラー (AWS Lambda)
 │   ├── job-store/       # 求人情報データベース・API (Cloudflare Workers)
-│   └── scripts/         # 共通スクリプト・ユーティリティ
+│   └── scripts/         # 共通スクリプト・ユーティリティ (@sho/scripts)
 ├── pnpm-workspace.yaml # モノレポ設定
 ├── biome.json         # コードフォーマッター設定
 └── renovate.json      # 依存関係自動更新設定
@@ -42,9 +42,9 @@ graph TD
 
 #### 共通
 
-- **パッケージマネージャー**: pnpm (workspace)
+- **パッケージマネージャー**: pnpm (v10.14.0)
 - **言語**: TypeScript
-- **コードフォーマッター**: Biome
+- **コードフォーマッター**: Biome (v1.9.4)
 - **Git Hooks**: Husky + lint-staged
 - **依存関係管理**: Renovate
 
@@ -54,66 +54,80 @@ graph TD
 
 - **目的**: 共通の型定義とスキーマ
 - **技術**:
-  - Zod (スキーマバリデーション)
-  - Drizzle ORM (データベーススキーマ)
-  - TypeScript (型定義)
-  - tsup (ビルドツール)
+  - Zod (v3.25.74) - スキーマバリデーション
+  - Drizzle ORM (v0.44.2) - データベーススキーマ
+  - TypeScript (v5.8.3) - 型定義
+  - tsup (v8.5.0) - ビルドツール
+  - Playwright (v1.53.1) - テスト用ブラウザ自動化
 
 ##### `headless-crawler`
 
 - **目的**: ハローワークサイトのクローリング・スクレイピング
 - **技術**:
-  - Playwright (ブラウザ自動化)
-  - AWS CDK (インフラ管理)
-  - Effect (関数型プログラミング)
-  - Jest (テスト)
-  - AWS Lambda + SQS (実行環境)
+  - Playwright (v1.53.1) - ブラウザ自動化
+  - AWS CDK (v2.1022.0) - インフラ管理
+  - Effect (v3.16.5) - 関数型プログラミング
+  - Jest (v29.7.0) - テスト
+  - AWS Lambda + SQS - 実行環境
+  - @sparticuz/chromium (v138.0.0) - Lambda用Chromium
 - **機能**:
   - 求人検索条件に基づく求人一覧取得
   - 個別求人詳細情報のスクレイピング
   - SQS連携による非同期ジョブ処理
+  - EventBridge (Cron) による定期実行（毎週月曜日午前1時）
+  - CloudWatch アラーム機能付き
 
 ##### `job-store`
 
 - **目的**: 求人情報のデータベース管理・API提供
 - **技術**:
-  - Cloudflare Workers
-  - Drizzle ORM
-  - Hono (Webフレームワーク)
-  - D1 (SQLite)
-  - Chanfana (OpenAPI生成)
-  - Effect (関数型プログラミング)
-  - Vitest (テスト)
+  - Cloudflare Workers - 実行環境
+  - Drizzle ORM (v0.44.2) - データベースORM
+  - Hono (v4.8.3) - Webフレームワーク
+  - D1 (SQLite) - データベース
+  - Chanfana (v2.8.1) - OpenAPI生成
+  - Effect (v3.16.5) - 関数型プログラミング
+  - Vitest (v3.2.0) - テスト
+  - Zod (v3.25.74) - バリデーション
 - **機能**:
   - 求人情報の保存・取得
   - JWTベースのページネーション機能
   - RESTful API提供（求人一覧・詳細取得）
-  - OpenAPI仕様書自動生成
+  - OpenAPI仕様書自動生成 (`/api/v1/docs`)
+  - 3つのエンドポイント:
+    - `POST /api/v1/job` - 求人情報登録
+    - `GET /api/v1/job/:jobNumber` - 求人詳細取得
+    - `GET /api/v1/jobs` - 求人一覧取得
 
 ##### `hello-work-job-searcher`
 
 - **目的**: ユーザーインターフェース
 - **技術**:
-  - React 19
-  - Next.js 15 (App Router)
-  - TypeScript
-  - Turbopack (開発時高速化)
+  - React (v19.1.1)
+  - Next.js (v15.4.5) - App Router
+  - TypeScript (v5)
+  - Turbopack - 開発時高速化
+  - TanStack React Query (v5.84.1) - データフェッチング
+  - TanStack React Virtual (v3.13.12) - 仮想化
+  - neverthrow (v8.2.0) - エラーハンドリング
 - **デプロイ**: Vercel
 - **現在の状況**:
-  - モックデータを使用した基本的な表示機能
-  - 求人検索・表示の基本機能を実装中
-  - UIコンポーネントの構築中
+  - job-store APIとの連携完了
+  - 求人一覧表示機能実装済み
+  - プロキシAPI (`/api/proxy/job-store/jobs`) 実装済み
+  - 無限スクロール対応の求人一覧表示
+  - 求人詳細ページ (`/jobs/[jobNumber]`) 実装済み
 
 ##### `@sho/scripts`
 
 - **目的**: 共通スクリプト・ユーティリティ
 - **技術**:
-  - TypeScript
-  - fs-extra (ファイル操作)
-  - neverthrow (エラーハンドリング)
-  - find-up (ファイル検索)
+  - TypeScript (v5.8.3)
+  - fs-extra (v11.3.0) - ファイル操作
+  - neverthrow (v8.2.0) - エラーハンドリング
+  - find-up (v7.0.0) - ファイル検索
 - **機能**:
-  - スキーマコピー等の開発支援スクリプト
+  - スキーマコピー等の開発支援スクリプト (`copy-schema`)
 
 ## 開発環境セットアップ
 
@@ -143,7 +157,7 @@ pnpm exec biome check --fix
 
 ```bash
 cd apps/hello-work-job-searcher
-pnpm dev
+pnpm dev  # http://localhost:9002 で起動
 ```
 
 #### クローラー
@@ -203,24 +217,23 @@ pnpm start          # 本番環境での起動確認
 
 ### 完成済み
 
-- 求人検索条件に基づく自動クローリング
-- 求人詳細情報の自動スクレイピング
-- 求人情報のデータベース管理（`job-store`によるAPI提供）
-- JWTベースのページネーション機能付き求人一覧API
-- OpenAPI仕様書の自動生成
-- 基本的なWeb UI（デモサイトで確認可能）
+- ✅ 求人検索条件に基づく自動クローリング
+- ✅ 求人詳細情報の自動スクレイピング
+- ✅ 求人情報のデータベース管理（`job-store`によるAPI提供）
+- ✅ JWTベースのページネーション機能付き求人一覧API
+- ✅ OpenAPI仕様書の自動生成
+- ✅ フロントエンドと`job-store` APIの連携
+- ✅ 求人一覧表示機能（無限スクロール対応）
+- ✅ 求人詳細表示機能
+- ✅ レスポンシブなWeb UI
 
-### 開発中
+### 開発中・今後の予定
 
-- 求人検索・フィルタリング機能（モックデータで基本機能実装中）
-- レスポンシブなWeb UI（UIは未完成、バックエンド構築を優先中）
-
-### 今後の予定
-
-- フロントエンドと`job-store` APIの連携
-- UIの改善・完成
-- 高度な検索・フィルタリング機能
-- 認証・認可機能の実装
+- 🔄 高度な検索・フィルタリング機能
+- 🔄 UIの改善・完成
+- 📋 認証・認可機能の実装
+- 📋 お気に入り機能
+- 📋 求人アラート機能
 
 ## 技術的特徴
 
@@ -230,6 +243,7 @@ pnpm start          # 本番環境での起動確認
 - Zodによるランタイムバリデーション
 - Drizzle ORMによる型安全なDB操作
 - フロントエンド〜バックエンド〜DBまでの一貫した型管理
+- neverthrowによる関数型エラーハンドリング
 
 ### モダンな開発体験
 
@@ -237,6 +251,7 @@ pnpm start          # 本番環境での起動確認
 - Biomeによる高速なlint・format
 - Huskyによる自動品質チェック
 - Renovateによる依存関係自動更新
+- Turbopackによる高速な開発サーバー
 
 ### 関数型プログラミング
 
@@ -249,13 +264,35 @@ pnpm start          # 本番環境での起動確認
 - AWS Lambda（重い処理）とCloudflare Workers（軽量API）の使い分け
 - コスト最適化されたスケーラブルな設計
 - インフラコード（AWS CDK）による管理
+- EventBridge による定期実行
+- CloudWatch アラーム機能
+
+### パフォーマンス最適化
+
+- TanStack React Query による効率的なデータフェッチング
+- TanStack React Virtual による大量データの仮想化
+- JWTベースのページネーション
+- プロキシAPIによるCORS回避
+
+## API仕様
+
+### job-store API
+
+- **ベースURL**: 環境変数 `JOB_STORE_ENDPOINT` で設定
+- **OpenAPI仕様書**: `{BASE_URL}/api/v1/docs`
+
+#### エンドポイント
+
+- `POST /api/v1/job` - 求人情報登録
+- `GET /api/v1/job/:jobNumber` - 求人詳細取得
+- `GET /api/v1/jobs?nextToken={token}` - 求人一覧取得（ページネーション対応）
 
 ## 開発ガイドライン
 
 - TypeScriptの厳密な型チェックを有効化
 - Biomeによるコードフォーマット統一
 - Effectを使用した関数型プログラミング
-- エラーハンドリングの徹底
+- neverthrowによるエラーハンドリングの徹底
 - テスト駆動開発の推奨
 
 ## プロジェクト構成詳細
