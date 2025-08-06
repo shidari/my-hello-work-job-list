@@ -3,32 +3,23 @@ import type {
   EmploymentType,
   EmploymentTypeSelector,
   EngineeringLabel,
+  EngineeringLabelSelector,
+  EngineeringLabelSelectorOpenerSibling,
+  EngineeringLabelSelectorRadioBtn,
+  JobNumber,
   JobSearchCriteria,
   JobSearchPage,
 } from "@sho/models";
 import { Effect } from "effect";
 import {
   EmploymentLabelToSelectorError,
+  EngineeringLabelSelectorError,
+  FillJobNumberError,
   FillOccupationFieldError,
   FillPrefectureFieldError,
   FillWorkTypeError,
-} from "../error";
-import { engineeringLabelToSelector } from "./helper";
+} from "./error";
 
-function employmentLabelToSelector(employmentType: EmploymentType) {
-  switch (employmentType) {
-    case "PartTimeWorker":
-      return Effect.succeed("#ID_ippanCKBox1" as EmploymentTypeSelector);
-    case "RegularEmployee":
-      return Effect.succeed("#ID_ippanCKBox2" as EmploymentTypeSelector);
-    default:
-      return Effect.fail(
-        new EmploymentLabelToSelectorError({
-          message: `unknown label: ${employmentType}`,
-        }),
-      );
-  }
-}
 function fillWorkType(page: JobSearchPage, employmentType: EmploymentType) {
   return Effect.gen(function* () {
     const selector = yield* employmentLabelToSelector(employmentType);
@@ -107,3 +98,70 @@ export function fillJobCriteriaField(
     }
   });
 }
+
+function engineeringLabelToSelector(
+  label: EngineeringLabel,
+): Effect.Effect<
+  EngineeringLabelSelector,
+  EngineeringLabelSelectorError,
+  never
+> {
+  switch (label) {
+    case "ソフトウェア開発技術者、プログラマー":
+      return Effect.succeed({
+        radioBtn: "#ID_skCheck094" as EngineeringLabelSelectorRadioBtn,
+        openerSibling: "#ID_skHid09" as EngineeringLabelSelectorOpenerSibling,
+      });
+    default:
+      return Effect.fail(
+        new EngineeringLabelSelectorError({
+          message: `Error: invalid label=${label}`,
+        }),
+      );
+  }
+}
+
+function employmentLabelToSelector(employmentType: EmploymentType) {
+  switch (employmentType) {
+    case "PartTimeWorker":
+      return Effect.succeed("#ID_ippanCKBox1" as EmploymentTypeSelector);
+    case "RegularEmployee":
+      return Effect.succeed("#ID_ippanCKBox2" as EmploymentTypeSelector);
+    default:
+      return Effect.fail(
+        new EmploymentLabelToSelectorError({
+          message: `unknown label: ${employmentType}`,
+        }),
+      );
+  }
+}
+
+export function fillJobNumber(page: JobSearchPage, jobNumber: JobNumber) {
+  return Effect.tryPromise({
+    try: async () => {
+      const jobNumberSplits = jobNumber.split("-");
+      const firstJobNumber = jobNumberSplits.at(0);
+      const secondJobNumber = jobNumberSplits.at(1);
+      if (!firstJobNumber)
+        throw new FillJobNumberError({
+          message: `firstJobnumber undefined. jobNumber=${jobNumber}`,
+        });
+      if (!secondJobNumber)
+        throw new FillJobNumberError({
+          message: `secondJobNumber undefined. jobNumber=${jobNumber}`,
+        });
+      const firstJobNumberInput = page.locator("#ID_kJNoJo1");
+      const secondJobNumberInput = page.locator("#ID_kJNoGe1");
+      await firstJobNumberInput.fill(firstJobNumber);
+      await secondJobNumberInput.fill(secondJobNumber);
+    },
+    catch: (e) =>
+      new FillJobNumberError({
+        message: `unexpected error.\njobNumber=${jobNumber}\n${String(e)}`,
+      }),
+  });
+}
+
+export type SelectorConverterError =
+  | EmploymentLabelToSelectorError
+  | EngineeringLabelSelectorError;
