@@ -4,7 +4,7 @@ import {
   HomePageElmNotFoundError,
   IsNextPageEnabledError,
   ListJobsError,
-  QualificatiosElmNotFoundError,
+  QualificationsElmNotFoundError,
 } from "./error";
 
 export function listJobOverviewElem(
@@ -44,7 +44,7 @@ export function qualificationsElmExists(page: JobDetailPage) {
       return count === 1;
     },
     catch: (e) =>
-      new QualificatiosElmNotFoundError({
+      new QualificationsElmNotFoundError({
         message: `unexpected error\n${String(e)}`,
       }),
   });

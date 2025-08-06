@@ -23,7 +23,7 @@ import {
 } from "../../element-action";
 import type {
   HomePageElmNotFoundError,
-  QualificatiosElmNotFoundError,
+  QualificationsElmNotFoundError,
 } from "../../element-action/error";
 import {
   ExtractEmployMentTypeError,
@@ -319,7 +319,7 @@ export function extractJobInfo(
   | ExtractTextContentError
   | JobDetailPropertyValidationError
   | HomePageElmNotFoundError
-  | QualificatiosElmNotFoundError
+  | QualificationsElmNotFoundError
 > {
   return Effect.gen(function* () {
     const jobNumber = yield* extractJobNumber(page);

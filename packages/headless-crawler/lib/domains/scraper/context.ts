@@ -11,7 +11,7 @@ import type { HelloWorkScrapingConfig } from "../core/config/scraper";
 import type {
   HomePageElmNotFoundError,
   ListJobsError,
-  QualificatiosElmNotFoundError,
+  QualificationsElmNotFoundError,
 } from "../core/interactions/element-action/error";
 import { extractJobInfo } from "../core/interactions/extraction";
 import type { ExtractTextContentError } from "../core/interactions/extraction/jobDetail/error";
@@ -52,7 +52,7 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
       | AssertSingleJobListedError
       | SelectorConverterError
       | HomePageElmNotFoundError
-      | QualificatiosElmNotFoundError
+      | QualificationsElmNotFoundError
       | GoToJobSearchPageError
       | SearchThenGotoFirstJobListPageError
       | FromJobListToJobDetailPageError
