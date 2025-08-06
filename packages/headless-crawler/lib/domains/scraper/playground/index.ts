@@ -1,5 +1,5 @@
 import { Effect } from "effect";
-import { buildScrapingResult } from "..";
+import { buildScrapingResult } from "../scraper";
 
 async function main() {
   const jobNumber = "01010-24871951";

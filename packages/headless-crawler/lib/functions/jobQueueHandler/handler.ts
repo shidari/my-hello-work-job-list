@@ -1,6 +1,6 @@
 import type { SQSEvent, SQSHandler } from "aws-lambda";
 import { Effect, Exit } from "effect";
-import { buildScrapingResult } from "../../domains/scraper";
+import { buildScrapingResult } from "../../domains/scraper/scraper";
 import {
   buildJobStoreClient,
   eventToFirstRecordToJobNumber,

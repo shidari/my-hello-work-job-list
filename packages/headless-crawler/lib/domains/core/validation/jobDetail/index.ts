@@ -1,6 +1,6 @@
 import {
+  type JobDetailPage,
   type JobListPage,
-  type JobSearchPage,
   RawEmployeeCountSchema,
   RawExpiryDateSchema,
   RawReceivedDateShema,
@@ -18,7 +18,7 @@ import {
 import { Effect } from "effect";
 import type { Page } from "playwright";
 import type z from "zod";
-import { ZodError } from "zod/v4";
+import { ZodError } from "zod";
 import {
   CompanyNameValidationError,
   EmployeeCountValidationError,
@@ -26,38 +26,15 @@ import {
   ExpiryDateValidationError,
   HomePageValidationError,
   JobDescriptionValidationError,
-  JobListPageValidationError,
+  JobDetailPageValidationError,
   JobNumberValidationError,
-  JobSearchPageValidationError,
   OccupationValidationError,
   QualificationValidationError,
   ReceivedDateValidationError,
   WageValidationError,
   WorkPlaceValidationError,
   WorkingHoursValidationError,
-} from "../error";
-
-export function validateJobSearchPage(page: Page) {
-  return Effect.gen(function* () {
-    const url = page.url();
-    if (!url.includes("kensaku"))
-      yield* Effect.fail(
-        new JobSearchPageValidationError({
-          message: `not on job search page.\nurl=${url}`,
-        }),
-      );
-    const jobSearchPage = yield* Effect.tryPromise({
-      try: async () => {
-        return page as JobSearchPage;
-      },
-      catch: (e) =>
-        new JobSearchPageValidationError({
-          message: `unexpected error.\n${String(e)}`,
-        }),
-    });
-    return jobSearchPage;
-  });
-}
+} from "./error";
 
 export function validateJobNumber(val: unknown) {
   return Effect.gen(function* () {
@@ -231,23 +208,25 @@ export function validateQualification(
   }
   return Effect.succeed(result.data);
 }
-
-export function validateJobListPage(page: Page) {
-  return Effect.tryPromise({
-    try: async () => {
-      return page.locator(".kyujin").count();
-    },
-    catch: (e) =>
-      new JobListPageValidationError({
-        message: `unexpected error. ${String(e)}`,
-      }),
-  }).pipe(
-    Effect.flatMap((pageCount) =>
-      pageCount === 0
-        ? Effect.fail(
-            new JobListPageValidationError({ message: "job list is empty" }),
-          )
-        : Effect.succeed(page as JobListPage),
-    ),
-  );
+export function validateJobDetailPage(
+  page: Page,
+): Effect.Effect<JobDetailPage, JobDetailPageValidationError, never> {
+  return Effect.gen(function* () {
+    const jobTitle = yield* Effect.tryPromise({
+      try: async () => {
+        const jobTitle = await page.locator("div.page_title").textContent();
+        return jobTitle;
+      },
+      catch: (e) =>
+        new JobDetailPageValidationError({
+          message: `unexpected error.\n${String(e)}`,
+        }),
+    });
+    if (jobTitle !== "求人情報")
+      throw new JobDetailPageValidationError({
+        message: `textContent of div.page_title should be 求人情報 but got: "${jobTitle}"`,
+      });
+    // branded type　一旦型エラー抑制
+    return page as unknown as JobDetailPage;
+  });
 }

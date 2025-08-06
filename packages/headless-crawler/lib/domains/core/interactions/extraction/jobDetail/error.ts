@@ -1,28 +1,5 @@
 import { Data } from "effect";
 
-export class FillJobNumberError extends Data.TaggedError("FillJobNumberError")<{
-  readonly message: string;
-}> {}
-export class SearchThenGotoJobListPageError extends Data.TaggedError(
-  "SearchThenGotoJobListPageError",
-)<{
-  readonly message: string;
-}> {}
-export class FromJobListToJobDetailPageError extends Data.TaggedError(
-  "FromJobListToJobDetailPageError",
-)<{
-  readonly message: string;
-}> {}
-export class ScrapeJobDataError extends Data.TaggedError("ScrapeJobDataError")<{
-  readonly message: string;
-}> {}
-
-export class AssertSingleJobListedError extends Data.TaggedError(
-  "AssertSingleJobListedError",
-)<{ readonly message: string }> {}
-export class JobDetailPageValidationError extends Data.TaggedError(
-  "JobDetailPageValidationError",
-)<{ readonly message: string }> {}
 export class ExtractJobInfoError extends Data.TaggedError(
   "ExtractJobInfoError",
 )<{ readonly message: string }> {}
@@ -73,6 +50,21 @@ export class ExtractQualificationsError extends Data.TaggedError(
   readonly message: string;
 }> {}
 
-export class JobDetailPagePagenationError extends Data.TaggedError(
-  "JobDetailPagePagenationError",
+export class ExtractJobNumbersError extends Data.TaggedError(
+  "ExtractJobNumbersError",
 )<{ readonly message: string }> {}
+
+export type ExtractTextContentError =
+  | ExtractJobInfoError
+  | ExtractJobCompanyNameError
+  | ExtractReceivedDateError
+  | ExtractExpiryDateError
+  | ExtractHomePageError
+  | ExtractOccupationError
+  | ExtractEmployMentTypeError
+  | ExtractWageError
+  | ExtractWorkingHoursError
+  | ExtractEmployeeCountError
+  | ExtractWorkPlaceError
+  | ExtractJobDescriptionError
+  | ExtractQualificationsError;

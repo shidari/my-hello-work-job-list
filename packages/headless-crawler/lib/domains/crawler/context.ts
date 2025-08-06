@@ -1,0 +1,139 @@
+import type { JobListPage, JobMetadata } from "@sho/models";
+import { Chunk, Context, Effect, Layer, Option, Stream } from "effect";
+import {
+  createContext,
+  createPage,
+  launchBrowser,
+} from "../core/browser/browser";
+import type { HelloWorkCrawlingConfig } from "../core/config/crawler";
+import {
+  isNextPageEnabled,
+  listJobOverviewElem,
+} from "../core/interactions/element-action";
+import type {
+  IsNextPageEnabledError,
+  ListJobsError,
+} from "../core/interactions/element-action/error";
+import { extractJobNumbers } from "../core/interactions/extraction";
+import type { ExtractJobNumbersError } from "../core/interactions/extraction/jobDetail/error";
+import type {
+  EmploymentLabelToSelectorError,
+  EngineeringLabelSelectorError,
+  JobSearchCriteriaFillFormError,
+} from "../core/interactions/form-filling/jobSearch/error";
+import {
+  goToJobSearchPage,
+  goToNextJobListPage,
+  searchThenGotoJobListPage,
+} from "../core/interactions/navigation";
+import type {
+  GoToJobSearchPageError,
+  NextJobListPageError,
+  SearchThenGotoJobListPageError,
+} from "../core/interactions/navigation/error";
+import { delay } from "../core/util";
+import { validateJobListPage, validateJobSearchPage } from "../core/validation";
+import type { JobNumberValidationError } from "../core/validation/jobDetail/error";
+import type { JobListPageValidationError } from "../core/validation/jobList/error";
+import type { JobSearchPageValidationError } from "../core/validation/jobSearch/error";
+export class HelloWorkCrawler extends Context.Tag("HelloWorkCrawler")<
+  HelloWorkCrawler,
+  {
+    readonly crawlJobLinks: () => Effect.Effect<
+      JobMetadata[],
+      | ListJobsError
+      | EngineeringLabelSelectorError
+      | JobSearchCriteriaFillFormError
+      | ExtractJobNumbersError
+      | EmploymentLabelToSelectorError
+      | SearchThenGotoJobListPageError
+      | JobListPageValidationError
+      | JobSearchPageValidationError
+      | GoToJobSearchPageError
+      | NextJobListPageError
+      | IsNextPageEnabledError
+      | JobNumberValidationError
+    >;
+  }
+>() {}
+
+export const buildHelloWorkCrawlerLayer = (config: HelloWorkCrawlingConfig) => {
+  return Layer.effect(
+    HelloWorkCrawler,
+    Effect.gen(function* () {
+      yield* Effect.logInfo(
+        `building crawler: config=${JSON.stringify(config, null, 2)}`,
+      );
+      const browser = yield* launchBrowser(config.browserConfig);
+      const context = yield* createContext(browser);
+      const page = yield* createPage(context);
+      return HelloWorkCrawler.of({
+        crawlJobLinks: () =>
+          Effect.gen(function* () {
+            yield* Effect.logInfo("start crawling...");
+            yield* goToJobSearchPage(page);
+            const searchPage = yield* validateJobSearchPage(page);
+            yield* searchThenGotoJobListPage(
+              searchPage,
+              config.jobSearchCriteria,
+            );
+            const jobListPage = yield* validateJobListPage(page);
+            const initialCount = 0;
+            const stream = Stream.paginateChunkEffect(
+              {
+                jobListPage,
+                count: initialCount,
+                roughMaxCount: config.roughMaxCount,
+                nextPageDelayMs: config.nextPageDelayMs,
+              },
+              fetchJobMetaData,
+            );
+            const chunk = yield* Stream.runCollect(stream);
+            const jobLinks = Chunk.toArray(chunk);
+            yield* Effect.logInfo(
+              `crawling finished. total: ${jobLinks.length}`,
+            );
+            return jobLinks;
+          }),
+      });
+    }),
+  );
+};
+
+function fetchJobMetaData({
+  jobListPage,
+  count,
+  roughMaxCount,
+  nextPageDelayMs,
+}: {
+  jobListPage: JobListPage;
+  count: number;
+  roughMaxCount: number;
+  nextPageDelayMs: number;
+}) {
+  return Effect.gen(function* () {
+    const jobOverviewList = yield* listJobOverviewElem(jobListPage);
+    const jobNumbers = (yield* extractJobNumbers(jobOverviewList)).map(
+      (jobNumber) => ({
+        jobNumber,
+      }),
+    );
+    const chunked = Chunk.fromIterable(jobNumbers);
+    const nextPage = yield* goToNextJobListPage(jobListPage);
+    const nextPageEnabled = yield* isNextPageEnabled(nextPage);
+    yield* delay(nextPageDelayMs);
+    const tmpTotal = count + jobNumbers.length;
+    yield* Effect.logInfo(`${tmpTotal} crawling finished`);
+    return [
+      chunked,
+      nextPageEnabled && tmpTotal <= roughMaxCount
+        ? Option.some({
+            jobListPage: nextPage,
+            count: tmpTotal,
+            roughMaxCount,
+            nextPageDelayMs, // 後で構造修正する予定
+          })
+        : Option.none(),
+    ] as const;
+  });
+}

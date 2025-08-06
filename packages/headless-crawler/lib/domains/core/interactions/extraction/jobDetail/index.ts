@@ -1,14 +1,6 @@
-import type { JobDetailPage, ScrapedJob } from "@sho/models";
+import type { JobDetailPage, JobOverViewList, ScrapedJob } from "@sho/models";
 import { Effect } from "effect";
 import { ZodError } from "zod";
-import type {
-  HomePageElmNotFoundError,
-  QualificatiosElmNotFoundError,
-} from "../shared/error";
-import {
-  homePageElmExists,
-  qualificationsElmExists,
-} from "../shared/helper/helper";
 import {
   validateCompanyName,
   validateEmployeeCount,
@@ -23,7 +15,16 @@ import {
   validateWage,
   validateWorkPlace,
   validateWorkingHours,
-} from "../shared/helper/validator";
+} from "../../../validation/jobDetail";
+import type { JobDetailPropertyValidationError } from "../../../validation/jobDetail/error";
+import {
+  homePageElmExists,
+  qualificationsElmExists,
+} from "../../element-action";
+import type {
+  HomePageElmNotFoundError,
+  QualificationsElmNotFoundError,
+} from "../../element-action/error";
 import {
   ExtractEmployMentTypeError,
   ExtractEmployeeCountError,
@@ -32,17 +33,46 @@ import {
   ExtractJobCompanyNameError,
   ExtractJobDescriptionError,
   ExtractJobInfoError,
+  ExtractJobNumbersError,
   ExtractOccupationError,
   ExtractQualificationsError,
   ExtractReceivedDateError,
+  type ExtractTextContentError,
   ExtractWageError,
   ExtractWorkPlaceError,
   ExtractWorkingHoursError,
-} from "./scraper-error";
-import type {
-  ExtractTextContentOnScrapingError,
-  JobPropertyValidationError,
-} from "./scraper-type";
+} from "./error";
+
+export function extractJobNumbers(jobOverviewList: JobOverViewList) {
+  return Effect.forEach(jobOverviewList, (table) => {
+    return Effect.gen(function* () {
+      const rawJobNumber = yield* Effect.tryPromise({
+        try: async () => {
+          const text = await table
+            .locator("div.right-side")
+            .locator("tr")
+            .nth(3)
+            .locator("td")
+            .nth(1)
+            .textContent();
+          return text;
+        },
+        catch: (e) =>
+          new ExtractJobNumbersError({
+            message: `unexpected error. ${String(e)}`,
+          }),
+      });
+      if (rawJobNumber === null) {
+        return yield* Effect.fail(
+          new ExtractJobNumbersError({ message: "jobNumber is null" }),
+        );
+      }
+      const trimedRawJobNumber = rawJobNumber.trim();
+      const jobNumber = yield* validateJobNumber(trimedRawJobNumber);
+      return jobNumber;
+    });
+  });
+}
 
 function extractJobNumber(page: JobDetailPage) {
   return Effect.gen(function* () {
@@ -286,10 +316,10 @@ export function extractJobInfo(
   page: JobDetailPage,
 ): Effect.Effect<
   ScrapedJob,
-  | ExtractTextContentOnScrapingError
-  | JobPropertyValidationError
+  | ExtractTextContentError
+  | JobDetailPropertyValidationError
   | HomePageElmNotFoundError
-  | QualificatiosElmNotFoundError
+  | QualificationsElmNotFoundError
 > {
   return Effect.gen(function* () {
     const jobNumber = yield* extractJobNumber(page);
