@@ -1,6 +1,6 @@
 export const dynamic = "force-dynamic";
 
-import { type TJobOverview, jobListSuccessResponseSchema } from "@sho/models";
+import type { TJobOverview } from "@sho/models";
 import { jobStoreClient } from "../client";
 import { FlexColumn, FlexN } from "../components";
 import { JobOverviewList } from "../components/client/JobOverviewList";
