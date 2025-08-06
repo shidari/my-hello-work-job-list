@@ -23,6 +23,7 @@ export function JobOverviewList({
 
   const totalSize = rowVirtualizer.getTotalSize();
 
+  // biome-ignore lint/correctness/useExhaustiveDependencies: https://tanstack.com/virtual/latest/docs/framework/react/examples/infinite-scroll 一旦この通りに書いた、後で必要に応じて修正する
   useEffect(() => {
     const [lastItem] = [...rowVirtualizer.getVirtualItems()].reverse();
     if (!lastItem) {
@@ -31,7 +32,6 @@ export function JobOverviewList({
     if (lastItem.index >= jobListInfo.items.length - 1) {
       (async () => {
         // Use lastItem from outer scope, no need to recalculate
-        console.log("Fetching more items...");
         const baseUrl = process.env.VERCEL_URL
           ? `https://${process.env.VERCEL_URL}` // Vercel環境
           : "http://localhost:9002";
@@ -58,7 +58,7 @@ export function JobOverviewList({
         rowVirtualizer.scrollToIndex(jobListInfo.items.length);
       })();
     }
-  }, [jobListInfo.items.length, jobListInfo.nextToken, rowVirtualizer]);
+  }, [rowVirtualizer.getVirtualItems()]);
 
   return (
     <div ref={parentRef} style={{ height: "100%", overflow: "auto" }}>
