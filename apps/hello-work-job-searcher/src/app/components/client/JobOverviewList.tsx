@@ -1,18 +1,50 @@
 "use client";
 
 import { type TJobOverview, jobListSuccessResponseSchema } from "@sho/models";
+import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import { JobOverview } from "../Job";
+
+async function fetchServerPage(nextToken?: string) {
+  const res = await fetch(
+    `/api/proxy/job-store/jobs${nextToken ? `?nextToken=${nextToken}` : ""}`,
+  );
+  const data = await res.json();
+  const validatedData = jobListSuccessResponseSchema.parse(data);
+  const nextItems: TJobOverview[] = validatedData.jobs.map((job) => ({
+    jobNumber: job.jobNumber,
+    companyName: job.companyName,
+    jobTitle: job.occupation,
+    employmentType: job.employmentType,
+    workPlace: job.workPlace || "不明",
+  }));
+  return { items: nextItems, nextToken: validatedData.nextToken };
+}
 export function JobOverviewList({
   initialItems,
   nextToken,
 }: { initialItems: TJobOverview[]; nextToken?: string }) {
-  const [jobListInfo, setJobListInfo] = useState({
-    items: initialItems,
-    nextToken: nextToken,
-  });
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+    useSuspenseInfiniteQuery({
+      queryKey: ["jobs"],
+      queryFn: (ctx) => fetchServerPage(ctx.pageParam),
+      initialData: {
+        pages: [{ items: initialItems, nextToken }],
+        pageParams: [nextToken],
+      },
+      getNextPageParam: (lastGroup) => lastGroup.nextToken,
+      initialPageParam: nextToken,
+    });
+
+  const jobListInfo = useMemo(() => {
+    return {
+      items: data.pages.flatMap((page) => page.items),
+      nextToken: data.pages[data.pages.length - 1].nextToken,
+    };
+  }, [data]);
+
   const parentRef = React.useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
@@ -30,32 +62,15 @@ export function JobOverviewList({
       return;
     }
     if (lastItem.index >= jobListInfo.items.length - 1) {
-      (async () => {
-        // Use lastItem from outer scope, no need to recalculate
-        const res = await fetch(
-          `/api/proxy/job-store/jobs?nextToken=${jobListInfo.nextToken}`,
-        );
-        const data = await res.json();
-        const validatedData = jobListSuccessResponseSchema.parse(data);
-        const nextItems: TJobOverview[] = validatedData.jobs.map((job) => ({
-          jobNumber: job.jobNumber,
-          companyName: job.companyName,
-          jobTitle: job.occupation,
-          employmentType: job.employmentType,
-          workPlace: job.workPlace || "不明",
-        }));
-        const newNextToken = validatedData.nextToken;
-        if (!newNextToken) {
-          return;
-        }
-        setJobListInfo((prev) => ({
-          items: [...prev.items, ...nextItems],
-          nextToken: newNextToken,
-        }));
-        rowVirtualizer.scrollToIndex(jobListInfo.items.length);
-      })();
+      fetchNextPage();
     }
-  }, [rowVirtualizer.getVirtualItems()]);
+  }, [
+    rowVirtualizer.getVirtualItems(),
+    hasNextPage,
+    fetchNextPage,
+    jobListInfo.items.length,
+    isFetchingNextPage,
+  ]);
 
   return (
     <div ref={parentRef} style={{ height: "100%", overflow: "auto" }}>
