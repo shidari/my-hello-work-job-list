@@ -3,8 +3,8 @@ import { Data } from "effect";
 export class HomePageElmNotFoundError extends Data.TaggedError(
   "HomePageElmNotFoundError",
 )<{ readonly message: string }> {}
-export class QualificatiosElmNotFoundError extends Data.TaggedError(
-  "QualificationElmNotFoundError",
+export class QualificationsElmNotFoundError extends Data.TaggedError(
+  "QualificationsElmNotFoundError",
 )<{ readonly message: string }> {}
 
 export class ListJobsError extends Data.TaggedError("ListJobsError")<{
