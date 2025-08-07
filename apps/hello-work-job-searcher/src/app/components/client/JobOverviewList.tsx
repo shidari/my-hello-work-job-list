@@ -2,10 +2,13 @@
 
 import { type TJobOverview, jobListSuccessResponseSchema } from "@sho/models";
 import { useInfiniteQuery } from "@tanstack/react-query";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { type VirtualItem, useVirtualizer } from "@tanstack/react-virtual";
 import Link from "next/link";
 import React, { useEffect, useMemo } from "react";
 import { JobOverview } from "../Job";
+
+let _kSavedOffset = 0;
+let _kMeasurementsCache = [] as VirtualItem[];
 
 async function fetchServerPage(nextToken?: string) {
   const res = await fetch(
@@ -51,6 +54,14 @@ export function JobOverviewList({
     count: jobListInfo.items.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 250, // 内部計算用はpxのまま
+    initialOffset: _kSavedOffset,
+    initialMeasurementsCache: _kMeasurementsCache,
+    onChange: (virtualizer) => {
+      if (!virtualizer.isScrolling) {
+        _kMeasurementsCache = virtualizer.measurementsCache;
+        _kSavedOffset = virtualizer.scrollOffset || 0;
+      }
+    },
   });
 
   const totalSize = rowVirtualizer.getTotalSize();
