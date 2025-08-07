@@ -1,57 +1,29 @@
 "use client";
 
-import { type TJobOverview, jobListSuccessResponseSchema } from "@sho/models";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import type { TJobOverview } from "@sho/models";
 import { type VirtualItem, useVirtualizer } from "@tanstack/react-virtual";
 import Link from "next/link";
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { JobOverview } from "../Job";
+import { useInfiniteJobList } from "./hooks/useInfiniteJobList";
 
 let _kSavedOffset = 0;
 let _kMeasurementsCache = [] as VirtualItem[];
 
-async function fetchServerPage(nextToken?: string) {
-  const res = await fetch(
-    `/api/proxy/job-store/jobs${nextToken ? `?nextToken=${nextToken}` : ""}`,
-  );
-  const data = await res.json();
-  const validatedData = jobListSuccessResponseSchema.parse(data);
-  const nextItems: TJobOverview[] = validatedData.jobs.map((job) => ({
-    jobNumber: job.jobNumber,
-    companyName: job.companyName,
-    jobTitle: job.occupation,
-    employmentType: job.employmentType,
-    workPlace: job.workPlace || "不明",
-  }));
-  return { items: nextItems, nextToken: validatedData.nextToken };
-}
 export function JobOverviewList({
   initialItems,
   nextToken,
 }: { initialItems: TJobOverview[]; nextToken?: string }) {
-  const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    useInfiniteQuery({
-      queryKey: ["jobs"],
-      queryFn: (ctx) => fetchServerPage(ctx.pageParam),
-      initialData: {
-        pages: [{ items: initialItems, nextToken }],
-        pageParams: [nextToken],
-      },
-      getNextPageParam: (lastGroup) => lastGroup.nextToken,
-      initialPageParam: nextToken,
+  const { items, fetchNextPage, isFetchingNextPage, hasNextPage } =
+    useInfiniteJobList({
+      initialItems,
+      nextToken,
     });
-
-  const jobListInfo = useMemo(() => {
-    return {
-      items: data.pages.flatMap((page) => page.items),
-      nextToken: data.pages[data.pages.length - 1].nextToken,
-    };
-  }, [data]);
 
   const parentRef = React.useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
-    count: jobListInfo.items.length,
+    count: items.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 250, // 内部計算用はpxのまま
     initialOffset: _kSavedOffset,
@@ -72,14 +44,14 @@ export function JobOverviewList({
     if (!lastItem) {
       return;
     }
-    if (lastItem.index >= jobListInfo.items.length - 1) {
+    if (lastItem.index >= items.length - 1) {
       fetchNextPage();
     }
   }, [
     rowVirtualizer.getVirtualItems(),
     hasNextPage,
     fetchNextPage,
-    jobListInfo.items.length,
+    items.length,
     isFetchingNextPage,
   ]);
 
@@ -93,7 +65,7 @@ export function JobOverviewList({
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-          const item = jobListInfo.items[virtualItem.index];
+          const item = items[virtualItem.index];
           return (
             <div
               key={item.jobNumber}
