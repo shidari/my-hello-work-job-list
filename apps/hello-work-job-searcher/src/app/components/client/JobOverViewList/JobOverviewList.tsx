@@ -4,8 +4,9 @@ import type { TJobOverview } from "@sho/models";
 import { type VirtualItem, useVirtualizer } from "@tanstack/react-virtual";
 import Link from "next/link";
 import React, { useEffect } from "react";
-import { JobOverview } from "../Job";
-import { useInfiniteJobList } from "./hooks/useInfiniteJobList";
+import { JobOverview } from "../../Job";
+import { useInfiniteJobList } from "../hooks/useInfiniteJobList";
+import styles from "./JobOverviewList.module.css";
 
 let _kSavedOffset = 0;
 let _kMeasurementsCache = [] as VirtualItem[];
@@ -78,7 +79,7 @@ export function JobOverviewList({
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
-              <section className="job-overview">
+              <section className={styles.jobOverview}>
                 <Link href={`/jobs/${item.jobNumber}`}>
                   <JobOverview
                     jobNumber={item.jobNumber}
@@ -93,7 +94,7 @@ export function JobOverviewList({
           );
         })}
         {isFetchingNextPage && (
-          <div>
+          <div className={styles.loadingMore}>
             <p>Loading more jobs...</p>
           </div>
         )}

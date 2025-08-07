@@ -14,20 +14,6 @@
   height: 100%;
 }
 
-.job-overview {
-  border: 0.1em solid gainsboro;
-  border-radius: 4px;
-  padding: 2%;
-}
-
-/* ちょっと良くない気がする */
-.job-overview a {
-  text-decoration: none;
-  /* 下線を消す */
-  color: inherit;
-  /* 親要素の文字色を継承する */
-}
-
 .job-detail {
   border: 0.1em solid gainsboro;
   padding: 1em;
