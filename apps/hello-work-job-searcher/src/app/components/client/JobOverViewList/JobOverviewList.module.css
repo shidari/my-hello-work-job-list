@@ -1,0 +1,42 @@
+.jobOverview {
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border-radius: 8px;
+    padding: 12px;
+    margin: 4px;
+    border: 0.1em solid gainsboro;
+    border-radius: 4px;
+    padding: 2%;
+}
+
+/* ちょっと良くない気がする */
+.jobOverview a {
+    text-decoration: none;
+    /* 下線を消す */
+    color: inherit;
+    /* 親要素の文字色を継承する */
+}
+
+.jobOverview:hover {
+    background-color: #e9ecef;
+    /* より濃いグレー */
+    /* または以下のような色も選択肢 */
+    /* background-color: #dee2e6; さらに濃い */
+    /* background-color: #f1f3f4; Google風 */
+    /* background-color: #e3f2fd; 薄い青 */
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    border-color: #adb5bd;
+    /* ボーダーも少し濃く */
+}
+
+.jobOverview:active {
+    transform: translateY(0px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.loadingMessage {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
