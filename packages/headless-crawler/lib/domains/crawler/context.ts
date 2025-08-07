@@ -4,33 +4,32 @@ import {
   createContext,
   createPage,
   launchBrowser,
-} from "../core/browser/browser";
+} from "../core/browser/builder";
 import type { HelloWorkCrawlingConfig } from "../core/config/crawler";
+
 import {
+  extractJobNumbers,
+  goToJobSearchPage,
+  goToNextJobListPage,
   isNextPageEnabled,
   listJobOverviewElem,
-} from "../core/interactions/element-action";
+  searchThenGotoJobListPage,
+} from "../core/browser";
 import type {
   IsNextPageEnabledError,
   ListJobsError,
-} from "../core/interactions/element-action/error";
-import { extractJobNumbers } from "../core/interactions/extraction";
-import type { ExtractJobNumbersError } from "../core/interactions/extraction/jobDetail/error";
+} from "../core/browser/interactions/element-action/error";
+import type { ExtractJobNumbersError } from "../core/browser/interactions/extraction/jobDetail/error";
 import type {
   EmploymentLabelToSelectorError,
   EngineeringLabelSelectorError,
   JobSearchCriteriaFillFormError,
-} from "../core/interactions/form-filling/jobSearch/error";
-import {
-  goToJobSearchPage,
-  goToNextJobListPage,
-  searchThenGotoJobListPage,
-} from "../core/interactions/navigation";
+} from "../core/browser/interactions/form-filling/jobSearch/error";
 import type {
   GoToJobSearchPageError,
   NextJobListPageError,
   SearchThenGotoJobListPageError,
-} from "../core/interactions/navigation/error";
+} from "../core/browser/interactions/navigation/error";
 import { delay } from "../core/util";
 import { validateJobListPage, validateJobSearchPage } from "../core/validation";
 import type { JobNumberValidationError } from "../core/validation/jobDetail/error";

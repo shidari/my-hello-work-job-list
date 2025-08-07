@@ -15,8 +15,8 @@ import {
   validateWage,
   validateWorkPlace,
   validateWorkingHours,
-} from "../../../validation/jobDetail";
-import type { JobDetailPropertyValidationError } from "../../../validation/jobDetail/error";
+} from "../../../../validation/jobDetail";
+import type { JobDetailPropertyValidationError } from "../../../../validation/jobDetail/error";
 import {
   homePageElmExists,
   qualificationsElmExists,
