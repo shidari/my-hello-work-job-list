@@ -1,7 +1,7 @@
 "use client";
 
 import { type TJobOverview, jobListSuccessResponseSchema } from "@sho/models";
-import { useSuspenseInfiniteQuery } from "@tanstack/react-query";
+import { useInfiniteQuery } from "@tanstack/react-query";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import Link from "next/link";
 import React, { useEffect, useMemo } from "react";
@@ -27,7 +27,7 @@ export function JobOverviewList({
   nextToken,
 }: { initialItems: TJobOverview[]; nextToken?: string }) {
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    useSuspenseInfiniteQuery({
+    useInfiniteQuery({
       queryKey: ["jobs"],
       queryFn: (ctx) => fetchServerPage(ctx.pageParam),
       initialData: {
@@ -109,6 +109,11 @@ export function JobOverviewList({
             </div>
           );
         })}
+        {isFetchingNextPage && (
+          <div>
+            <p>Loading more jobs...</p>
+          </div>
+        )}
       </div>
     </div>
   );
