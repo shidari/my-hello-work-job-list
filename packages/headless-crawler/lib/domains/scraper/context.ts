@@ -1,32 +1,33 @@
 import type { JobNumber, ScrapedJob } from "@sho/models";
 import { Context, Data, Effect, Layer } from "effect";
-import type { AssertSingleJobListedError } from "../core/assertion/error";
 import {
   createContext,
   createPage,
   launchBrowser,
-} from "../core/browser/browser";
-import type { NewPageError } from "../core/browser/error";
+} from "../core/browser/builder";
+import type { NewPageError } from "../core/browser/builder/error";
 import type { HelloWorkScrapingConfig } from "../core/config/scraper";
+
+import {
+  type FromJobListToJobDetailPageError,
+  type SelectorConverterError,
+  extractJobInfo,
+  goToJobSearchPage,
+  goToSingleJobDetailPage,
+  searchNoThenGotoSingleJobListPage,
+} from "../core/browser";
+import type { AssertSingleJobListedError } from "../core/browser/assertion/error";
 import type {
   HomePageElmNotFoundError,
   ListJobsError,
   QualificationsElmNotFoundError,
-} from "../core/interactions/element-action/error";
-import { extractJobInfo } from "../core/interactions/extraction";
-import type { ExtractTextContentError } from "../core/interactions/extraction/jobDetail/error";
-import type { SelectorConverterError } from "../core/interactions/form-filling";
-import type { JobSearchWithJobNumberFillingError } from "../core/interactions/form-filling/jobSearch/error";
-import {
-  type FromJobListToJobDetailPageError,
-  goToJobSearchPage,
-  goToSingleJobDetailPage,
-  searchNoThenGotoSingleJobListPage,
-} from "../core/interactions/navigation";
+} from "../core/browser/interactions/element-action/error";
+import type { ExtractTextContentError } from "../core/browser/interactions/extraction/jobDetail/error";
+import type { JobSearchWithJobNumberFillingError } from "../core/browser/interactions/form-filling/jobSearch/error";
 import type {
   GoToJobSearchPageError,
   SearchThenGotoFirstJobListPageError,
-} from "../core/interactions/navigation/error";
+} from "../core/browser/interactions/navigation/error";
 import {
   validateJobDetailPage,
   validateJobListPage,
