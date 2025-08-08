@@ -1,19 +1,19 @@
 import type { InsertJobRequestBody, Job } from "@sho/models";
-import { eq, gt } from "drizzle-orm";
+import { and, eq, gt, like } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
-import { ResultAsync, errAsync, okAsync } from "neverthrow";
+import { errAsync, okAsync, ResultAsync } from "neverthrow";
 import { jobs } from "../db/schema";
 import {
-  type FetchJobError,
-  type FetchJobListError,
-  type InsertJobDuplicationError,
-  type InsertJobError,
-  type JobNotFoundError,
   createFetchJobError,
   createFetchJobListError,
   createInsertJobDuplicationError,
   createInsertJobError,
   createJobNotFoundError,
+  type FetchJobError,
+  type FetchJobListError,
+  type InsertJobDuplicationError,
+  type InsertJobError,
+  type JobNotFoundError,
 } from "./error";
 
 type DBClient<T> = {
@@ -43,6 +43,7 @@ type JobStoreClientImplBuilder = (client: D1DBClient) => {
   fetchJobList: (params: {
     cursor?: { jobId: number };
     limit: number;
+    filter?: { companyName?: string };
   }) => ResultAsync<
     { jobs: Job[]; cursor: { jobId: number } },
     FetchJobListError
@@ -114,13 +115,37 @@ export const JobStoreClientImplBuilder: JobStoreClientImplBuilder = (
   fetchJobList: ({
     limit = 20,
     cursor,
-  }: { cursor?: { jobId: number }; limit: number }) => {
+    filter = {},
+  }: {
+    cursor?: { jobId: number };
+    limit: number;
+    filter?: { companyName?: string };
+  }) => {
     return ResultAsync.fromPromise(
       (() => {
         const db = client.getClient();
-        return cursor
-          ? db.select().from(jobs).where(gt(jobs.id, cursor.jobId)).limit(limit)
-          : db.select().from(jobs).limit(limit);
+
+        // 基本的な条件を構築
+        const conditions = [];
+
+        // cursorの条件
+        if (cursor) {
+          conditions.push(gt(jobs.id, cursor.jobId));
+        }
+
+        // companyNameの正規表現フィルタ
+        if (filter.companyName) {
+          // オプション1: LIKE を使用（SQLiteのLIKEは基本的なパターンマッチング）
+          conditions.push(like(jobs.companyName, `%${filter.companyName}%`));
+        }
+
+        const query = db.select().from(jobs);
+
+        if (conditions.length > 0) {
+          return query.where(and(...conditions)).limit(limit);
+        }
+
+        return query.limit(limit);
       })(),
       (error) =>
         createFetchJobListError(`fetch job list failed.\n${String(error)}`),
