@@ -5,12 +5,13 @@ import {
   jobListServerErrorSchema,
   jobListSuccessResponseSchema,
 } from "@sho/models";
-import { OpenAPIRoute, contentJson } from "chanfana";
+import { contentJson, OpenAPIRoute } from "chanfana";
 import { HTTPException } from "hono/http-exception";
 import { decode, sign } from "hono/jwt";
-import { ResultAsync, errAsync, okAsync, safeTry } from "neverthrow";
+import { errAsync, okAsync, ResultAsync, safeTry } from "neverthrow";
 import type { AppContext } from "../../app";
-import { JobStoreClientImplBuilder, createD1DBClient } from "../../client";
+import { createJobStoreResultBuilder } from "../../clientImpl";
+import { createJobStoreDBClientAdapter } from "../../clientImpl/adapter";
 import { getDb } from "../../db";
 import {
   createDecodeJWTPayloadError,
@@ -62,8 +63,8 @@ export class JobListEndpoint extends OpenAPIRoute {
 
       // JobStoreClientの作成
       const db = getDb(c);
-      const dbClient = createD1DBClient(db);
-      const jobStore = JobStoreClientImplBuilder(dbClient);
+      const dbClient = createJobStoreDBClientAdapter(db); // DrizzleをJobStoreDBClientに変換
+      const jobStore = createJobStoreResultBuilder(dbClient);
 
       // nextTokenがない場合（初回リクエスト）
       if (!nextToken) {

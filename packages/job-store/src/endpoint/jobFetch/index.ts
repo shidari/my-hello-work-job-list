@@ -4,11 +4,12 @@ import {
   jobFetchServerErrorSchema,
   jobFetchSuccessResponseSchema,
 } from "@sho/models";
-import { OpenAPIRoute, contentJson } from "chanfana";
+import { contentJson, OpenAPIRoute } from "chanfana";
 import { HTTPException } from "hono/http-exception";
-import { ResultAsync, okAsync, safeTry } from "neverthrow";
+import { okAsync, ResultAsync, safeTry } from "neverthrow";
 import type { AppContext } from "../../app";
-import { JobStoreClientImplBuilder, createD1DBClient } from "../../client";
+import { createJobStoreResultBuilder } from "../../clientImpl";
+import { createJobStoreDBClientAdapter } from "../../clientImpl/adapter";
 import { getDb } from "../../db";
 import { createFetchValidationError } from "./error";
 
@@ -46,8 +47,8 @@ export class JobFetchEndpoint extends OpenAPIRoute {
         params: { jobNumber },
       } = validatedData;
       const db = getDb(c);
-      const dbClient = createD1DBClient(db);
-      const jobStore = JobStoreClientImplBuilder(dbClient);
+      const dbClient = createJobStoreDBClientAdapter(db); // DrizzleをJobStoreDBClientに変換
+      const jobStore = createJobStoreResultBuilder(dbClient);
       const job = yield* await jobStore.fetchJob(jobNumber);
       return okAsync(job);
     });
