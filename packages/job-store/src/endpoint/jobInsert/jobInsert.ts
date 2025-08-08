@@ -5,16 +5,12 @@ import {
   insertJobSuccessResponseSchema,
 } from "@sho/models";
 import { OpenAPIRoute, contentJson } from "chanfana";
-import { Effect, Exit } from "effect";
 import { HTTPException } from "hono/http-exception";
+import { ResultAsync, okAsync, safeTry } from "neverthrow";
 import type { AppContext } from "../../app";
-import { JobStoreClient, makeJobStoreClientLayer } from "../../client";
+import { JobStoreClientImplBuilder, createD1DBClient } from "../../client";
 import { getDb } from "../../db";
-import {
-  InsertJobDuplicationError,
-  InsertJobError,
-  InsertJobRequestValidationError,
-} from "./error";
+import { createFetchValidationError } from "../jobFetch/error";
 
 export class JobInsertEndpoint extends OpenAPIRoute {
   schema = {
@@ -40,43 +36,34 @@ export class JobInsertEndpoint extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const db = getDb(c);
-    // Effect内でthisを使用したいため
     const self = this;
-    const program = Effect.gen(function* () {
-      const jobStoreClient = yield* JobStoreClient;
-      const validatedReqBody = yield* Effect.tryPromise({
-        try: () => self.getValidatedData<typeof self.schema>(),
-        catch: (e) =>
-          new InsertJobRequestValidationError({
-            message: `schema validation failed.\n${String(e)}`,
-            errorType: "client",
-          }),
-      }).pipe(Effect.map(({ body }) => body));
-      yield* jobStoreClient.insertJob(validatedReqBody);
-      return validatedReqBody;
+    // バリデーション
+    const result = safeTry(async function* () {
+      const validatedData = yield* await ResultAsync.fromPromise(
+        self.getValidatedData<typeof self.schema>(),
+        (error) =>
+          createFetchValidationError(`Validation failed: ${String(error)}`),
+      );
+      const { body } = validatedData;
+      const db = getDb(c);
+      const dbClient = createD1DBClient(db);
+      const jobStore = JobStoreClientImplBuilder(dbClient);
+      const job = yield* await jobStore.insertJob(body);
+      return okAsync(job);
     });
-    const runnable = Effect.provide(program, makeJobStoreClientLayer(db));
-
-    const exit = await Effect.runPromiseExit(runnable);
-
-    return Exit.match(exit, {
-      onFailure: (error) => {
-        if (error instanceof InsertJobRequestValidationError) {
-          throw new HTTPException(400, { message: "invalid req body" });
+    return result.match(
+      (job) => c.json(job),
+      (error) => {
+        switch (error._tag) {
+          case "InsertJobError":
+            throw new HTTPException(500, { message: error.message });
+          case "InsertJobDuplicationError":
+          case "FetchJobValidationError":
+            throw new HTTPException(400, { message: error.message });
+          default:
+            throw new HTTPException(500, { message: "Unknown error occurred" });
         }
-        if (error instanceof InsertJobDuplicationError) {
-          throw new HTTPException(400, { message: "duplicated jobNumber" });
-        }
-        if (error instanceof InsertJobError) {
-          throw new HTTPException(500, { message: "internal server error" });
-        }
-        throw new HTTPException(500, { message: "internal server error" });
       },
-      onSuccess: (data) => {
-        // dataの中にjobがあるなら
-        return c.json({ success: true, result: data });
-      },
-    });
+    );
   }
 }

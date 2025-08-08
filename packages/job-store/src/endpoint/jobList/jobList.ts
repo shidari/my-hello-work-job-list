@@ -6,19 +6,18 @@ import {
   jobListSuccessResponseSchema,
 } from "@sho/models";
 import { OpenAPIRoute, contentJson } from "chanfana";
-import { Cause, Effect, Exit } from "effect";
-import { runPromiseExit } from "effect/Effect";
 import { HTTPException } from "hono/http-exception";
 import { decode, sign } from "hono/jwt";
+import { ResultAsync, errAsync, okAsync, safeTry } from "neverthrow";
 import type { AppContext } from "../../app";
-import { JobStoreClient, makeJobStoreClientLayer } from "../../client";
-import { FetchJobListError } from "../../client/error";
+import { JobStoreClientImplBuilder, createD1DBClient } from "../../client";
 import { getDb } from "../../db";
 import {
-  DecodeJWTPayloadError,
-  JWTDecodeError,
-  JWTExpiredError,
-  JWTSignatureError,
+  createDecodeJWTPayloadError,
+  createFetchJobListValidationError,
+  createJWTDecodeError,
+  createJWTExpiredError,
+  createJWTSignatureError,
 } from "./error";
 
 const INITIAL_JOB_ID = 1; // 初期のcursorとして使用するjobId
@@ -45,108 +44,124 @@ export class JobListEndpoint extends OpenAPIRoute {
   };
 
   async handle(c: AppContext) {
-    const db = getDb(c);
-    // Effect内でthisを使用したいため
     const self = this;
-    const program = Effect.gen(function* () {
-      const jobStoreClient = yield* JobStoreClient;
-      // jwtを使ってnextToken作る
+    const result = safeTry(async function* () {
+      // バリデーション
+      const validatedData = yield* await ResultAsync.fromPromise(
+        self.getValidatedData<typeof self.schema>(),
+        (error) =>
+          createFetchJobListValidationError(
+            `Fetch JobList validation failed\n${String(error)}`,
+          ),
+      );
+
+      const {
+        query: { nextToken },
+      } = validatedData;
       const jwtSecret = c.env.JWT_SECRET;
 
-      const nextTokenOrNot = yield* Effect.tryPromise({
-        try: () => self.getValidatedData<typeof self.schema>(),
-        catch: (e) =>
-          new FetchJobListError({
-            message: `Fetch JobList validation failed\n${String(e)}`,
-          }),
-      }).pipe(Effect.map(({ query }) => query.nextToken));
+      // JobStoreClientの作成
+      const db = getDb(c);
+      const dbClient = createD1DBClient(db);
+      const jobStore = JobStoreClientImplBuilder(dbClient);
 
-      if (!nextTokenOrNot) {
-        const {
-          jobs,
-          cursor: { jobId },
-        } = yield* jobStoreClient.fetchJobList({
+      // nextTokenがない場合（初回リクエスト）
+      if (!nextToken) {
+        const jobListResult = yield* await jobStore.fetchJobList({
           cursor: { jobId: INITIAL_JOB_ID },
           limit: 20,
         });
-        const signed = yield* Effect.tryPromise({
-          try: () =>
-            sign(
-              {
-                exp: Math.floor(Date.now() / 1000) + 60 * 15,
-                cursor: { jobId },
-              },
-              jwtSecret,
-            ),
-          catch: (e) =>
-            new JWTSignatureError({
-              message: `JWT signing failed.\n${String(e)}`,
-            }),
-        });
-        return { jobs, nextToken: signed };
-      }
-      const nextToken = nextTokenOrNot;
-      const { payload } = yield* Effect.try({
-        try: () => decode(nextToken),
-        catch: (e) =>
-          new JWTDecodeError({ message: `JWT decoding failed.\n${String(e)}` }),
-      });
-      const validatedPayload = (() => {
-        const result = decodedNextTokenSchema.safeParse(payload);
-        if (!result.success)
-          throw new DecodeJWTPayloadError({
-            message: `Decoding JWT payload failed.\n${String(result.error)}`,
-          });
-        return result.data;
-      })();
-      const now = Math.floor(Date.now() / 1000);
-      if (validatedPayload.exp && validatedPayload.exp < now)
-        return Effect.fail(new JWTExpiredError({ message: "JWT expired" }));
-      const jobListData = yield* jobStoreClient.fetchJobList({
-        cursor: { jobId: validatedPayload.cursor.jobId },
-        limit: 20,
-      });
-      const signed = yield* Effect.tryPromise({
-        try: () =>
+
+        const {
+          jobs,
+          cursor: { jobId },
+        } = jobListResult;
+
+        // JWT署名
+        const signResult = yield* ResultAsync.fromPromise(
           sign(
             {
-              exp: Math.floor(Date.now() / 1000) + 60 * 15,
-              cursor: { jobId: jobListData.cursor.jobId },
+              exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
+              cursor: { jobId },
             },
             jwtSecret,
           ),
-        catch: (e) =>
-          new JWTSignatureError({
-            message: `JWT signing failed.\n${String(e)}`,
-          }),
+          (error) =>
+            createJWTSignatureError(`JWT signing failed.\n${String(error)}`),
+        );
+
+        return okAsync({ jobs, nextToken: signResult });
+      }
+      // nextTokenがある場合（ページネーション）
+      // JWT デコード
+      const decodeResult = yield* ResultAsync.fromPromise(
+        Promise.resolve(decode(nextToken)),
+        (error) =>
+          createJWTDecodeError(`JWT decoding failed.\n${String(error)}`),
+      );
+      const payloadValidation = decodedNextTokenSchema.safeParse(
+        decodeResult.payload,
+      );
+      if (!payloadValidation.success) {
+        return errAsync(
+          createDecodeJWTPayloadError(
+            `Decoding JWT payload failed.\n${String(payloadValidation.error)}`,
+          ),
+        );
+      }
+      const validatedPayload = payloadValidation.data;
+
+      // JWT有効期限チェック
+      const now = Math.floor(Date.now() / 1000);
+      if (validatedPayload.exp && validatedPayload.exp < now) {
+        return errAsync(createJWTExpiredError("JWT expired"));
+      }
+
+      // ジョブリスト取得
+      const jobListResult = yield* await jobStore.fetchJobList({
+        cursor: { jobId: validatedPayload.cursor.jobId },
+        limit: 20,
       });
-      return { jobs: jobListData.jobs, nextToken: signed };
+
+      const {
+        jobs,
+        cursor: { jobId },
+      } = jobListResult;
+
+      // JWT署名
+      const signResult = yield* ResultAsync.fromPromise(
+        sign(
+          {
+            exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
+            cursor: { jobId },
+          },
+          jwtSecret,
+        ),
+        (error) =>
+          createJWTSignatureError(`JWT signing failed.\n${String(error)}`),
+      );
+
+      return okAsync({ jobs, nextToken: signResult });
     });
-    const runnable = Effect.provide(program, makeJobStoreClientLayer(db));
 
-    const exit = await runPromiseExit(runnable);
-
-    return Exit.match(exit, {
-      onFailure: (cause) => {
-        console.error(`Exited with failure state: ${Cause.pretty(cause)}`);
-        if (Cause.isFailType(cause)) {
-          switch (cause.error._tag) {
-            case "JWTDecodeError":
-            case "JWTSignatureError":
-              throw new HTTPException(400, { message: cause.error.message });
-            case "FetchJobListError":
-              throw new HTTPException(500, { message: cause.error.message });
-            default:
-              throw new HTTPException(500, {
-                message: "internal server error",
-              });
-          }
+    return result.match(
+      ({ jobs, nextToken }) => c.json({ jobs, nextToken }),
+      (error) => {
+        switch (error._tag) {
+          case "JWTDecodeError":
+            throw new HTTPException(400, { message: error.message });
+          case "JWTSignatureError":
+            throw new HTTPException(500, { message: error.message });
+          case "JWTExpiredError":
+            throw new HTTPException(401, { message: error.message });
+          case "DecodeJWTPayloadError":
+            throw new HTTPException(400, { message: error.message });
+          case "FetchJobListValidationError":
+            throw new HTTPException(400, { message: error.message });
+          default:
+            throw new HTTPException(500, { message: "internal server error" });
         }
-        throw new HTTPException(500, { message: "internal server error" });
       },
-      onSuccess: (data) => {
-        return c.json(data);
-      },
-    });
+    );
   }
 }
