@@ -1,5 +1,23 @@
 # Hello Work Searcher ポートフォリオ詳細解説
 
+## 🚀 TLDR (斜め読み用サマリー)
+
+**プロジェクト概要**: ハローワーク求人情報の自動収集・管理・検索システム\
+**技術スタック**: TypeScript + Effect-ts + AWS Lambda + Cloudflare Workers +
+Next.js 15 + React 19\
+**アーキテクチャ**: モノレポ型サーバーレス構成（コスト最適化重視）\
+**実績**: 約200件の求人データを自動収集・構造化、手動検索プロセスを完全自動化\
+**技術的ハイライト**:
+
+- Effect-tsによる関数型プログラミング・型安全性の徹底
+- AWS Lambda + Cloudflare Workersのハイブリッド構成
+- Drizzle ORM + Zod + TypeScriptによる一貫した型管理
+- モノレポによる効率的な開発体験
+
+**デモサイト**: https://my-hello-work-job-list-hello-work-j.vercel.app/
+
+---
+
 ## 概要
 
 Hello Work
