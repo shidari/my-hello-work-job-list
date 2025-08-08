@@ -44,7 +44,7 @@ graph TD
 
 - **パッケージマネージャー**: pnpm (v10.14.0)
 - **言語**: TypeScript
-- **コードフォーマッター**: Biome (v1.9.4)
+- **コードフォーマッター**: Biome (v2.0.6)
 - **Git Hooks**: Husky + lint-staged
 - **依存関係管理**: Renovate
 
@@ -86,14 +86,17 @@ graph TD
   - Hono (v4.8.3) - Webフレームワーク
   - D1 (SQLite) - データベース
   - Chanfana (v2.8.1) - OpenAPI生成
-  - Effect (v3.16.5) - 関数型プログラミング
   - Vitest (v3.2.0) - テスト
   - Zod (v3.25.74) - バリデーション
+  - neverthrow (v8.2.0) - エラーハンドリング
+  - Wrangler (v4.26.1) - デプロイメントツール
+  - tsup (v8.5.0) - ビルドツール
 - **機能**:
   - 求人情報の保存・取得
   - JWTベースのページネーション機能
   - RESTful API提供（求人一覧・詳細取得）
   - OpenAPI仕様書自動生成 (`/api/v1/docs`)
+  - ルートパスから自動的にドキュメントページへリダイレクト
   - 3つのエンドポイント:
     - `POST /api/v1/job` - 求人情報登録
     - `GET /api/v1/job/:jobNumber` - 求人詳細取得
@@ -104,7 +107,7 @@ graph TD
 - **目的**: ユーザーインターフェース
 - **技術**:
   - React (v19.1.1)
-  - Next.js (v15.4.5) - App Router
+  - Next.js (v15.4.6) - App Router
   - TypeScript (v5)
   - Turbopack - 開発時高速化
   - TanStack React Query (v5.84.1) - データフェッチング
@@ -117,6 +120,7 @@ graph TD
   - プロキシAPI (`/api/proxy/job-store/jobs`) 実装済み
   - 無限スクロール対応の求人一覧表示
   - 求人詳細ページ (`/jobs/[jobNumber]`) 実装済み
+  - ホームページから求人一覧への自動リダイレクト実装済み
 
 ##### `@sho/scripts`
 
