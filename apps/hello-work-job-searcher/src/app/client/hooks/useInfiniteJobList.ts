@@ -17,30 +17,22 @@ async function fetchServerPage(nextToken?: string) {
   return { items: nextItems, nextToken: validatedData.nextToken };
 }
 
-export const useInfiniteJobList = ({
-  initialItems,
-  nextToken,
-}: {
-  initialItems: TJobOverview[];
-  nextToken?: string;
-}) => {
-  const { data, fetchNextPage, isFetchingNextPage, hasNextPage } =
+export const useInfiniteJobList = () => {
+  const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isLoading } =
     useInfiniteQuery({
       queryKey: ["jobs"],
-      queryFn: (ctx) => fetchServerPage(ctx.pageParam),
-      initialData: {
-        pages: [{ items: initialItems, nextToken }],
-        pageParams: [nextToken],
-      },
+      queryFn: (ctx) => fetchServerPage(ctx.pageParam), // pageParamは string | undefined
       getNextPageParam: (lastGroup) => lastGroup.nextToken,
-      initialPageParam: nextToken,
+      initialPageParam: undefined as string | undefined, // 型を明示的に指定
+      staleTime: 1000 * 60 * 5,
     });
 
   return {
-    items: data.pages.flatMap((page) => page.items),
-    nextToken: data.pages[data.pages.length - 1].nextToken,
+    items: data?.pages.flatMap((page) => page.items) || [],
+    nextToken: data?.pages[data.pages.length - 1]?.nextToken,
     fetchNextPage,
     isFetchingNextPage,
     hasNextPage,
+    isLoading,
   };
 };
