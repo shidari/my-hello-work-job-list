@@ -57,7 +57,7 @@ export class JobListEndpoint extends OpenAPIRoute {
       );
 
       const {
-        query: { nextToken },
+        query: { nextToken, companyName },
       } = validatedData;
       const jwtSecret = c.env.JWT_SECRET;
 
@@ -71,6 +71,9 @@ export class JobListEndpoint extends OpenAPIRoute {
         const jobListResult = yield* await jobStore.fetchJobList({
           cursor: { jobId: INITIAL_JOB_ID },
           limit: 20,
+          filter: {
+            companyName,
+          },
         });
 
         const {
