@@ -1,6 +1,5 @@
 "use client";
 
-import type { TJobOverview } from "@sho/models";
 import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
 import Link from "next/link";
 import React, { useEffect } from "react";
@@ -11,18 +10,9 @@ import styles from "./JobOverviewList.module.css";
 let _kSavedOffset = 0;
 let _kMeasurementsCache = [] as VirtualItem[];
 
-export function JobOverviewList({
-  initialItems,
-  nextToken,
-}: {
-  initialItems: TJobOverview[];
-  nextToken?: string;
-}) {
+export function JobOverviewList() {
   const { items, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    useInfiniteJobList({
-      initialItems,
-      nextToken,
-    });
+    useInfiniteJobList();
 
   const parentRef = React.useRef<HTMLDivElement>(null);
 

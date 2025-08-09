@@ -1,8 +1,10 @@
 export const dynamic = "force-dynamic";
 
 import type { TJobOverview } from "@sho/models";
+import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { jobStoreClient } from "../client";
 import { JobOverviewList } from "../client/components/JobOverViewList";
+import { JobsPageClient } from "../client/components/JobsPageClient";
 import { FlexColumn, FlexN } from "../components";
 
 export default async function Page() {
@@ -15,19 +17,29 @@ export default async function Page() {
     employmentType: job.employmentType,
     workPlace: job.workPlace || "不明",
   }));
+
+  const queryClient = new QueryClient(); // QueryClientに初期データをプリロード
+  queryClient.setQueryData(["jobs"], {
+    pages: [
+      {
+        items: initialItems,
+        nextToken: data.nextToken,
+      },
+    ],
+    pageParams: [data.nextToken],
+  });
   return (
-    <main style={{ height: "100%" }}>
-      <FlexColumn>
-        <FlexN n={1}>
-          <h1>求人情報一覧</h1>
-        </FlexN>
-        <FlexN n={9}>
-          <JobOverviewList
-            initialItems={initialItems}
-            nextToken={data.nextToken}
-          />
-        </FlexN>
-      </FlexColumn>
-    </main>
+    <JobsPageClient dehydratedState={dehydrate(queryClient)}>
+      <main style={{ height: "100%" }}>
+        <FlexColumn>
+          <FlexN n={1}>
+            <h1>求人情報一覧</h1>
+          </FlexN>
+          <FlexN n={9}>
+            <JobOverviewList />
+          </FlexN>
+        </FlexColumn>
+      </main>
+    </JobsPageClient>
   );
 }
