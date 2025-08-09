@@ -1,5 +1,10 @@
+// https://github.com/cloudflare/chanfana/issues/167#issue-2470366210
+// queryでinternal server errorが出るので、zod-to-openapiを使う
+import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import z from "zod";
 import { jobSelectSchema } from "./drizzle";
+
+extendZodWithOpenApi(z);
 
 export const jobListQuerySchema = z.object({
   nextToken: z.string().optional(),
