@@ -5,6 +5,7 @@ import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { jobStoreClient } from "../client";
 import { JobOverviewList } from "../client/components/JobOverViewList";
 import { JobsPageClient } from "../client/components/JobsPageClient";
+import { SearchFilter } from "../client/components/SearchFilter";
 import { FlexColumn, FlexN } from "../components";
 
 export default async function Page() {
@@ -36,6 +37,7 @@ export default async function Page() {
             <h1>求人情報一覧</h1>
           </FlexN>
           <FlexN n={9}>
+            <SearchFilter />
             <JobOverviewList />
           </FlexN>
         </FlexColumn>
