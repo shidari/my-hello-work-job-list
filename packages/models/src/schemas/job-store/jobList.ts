@@ -3,6 +3,7 @@ import { jobSelectSchema } from "./drizzle";
 
 export const jobListQuerySchema = z.object({
   nextToken: z.string().optional(),
+  companyName: z.string().optional(),
 });
 
 export const decodedNextTokenSchema = z.object({
