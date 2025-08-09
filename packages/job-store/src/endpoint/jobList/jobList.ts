@@ -57,8 +57,12 @@ export class JobListEndpoint extends OpenAPIRoute {
       );
 
       const {
-        query: { nextToken, companyName },
+        query: { nextToken, companyName: encodedCompanyName },
       } = validatedData;
+
+      const companyName = encodedCompanyName
+        ? decodeURIComponent(encodedCompanyName)
+        : undefined;
       const jwtSecret = c.env.JWT_SECRET;
 
       // JobStoreClientの作成
