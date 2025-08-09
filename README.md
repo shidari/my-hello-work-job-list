@@ -4,6 +4,36 @@
 
 **🌐 デモサイト**: https://my-hello-work-job-list-hello-work-j.vercel.app/
 
+## 🚀 TL;DR（斜め読み用サマリー）
+
+**何をするプロジェクト？**\
+ハローワークの求人情報を自動収集・管理・検索できるWebアプリケーション
+
+**技術スタック**\
+TypeScript + Effect-ts + AWS Lambda + Cloudflare Workers + Next.js 15 + React 19
+
+**アーキテクチャ**\
+モノレポ型サーバーレス構成（コスト最適化重視）
+
+**実績**\
+約200件の求人データを自動収集・構造化、手動検索プロセスを完全自動化
+
+**技術的ハイライト**
+
+- ✨ Effect-tsによる関数型プログラミング・型安全性の徹底
+- 🏗️ AWS Lambda + Cloudflare Workersのハイブリッド構成
+- 🔒 Drizzle ORM + Zod + TypeScriptによる一貫した型管理
+- 📦 pnpm workspaceによるモノレポ管理
+- 🚀 React 19 + Next.js 15の最新技術スタック
+
+**5分で理解する構成**
+
+```
+クローラー(AWS Lambda) → API/DB(Cloudflare Workers) → フロントエンド(Next.js/Vercel)
+```
+
+---
+
 ## 概要
 
 このプロジェクトは、ハローワークの求人情報を自動的にクロール・スクレイピングし、管理・検索できるシステムです。モノレポ構成で、フロントエンド、データベース・API、クローラーなどの各機能を独立したパッケージとして管理しています。
