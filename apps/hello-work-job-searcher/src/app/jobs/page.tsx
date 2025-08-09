@@ -2,8 +2,8 @@ export const dynamic = "force-dynamic";
 
 import type { TJobOverview } from "@sho/models";
 import { jobStoreClient } from "../client";
+import { JobOverviewList } from "../client/components/JobOverViewList/JobOverviewList";
 import { FlexColumn, FlexN } from "../components";
-import { JobOverviewList } from "../components/client/JobOverViewList/JobOverviewList";
 
 export default async function Page() {
   // 一旦対応めんどいからunsafeUnwrapを使う

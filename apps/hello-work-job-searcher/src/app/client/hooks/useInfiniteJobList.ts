@@ -1,4 +1,4 @@
-import { type TJobOverview, jobListSuccessResponseSchema } from "@sho/models";
+import { jobListSuccessResponseSchema, type TJobOverview } from "@sho/models";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
 async function fetchServerPage(nextToken?: string) {

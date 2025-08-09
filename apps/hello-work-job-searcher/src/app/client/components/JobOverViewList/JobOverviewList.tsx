@@ -1,11 +1,11 @@
 "use client";
 
 import type { TJobOverview } from "@sho/models";
-import { type VirtualItem, useVirtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
 import Link from "next/link";
 import React, { useEffect } from "react";
-import { JobOverview } from "../../Job";
-import { useInfiniteJobList } from "../hooks/useInfiniteJobList";
+import { JobOverview } from "@/app/components/Job";
+import { useInfiniteJobList } from "../../hooks/useInfiniteJobList";
 import styles from "./JobOverviewList.module.css";
 
 let _kSavedOffset = 0;
@@ -14,7 +14,10 @@ let _kMeasurementsCache = [] as VirtualItem[];
 export function JobOverviewList({
   initialItems,
   nextToken,
-}: { initialItems: TJobOverview[]; nextToken?: string }) {
+}: {
+  initialItems: TJobOverview[];
+  nextToken?: string;
+}) {
   const { items, fetchNextPage, isFetchingNextPage, hasNextPage } =
     useInfiniteJobList({
       initialItems,
