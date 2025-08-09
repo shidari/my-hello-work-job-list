@@ -196,8 +196,8 @@ importers:
   packages/models:
     dependencies:
       '@asteasolutions/zod-to-openapi':
-        specifier: ^8.1.0
-        version: 8.1.0(zod@3.25.76)
+        specifier: ^7.2.0
+        version: 7.3.4(zod@3.25.76)
       drizzle-orm:
         specifier: ^0.44.2
         version: 0.44.4
