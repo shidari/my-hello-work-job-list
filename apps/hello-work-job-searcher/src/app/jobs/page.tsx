@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import type { TJobOverview } from "@sho/models";
 import { jobStoreClient } from "../client";
-import { JobOverviewList } from "../client/components/JobOverViewList/JobOverviewList";
+import { JobOverviewList } from "../client/components/JobOverViewList";
 import { FlexColumn, FlexN } from "../components";
 
 export default async function Page() {
