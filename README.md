@@ -10,7 +10,8 @@
 ハローワークの求人情報を自動収集・管理・検索できるWebアプリケーション
 
 **技術スタック**\
-TypeScript + Effect-ts + AWS Lambda + Cloudflare Workers + Next.js 15 + React 19
+TypeScript + neverthrow + AWS Lambda + Cloudflare Workers + Next.js 15 + React
+19
 
 **アーキテクチャ**\
 モノレポ型サーバーレス構成（コスト最適化重視）
@@ -20,7 +21,7 @@ TypeScript + Effect-ts + AWS Lambda + Cloudflare Workers + Next.js 15 + React 19
 
 **技術的ハイライト**
 
-- ✨ Effect-tsによる関数型プログラミング・型安全性の徹底
+- ✨ 型主導開発による堅牢性・neverthrowによる関数型エラーハンドリング
 - 🏗️ AWS Lambda + Cloudflare Workersのハイブリッド構成
 - 🔒 Drizzle ORM + Zod + TypeScriptによる一貫した型管理
 - 📦 pnpm workspaceによるモノレポ管理
@@ -73,33 +74,37 @@ graph TD
 #### 共通
 
 - **パッケージマネージャー**: pnpm (v10.14.0)
-- **言語**: TypeScript
+- **言語**: TypeScript (v5.8.3)
 - **コードフォーマッター**: Biome (v2.0.6)
-- **Git Hooks**: Husky + lint-staged
+- **Git Hooks**: Husky (v9.1.7) + lint-staged (v16.1.0)
 - **依存関係管理**: Renovate
+- **コミット規約**: Commitlint (v19.8.1)
 
 #### 各パッケージ
 
 ##### `@sho/models`
 
-- **目的**: 共通の型定義とスキーマ
+- **目的**: 共通の型定義とスキーマ（Source of Truth）
 - **技術**:
   - Zod (v3.25.74) - スキーマバリデーション
   - Drizzle ORM (v0.44.2) - データベーススキーマ
   - TypeScript (v5.8.3) - 型定義
   - tsup (v8.5.0) - ビルドツール
   - Playwright (v1.53.1) - テスト用ブラウザ自動化
+  - @asteasolutions/zod-to-openapi (v7.2.0) -
+    OpenAPI仕様生成（chanfanaのバグ対応のため）
 
 ##### `headless-crawler`
 
 - **目的**: ハローワークサイトのクローリング・スクレイピング
 - **技術**:
   - Playwright (v1.53.1) - ブラウザ自動化
-  - AWS CDK (v2.1022.0) - インフラ管理
-  - Effect (v3.16.5) - 関数型プログラミング
-  - Jest (v29.7.0) - テスト
+  - AWS CDK (v2.1024.0) - インフラ管理
+  - Effect (v3.16.5) - 関数型プログラミング（**今後neverthrowに移行予定**）
   - AWS Lambda + SQS - 実行環境
   - @sparticuz/chromium (v138.0.0) - Lambda用Chromium
+  - @aws-sdk/client-sqs (v3.840.0) - SQS連携
+  - esbuild (v0.25.5) - ビルドツール
 - **機能**:
   - 求人検索条件に基づく求人一覧取得
   - 個別求人詳細情報のスクレイピング
@@ -121,6 +126,8 @@ graph TD
   - neverthrow (v8.2.0) - エラーハンドリング
   - Wrangler (v4.26.1) - デプロイメントツール
   - tsup (v8.5.0) - ビルドツール
+  - @hono/zod-openapi (v1.0.2) - OpenAPI統合
+  - valibot (v1.1.0) - 追加バリデーション
 - **機能**:
   - 求人情報の保存・取得
   - JWTベースのページネーション機能
@@ -143,6 +150,7 @@ graph TD
   - TanStack React Query (v5.84.1) - データフェッチング
   - TanStack React Virtual (v3.13.12) - 仮想化
   - neverthrow (v8.2.0) - エラーハンドリング
+  - Jotai (v2.13.0) - 状態管理
 - **デプロイ**: Vercel
 - **現在の状況**:
   - job-store APIとの連携完了
@@ -151,6 +159,7 @@ graph TD
   - 無限スクロール対応の求人一覧表示
   - 求人詳細ページ (`/jobs/[jobNumber]`) 実装済み
   - ホームページから求人一覧への自動リダイレクト実装済み
+  - 会社名フィルタリング機能対応
 
 ##### `@sho/scripts`
 
@@ -201,7 +210,6 @@ cd packages/headless-crawler
 pnpm verify:crawler  # クローラー動作確認
 pnpm verify:scraper  # スクレイパー動作確認
 pnpm type-check      # 型チェック
-pnpm test           # テスト実行
 ```
 
 #### データベース・API
@@ -260,10 +268,14 @@ pnpm start          # 本番環境での起動確認
 - ✅ 求人一覧表示機能（無限スクロール対応）
 - ✅ 求人詳細表示機能
 - ✅ レスポンシブなWeb UI
+- ✅ 会社名による求人フィルタリング機能
+- ✅ プロキシAPIによるCORS回避
 
 ### 開発中・今後の予定
 
-- 🔄 高度な検索・フィルタリング機能
+- 🔄 検索機能のdebounce実装
+- 🔄 Effect-tsからneverthrowへの移行（実装の複雑さ軽減のため）
+- 🔄 高度な検索・フィルタリング機能の拡張
 - 🔄 UIの改善・完成
 - 📋 認証・認可機能の実装
 - 📋 お気に入り機能
@@ -271,13 +283,13 @@ pnpm start          # 本番環境での起動確認
 
 ## 技術的特徴
 
-### 型安全性の徹底
+### 型主導開発
 
+- **@sho/models**をSource of Truthとした一貫した型管理
 - 全パッケージでTypeScript strict modeを有効化
 - Zodによるランタイムバリデーション
 - Drizzle ORMによる型安全なDB操作
-- フロントエンド〜バックエンド〜DBまでの一貫した型管理
-- neverthrowによる関数型エラーハンドリング
+- フロントエンド〜バックエンド〜DBまでの型の一貫性
 
 ### モダンな開発体験
 
@@ -286,12 +298,13 @@ pnpm start          # 本番環境での起動確認
 - Huskyによる自動品質チェック
 - Renovateによる依存関係自動更新
 - Turbopackによる高速な開発サーバー
+- Commitlintによるコミット規約の統一
 
-### 関数型プログラミング
+### 関数型エラーハンドリング
 
-- Effect-tsによる副作用管理
-- 堅牢なエラーハンドリング
-- 関数の合成による可読性向上
+- neverthrowによる堅牢なエラーハンドリング
+- 実装の複雑さを抑えつつ型安全性を確保
+- Effect-tsから段階的に移行中（実用性重視）
 
 ### サーバーレスアーキテクチャ
 
@@ -307,6 +320,7 @@ pnpm start          # 本番環境での起動確認
 - TanStack React Virtual による大量データの仮想化
 - JWTベースのページネーション
 - プロキシAPIによるCORS回避
+- Jotaiによる効率的な状態管理
 
 ## API仕様
 
@@ -319,15 +333,22 @@ pnpm start          # 本番環境での起動確認
 
 - `POST /api/v1/job` - 求人情報登録
 - `GET /api/v1/job/:jobNumber` - 求人詳細取得
-- `GET /api/v1/jobs?nextToken={token}` - 求人一覧取得（ページネーション対応）
+- `GET /api/v1/jobs?nextToken={token}&companyName={name}` -
+  求人一覧取得（ページネーション・フィルタリング対応）
+
+#### プロキシAPI（フロントエンド）
+
+- `GET /api/proxy/job-store/jobs?nextToken={token}&companyName={name}` -
+  求人一覧取得プロキシ
 
 ## 開発ガイドライン
 
 - TypeScriptの厳密な型チェックを有効化
 - Biomeによるコードフォーマット統一
-- Effectを使用した関数型プログラミング
 - neverthrowによるエラーハンドリングの徹底
+- @sho/modelsを中心とした型主導開発
 - テスト駆動開発の推奨
+- Conventional Commitsによるコミットメッセージ規約
 
 ## プロジェクト構成詳細
 
