@@ -2,11 +2,11 @@ export const dynamic = "force-dynamic";
 
 import type { TJobOverview } from "@sho/models";
 import { dehydrate, QueryClient } from "@tanstack/react-query";
-import { jobStoreClient } from "../client";
-import { JobOverviewList } from "../client/components/JobOverViewList";
-import { JobsPageClient } from "../client/components/JobsPageClient";
-import { SearchFilter } from "../client/components/SearchFilter";
 import { FlexColumn, FlexN } from "../components";
+import { JobOverviewList } from "../components/client/components/JobOverViewList";
+import { JobsPageClient } from "../components/client/components/JobsPageClient";
+import { SearchFilter } from "../components/client/components/SearchFilter";
+import { jobStoreClient } from "../store/client";
 
 export default async function Page() {
   // 一旦対応めんどいからunsafeUnwrapを使う

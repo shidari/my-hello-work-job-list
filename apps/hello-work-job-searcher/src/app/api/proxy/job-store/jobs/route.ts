@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { jobStoreClient } from "@/app/client";
+import { jobStoreClient } from "@/app/store/client";
 
 export async function GET(request: NextRequest) {
   // NextRequestのsearchParamsを直接使用
