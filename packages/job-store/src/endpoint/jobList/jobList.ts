@@ -129,6 +129,9 @@ export class JobListEndpoint extends OpenAPIRoute {
       const jobListResult = yield* await jobStore.fetchJobList({
         cursor: { jobId: validatedPayload.cursor.jobId },
         limit: 20,
+        filter: {
+          companyName,
+        },
       });
 
       const {
