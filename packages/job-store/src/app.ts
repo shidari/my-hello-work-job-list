@@ -8,13 +8,24 @@ const j = Symbol();
 type JWTSecret = string & { [j]: unknown };
 
 export type Env = {
-  // Example bindings, use your own
   DB: D1Database;
-  JWT_SECRET: JWTSecret; // JWTのシークレットキー
+  JWT_SECRET: JWTSecret;
 };
 export type AppContext = Context<{ Bindings: Env }>;
 
 const app = new Hono<{ Bindings: Env }>();
+
+// シンプルなログミドルウェア
+app.use("*", async (c, next) => {
+  const start = Date.now();
+
+  console.log(`📥 ${c.req.method} ${c.req.url}`);
+
+  await next();
+
+  const duration = Date.now() - start;
+  console.log(`📤 ${c.res.status} (${duration}ms)`);
+});
 
 // Initialize Chanfana for Hono
 const openapi = fromHono(app, {
@@ -24,17 +35,17 @@ const openapi = fromHono(app, {
       version: "1.0.0",
       description: "This is the documentation for job store API.",
     },
-    servers: [
-      // { url: 'http://localhost:3000/api/v1', description: 'Development server' },
-    ],
+    servers: [],
   },
   docs_url: "/api/v1/docs",
   openapi_url: "/api/v1/openapi.json",
-  openapiVersion: "3.1", // or '3' for OpenAPI v3.0.3
+  openapiVersion: "3.1",
 });
+
 app.get("/", (c) => {
-  return c.redirect("/api/v1/docs", 302); // 302 Found でリダイレクト
+  return c.redirect("/api/v1/docs", 302);
 });
+
 openapi.post("/api/v1/job", JobInsertEndpoint);
 openapi.get("/api/v1/job/:jobNumber", JobFetchEndpoint);
 openapi.get("/api/v1/jobs", JobListEndpoint);
