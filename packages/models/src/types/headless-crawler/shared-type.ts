@@ -27,6 +27,7 @@ export interface DirtyWorkLocation {
 export type EngineeringLabel = "ソフトウェア開発技術者、プログラマー";
 
 type DirtyDesiredOccupation = EngineeringLabel;
+export type SearchPeriod = "all" | "recent";
 
 export type JobNumber = z.infer<typeof jobNumberSchema>;
 export type JobSearchCriteria = {
@@ -36,6 +37,7 @@ export type JobSearchCriteria = {
     occupationSelection?: DirtyDesiredOccupation;
   };
   employmentType?: EmploymentType;
+  searchPeriod: SearchPeriod;
 };
 
 export type EngineeringLabelSelector = {
