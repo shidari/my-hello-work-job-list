@@ -27,7 +27,7 @@ function fillWorkType(page: JobSearchPage, employmentType: EmploymentType) {
       try: async () => {
         await page.locator(selector).check();
       },
-      catch: (e) =>
+      catch: (_e) =>
         new FillWorkTypeError({
           message: `Error: invalid employmentType: ${employmentType}`,
         }),
@@ -124,9 +124,9 @@ function engineeringLabelToSelector(
 function employmentLabelToSelector(employmentType: EmploymentType) {
   switch (employmentType) {
     case "PartTimeWorker":
-      return Effect.succeed("#ID_ippanCKBox1" as EmploymentTypeSelector);
+      return Effect.succeed("#ID_LippanCKBox2" as EmploymentTypeSelector);
     case "RegularEmployee":
-      return Effect.succeed("#ID_ippanCKBox2" as EmploymentTypeSelector);
+      return Effect.succeed("#ID_LippanCKBox1" as EmploymentTypeSelector);
     default:
       return Effect.fail(
         new EmploymentLabelToSelectorError({
