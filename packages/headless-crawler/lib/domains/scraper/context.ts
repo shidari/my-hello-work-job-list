@@ -1,22 +1,19 @@
 import type { JobNumber, ScrapedJob } from "@sho/models";
 import { Context, Data, Effect, Layer } from "effect";
 import {
-  createContext,
-  createPage,
-  launchBrowser,
-} from "../core/browser/builder";
-import type { NewPageError } from "../core/browser/builder/error";
-import type { HelloWorkScrapingConfig } from "../core/config/scraper";
-
-import {
-  type FromJobListToJobDetailPageError,
-  type SelectorConverterError,
   extractJobInfo,
+  type FromJobListToJobDetailPageError,
   goToJobSearchPage,
   goToSingleJobDetailPage,
   searchNoThenGotoSingleJobListPage,
 } from "../core/browser";
 import type { AssertSingleJobListedError } from "../core/browser/assertion/error";
+import {
+  createContext,
+  createPage,
+  launchBrowser,
+} from "../core/browser/builder";
+import type { NewPageError } from "../core/browser/builder/error";
 import type {
   HomePageElmNotFoundError,
   ListJobsError,
@@ -28,6 +25,7 @@ import type {
   GoToJobSearchPageError,
   SearchThenGotoFirstJobListPageError,
 } from "../core/browser/interactions/navigation/error";
+import type { HelloWorkScrapingConfig } from "../core/config/scraper";
 import {
   validateJobDetailPage,
   validateJobListPage,
@@ -51,7 +49,6 @@ export class HelloWorkScraper extends Context.Tag("HelloWorkScraper")<
       | ScrapeJobDataError
       | NewPageError
       | AssertSingleJobListedError
-      | SelectorConverterError
       | HomePageElmNotFoundError
       | QualificationsElmNotFoundError
       | GoToJobSearchPageError
