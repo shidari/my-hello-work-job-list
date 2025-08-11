@@ -1,40 +1,62 @@
 # Hello Work Searcher ポートフォリオ詳細解説
 
-## 🚀 TLDR (斜め読み用サマリー)
+## 🚀 TLDR (現場エンジニア向け技術サマリー)
 
-**プロジェクト概要**: ハローワーク求人情報の自動収集・管理・検索システム\
-**技術スタック**: TypeScript + Effect-ts + AWS Lambda + Cloudflare Workers +
-Next.js 15 + React 19\
-**アーキテクチャ**: モノレポ型サーバーレス構成（コスト最適化重視）\
-**開発実績**:
-2ヶ月間・平均3時間/日の集中開発、約200件の求人データを自動収集・構造化
+### 🏗️ アーキテクチャ概要
 
-**技術的ハイライト**:
+**モノレポ型サーバーレス構成** | **TypeScript + Effect-ts + AWS Lambda +
+Cloudflare Workers + Next.js 15**
 
-- **Effect-ts採用の戦略的判断**: Result型への親和性 + 依存注入の型安全性 +
-  エフェクトシステムの将来性を見越した先行投資
-- **サーバーレス基盤の使い分け**: 理想はCloudflare
-  Workers統一だが、headless-browser制約でAWS Lambda併用
-- **型安全性の徹底**: Drizzle ORM + Zod +
-  TypeScript統合で存在しないキー指定・型エラーを防止
-- **モノレポ効率化**: 単一責務の徹底でスルスル開発を実現、pnpm workspace +
-  Biome + Husky + Renovateによる開発体験最適化
+```
+ハローワーク → headless-crawler(Lambda) → job-store(Workers) → React App
+                     ↓
+               @sho/models(型統一)
+```
 
-**パフォーマンス実測値**:
+### ⚡ 技術的な見どころ
 
-- **クローリング処理時間**: 200件/90秒（約2.2件/秒）
-- **開発工数**: 2ヶ月間・平均3時間/日の集中開発で完成
-- **コスト実績**: Cloudflare完全無料、AWS月額1000円→デプロイ最適化で大幅削減
-- **API設計**: JWTベースページネーション、シンプルなDBアクセスで高速レスポンス
+**Effect-ts関数型プログラミング**
 
-**技術的課題と解決実績**:
+- 依存注入の型安全性 + Result型エラーハンドリング
+- Stream.paginateChunkEffectによる効率的なページネーション
+- create/running effect分離の学習プロセス（最難関）
 
-- **Effect-ts学習**: create/running
-  effectの分離理解に苦労→Rustのイテレータ概念で突破
-- **セッション管理**:
-  ハローワークサイト制約でheadless-browserによる段階的遷移が必須
-- **技術的負債**: headless-crawlerのEffect-ts密結合を反省、3rd party
-  libraryのwrapper設計の重要性を学習
+**型安全性の徹底**
+
+- Drizzle ORM + Zod + TypeScript統合
+- 生データ→変換→DB保存の3段階型設計
+- 手動同期の技術的負債を明示的管理
+
+**サーバーレス基盤の使い分け**
+
+- Cloudflare Workers: 軽量API（完全無料）
+- AWS Lambda: headless-browser処理（コスト最適化済み）
+
+### 📊 実績・パフォーマンス
+
+| 項目             | 実測値               |
+| ---------------- | -------------------- |
+| 開発期間         | 2ヶ月（180時間）     |
+| クローリング速度 | 200件/90秒           |
+| コスト           | CF無料 + AWS大幅削減 |
+| 技術学習比重     | Effect-ts 40%        |
+
+### 🔧 技術的課題と解決
+
+**学習困難ポイント**
+
+- Effect-ts: create/running effect分離 → Rustイテレータ概念で突破
+- Chunk概念: 型エラー格闘 → Effect-ts実装に合わせる設計転換
+
+**設計反省点**
+
+- Effect-ts密結合 → 3rd party libraryのwrapper設計の重要性を学習
+- テスト戦略: 型ドリブン開発で品質担保、コストと効果の戦略的判断
+
+**技術的負債**
+
+- Option型理解不足（明示的管理）
+- headless-crawler密結合（インターフェース分離予定）
 
 **デモサイト**: https://my-hello-work-job-list-hello-work-j.vercel.app/
 
