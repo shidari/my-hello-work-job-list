@@ -24,10 +24,14 @@ export class FillJobNumberError extends Data.TaggedError("FillJobNumberError")<{
   readonly message: string;
 }> {}
 
+export class FillJobPeriodError extends Data.TaggedError("FillJobPeriodError")<{
+  readonly message: string;
+}> {}
 export type JobSearchCriteriaFillFormError =
   | FillWorkTypeError
   | FillPrefectureFieldError
-  | FillOccupationFieldError;
+  | FillOccupationFieldError
+  | FillJobPeriodError;
 
 export type JobFieldFillingError =
   | FillWorkTypeError

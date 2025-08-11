@@ -9,12 +9,14 @@ import type {
   JobNumber,
   JobSearchCriteria,
   JobSearchPage,
+  SearchPeriod,
 } from "@sho/models";
 import { Effect } from "effect";
 import {
   EmploymentLabelToSelectorError,
   EngineeringLabelSelectorError,
   FillJobNumberError,
+  FillJobPeriodError,
   FillOccupationFieldError,
   FillPrefectureFieldError,
   FillWorkTypeError,
@@ -89,12 +91,16 @@ export function fillJobCriteriaField(
   page: JobSearchPage,
   jobSearchCriteria: JobSearchCriteria,
 ) {
-  const { employmentType, workLocation, desiredOccupation } = jobSearchCriteria;
+  const { employmentType, workLocation, desiredOccupation, searchPeriod } =
+    jobSearchCriteria;
   return Effect.gen(function* () {
     if (employmentType) yield* fillWorkType(page, employmentType);
     if (workLocation) yield* fillPrefectureField(page, workLocation);
     if (desiredOccupation?.occupationSelection) {
       yield* fillOccupationField(page, desiredOccupation.occupationSelection);
+    }
+    if (searchPeriod) {
+      yield* fillJobPeriod(page, searchPeriod);
     }
   });
 }
@@ -162,6 +168,20 @@ export function fillJobNumber(page: JobSearchPage, jobNumber: JobNumber) {
   });
 }
 
-export type SelectorConverterError =
-  | EmploymentLabelToSelectorError
-  | EngineeringLabelSelectorError;
+export function fillJobPeriod(page: JobSearchPage, searchPeriod: SearchPeriod) {
+  return Effect.gen(function* () {
+    yield* Effect.logDebug(`fillJobPeriod: searchPeriod=${searchPeriod}`);
+    const id = searchPeriod === "all" ? undefined : "#ID_newArrivedCKBox1";
+    id &&
+      (yield* Effect.tryPromise({
+        try: async () => {
+          const locator = page.locator(id);
+          locator.check();
+        },
+        catch: (e) =>
+          new FillJobPeriodError({
+            message: `Error: searchPeriod=${searchPeriod} ${String(e)}`,
+          }),
+      }));
+  });
+}
