@@ -1,5 +1,3 @@
-import Link from "next/link";
-import { FlexN } from "./Flex";
 import "./index.css";
 import type { TJobDetail, TJobOverview } from "@sho/models";
 
