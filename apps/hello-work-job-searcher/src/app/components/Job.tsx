@@ -1,3 +1,4 @@
+import { formatDate } from "../util";
 import "./index.css";
 import type { TJobDetail, TJobOverview } from "@sho/models";
 
@@ -60,7 +61,7 @@ export function JobDetail(props: { jobDetail: TJobDetail }) {
         <li data-label="work-place" data-value={workPlace} />
         就業場所: {workPlace}
         <li data-label="expiry-date" data-value={expiryDate}>
-          紹介期限: {expiryDate}
+          紹介期限: {formatDate(expiryDate)}
         </li>
         <li data-label="working-hours" data-value={workingHours}>
           勤務時間: {workingHours}
