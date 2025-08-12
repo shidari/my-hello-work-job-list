@@ -26,7 +26,7 @@ export type JobStoreResultBuilder = (client: JobStoreDBClient) => {
     limit: number;
     filter?: { companyName?: string };
   }) => ResultAsync<
-    { jobs: Job[]; cursor: { jobId: number } },
+    { jobs: Job[]; cursor: { jobId: number }; meta: { totalCount: number } },
     FetchJobListError
   >;
 };

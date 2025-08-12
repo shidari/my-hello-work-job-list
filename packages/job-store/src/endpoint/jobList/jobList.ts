@@ -83,6 +83,7 @@ export class JobListEndpoint extends OpenAPIRoute {
         const {
           jobs,
           cursor: { jobId },
+          meta,
         } = jobListResult;
 
         // JWT署名
@@ -98,7 +99,7 @@ export class JobListEndpoint extends OpenAPIRoute {
             createJWTSignatureError(`JWT signing failed.\n${String(error)}`),
         );
 
-        return okAsync({ jobs, nextToken: signResult });
+        return okAsync({ jobs, nextToken: signResult, meta });
       }
       // nextTokenがある場合（ページネーション）
       // JWT デコード
@@ -137,6 +138,7 @@ export class JobListEndpoint extends OpenAPIRoute {
       const {
         jobs,
         cursor: { jobId },
+        meta,
       } = jobListResult;
 
       // JWT署名
@@ -152,11 +154,11 @@ export class JobListEndpoint extends OpenAPIRoute {
           createJWTSignatureError(`JWT signing failed.\n${String(error)}`),
       );
 
-      return okAsync({ jobs, nextToken: signResult });
+      return okAsync({ jobs, nextToken: signResult, meta });
     });
 
     return result.match(
-      ({ jobs, nextToken }) => c.json({ jobs, nextToken }),
+      ({ jobs, nextToken, meta }) => c.json({ jobs, nextToken, meta }),
       (error) => {
         switch (error._tag) {
           case "JWTDecodeError":
