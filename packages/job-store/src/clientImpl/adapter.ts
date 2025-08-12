@@ -37,7 +37,11 @@ export const createJobStoreDBClientAdapter = (
     cursor?: { jobId: number };
     limit: number;
     filter?: { companyName?: string };
-  }): Promise<{ jobs: Job[]; cursor: { jobId: number } }> => {
+  }): Promise<{
+    jobs: Job[];
+    cursor: { jobId: number };
+    meta: { totalCount: number };
+  }> => {
     const { cursor, limit, filter = {} } = options;
 
     const conditions = [];
@@ -57,10 +61,18 @@ export const createJobStoreDBClientAdapter = (
         ? await query.where(and(...conditions)).limit(limit)
         : await query.limit(limit);
 
+    const totalCount = await drizzleClient.$count(
+      jobs,
+      conditions.length > 0 ? and(...conditions) : undefined,
+    );
+
     return {
       jobs: jobList,
       cursor: {
         jobId: jobList.length > 0 ? jobList[jobList.length - 1].id : 1,
+      },
+      meta: {
+        totalCount,
       },
     };
   },
