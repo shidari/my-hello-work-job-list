@@ -30,6 +30,9 @@ export const JobListSchema = z.array(
 export const jobListSuccessResponseSchema = z.object({
   jobs: JobListSchema,
   nextToken: z.string().optional(),
+  meta: z.object({
+    totalCount: z.number(),
+  }),
 });
 
 export const jobListClientErrorResponseSchema = z.object({

@@ -10,6 +10,10 @@ export type JobStoreDBClient = {
     cursor?: { jobId: number };
     limit: number;
     filter?: { companyName?: string };
-  }) => Promise<{ jobs: Job[]; cursor: { jobId: number } }>;
+  }) => Promise<{
+    jobs: Job[];
+    cursor: { jobId: number };
+    meta: { totalCount: number };
+  }>;
   checkJobExists: (jobNumber: string) => Promise<boolean>;
 };
