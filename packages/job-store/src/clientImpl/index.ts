@@ -1,4 +1,8 @@
-import type { InsertJobRequestBody, JobStoreDBClient } from "@sho/models";
+import type {
+  InsertJobRequestBody,
+  JobStoreDBClient,
+  SearchFilter,
+} from "@sho/models";
 import { errAsync, okAsync, ResultAsync } from "neverthrow";
 import {
   createFetchJobError,
@@ -51,7 +55,7 @@ export const createJobStoreResultBuilder: JobStoreResultBuilder = (
   fetchJobList: (params: {
     cursor?: { jobId: number };
     limit: number;
-    filter?: { companyName?: string };
+    filter: SearchFilter;
   }) => {
     return ResultAsync.fromPromise(
       dbClient.findJobs(params), // dbClientのメソッドを使用

@@ -9,11 +9,11 @@ export type JobStoreDBClient = {
   findJobs: (options: {
     cursor?: { jobId: number };
     limit: number;
-    filter?: { companyName?: string };
+    filter: { companyName?: string };
   }) => Promise<{
     jobs: Job[];
     cursor: { jobId: number };
-    meta: { totalCount: number };
+    meta: { totalCount: number; filter: SearchFilter };
   }>;
   checkJobExists: (jobNumber: string) => Promise<boolean>;
 };

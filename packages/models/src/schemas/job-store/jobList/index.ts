@@ -2,20 +2,16 @@
 // queryでinternal server errorが出るので、zod-to-openapiを使う
 import { extendZodWithOpenApi } from "@asteasolutions/zod-to-openapi";
 import z from "zod";
-import { jobSelectSchema } from "./drizzle";
+import { jobSelectSchema } from "../drizzle";
 
 extendZodWithOpenApi(z);
 
 export const jobListQuerySchema = z.object({
-  nextToken: z.string().optional(),
   companyName: z.string().optional(),
 });
 
-export const decodedNextTokenSchema = z.object({
-  exp: z.number(),
-  cursor: z.object({
-    jobId: z.number(),
-  }),
+export const jobListSearchFilterSchema = z.object({
+  companyName: z.string().optional(),
 });
 
 export const JobListSchema = z.array(
