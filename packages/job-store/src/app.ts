@@ -2,7 +2,8 @@ import { fromHono } from "chanfana";
 import { type Context, Hono } from "hono";
 import { JobFetchEndpoint } from "./endpoint/jobFetch";
 import { JobInsertEndpoint } from "./endpoint/jobInsert/jobInsert";
-import { JobListEndpoint } from "./endpoint/jobList/jobList";
+import { JobListEndpoint } from "./endpoint/jobList";
+import { JobListContinueEndpoint } from "./endpoint/jobList/continue";
 
 const j = Symbol();
 type JWTSecret = string & { [j]: unknown };
@@ -49,5 +50,6 @@ app.get("/", (c) => {
 openapi.post("/api/v1/job", JobInsertEndpoint);
 openapi.get("/api/v1/job/:jobNumber", JobFetchEndpoint);
 openapi.get("/api/v1/jobs", JobListEndpoint);
+openapi.get("/api/v1/jobs/continue", JobListContinueEndpoint);
 
 export { app };

@@ -1,4 +1,9 @@
-import type { InsertJobRequestBody, Job, JobStoreDBClient } from "@sho/models";
+import type {
+  InsertJobRequestBody,
+  Job,
+  JobStoreDBClient,
+  SearchFilter,
+} from "@sho/models";
 import type { ResultAsync } from "neverthrow";
 import type {
   FetchJobError,
@@ -24,9 +29,13 @@ export type JobStoreResultBuilder = (client: JobStoreDBClient) => {
   fetchJobList: (params: {
     cursor?: { jobId: number };
     limit: number;
-    filter?: { companyName?: string };
+    filter: { companyName?: string };
   }) => ResultAsync<
-    { jobs: Job[]; cursor: { jobId: number }; meta: { totalCount: number } },
+    {
+      jobs: Job[];
+      cursor: { jobId: number };
+      meta: { totalCount: number; filter: SearchFilter };
+    },
     FetchJobListError
   >;
 };

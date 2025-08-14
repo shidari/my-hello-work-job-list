@@ -1,4 +1,9 @@
-import type { InsertJobRequestBody, Job, JobStoreDBClient } from "@sho/models";
+import type {
+  InsertJobRequestBody,
+  Job,
+  JobStoreDBClient,
+  SearchFilter,
+} from "@sho/models";
 import { and, eq, gt, like } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { jobs } from "../db/schema";
@@ -36,11 +41,11 @@ export const createJobStoreDBClientAdapter = (
   findJobs: async (options: {
     cursor?: { jobId: number };
     limit: number;
-    filter?: { companyName?: string };
+    filter: { companyName?: string };
   }): Promise<{
     jobs: Job[];
     cursor: { jobId: number };
-    meta: { totalCount: number };
+    meta: { totalCount: number; filter: SearchFilter };
   }> => {
     const { cursor, limit, filter = {} } = options;
 
@@ -73,6 +78,7 @@ export const createJobStoreDBClientAdapter = (
       },
       meta: {
         totalCount,
+        filter,
       },
     };
   },
