@@ -1,3 +1,4 @@
+import type { DecodedNextToken } from "@sho/models";
 import {
   jobListClientErrorResponseSchema,
   jobListQuerySchema,
@@ -79,14 +80,13 @@ export class JobListEndpoint extends OpenAPIRoute {
       } = jobListResult;
 
       // JWT署名
+      const validPayload: DecodedNextToken = {
+        exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
+        cursor: { jobId },
+        filter: meta.filter,
+      };
       const signResult = yield* ResultAsync.fromPromise(
-        sign(
-          {
-            exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
-            cursor: { jobId },
-          },
-          jwtSecret,
-        ),
+        sign(validPayload, jwtSecret),
         (error) =>
           createJWTSignatureError(`JWT signing failed.\n${String(error)}`),
       );
