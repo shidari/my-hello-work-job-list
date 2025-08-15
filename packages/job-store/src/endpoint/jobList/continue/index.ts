@@ -126,15 +126,15 @@ export class JobListContinueEndpoint extends OpenAPIRoute {
 
         switch (error._tag) {
           case "JWTDecodeError":
-            throw new HTTPException(400, { message: error.message });
+            throw new HTTPException(400, { message: "invalid nextToken" });
           case "JWTSignatureError":
             throw new HTTPException(500, { message: error.message });
           case "JWTExpiredError":
-            throw new HTTPException(401, { message: error.message });
+            throw new HTTPException(401, { message: "nextToken expired" });
           case "DecodeJWTPayloadError":
-            throw new HTTPException(400, { message: error.message });
+            throw new HTTPException(400, { message: "invalid nextToken" });
           case "ResponseSchemaValidationError":
-            throw new HTTPException(400, { message: error.message });
+            throw new HTTPException(400, { message: "invalid query" });
           default:
             throw new HTTPException(500, { message: "internal server error" });
         }
