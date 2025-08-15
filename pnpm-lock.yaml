@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@hono/swagger-ui':
         specifier: ^0.5.2
-        version: 0.5.2(hono@4.9.1)
+        version: 0.5.2(hono@4.9.2)
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.0.6
@@ -127,10 +127,10 @@ importers:
     dependencies:
       '@hono/zod-openapi':
         specifier: ^1.0.2
-        version: 1.1.0(hono@4.9.1)(zod@3.25.76)
+        version: 1.1.0(hono@4.9.2)(zod@3.25.76)
       '@hono/zod-validator':
         specifier: ^0.7.2
-        version: 0.7.2(hono@4.9.1)(zod@3.25.76)
+        version: 0.7.2(hono@4.9.2)(zod@3.25.76)
       '@sho/models':
         specifier: workspace:*
         version: link:../models
@@ -145,10 +145,10 @@ importers:
         version: 17.2.1
       hono:
         specifier: ^4.8.3
-        version: 4.9.1
+        version: 4.9.2
       hono-openapi:
         specifier: ^0.4.8
-        version: 0.4.8(@hono/zod-validator@0.7.2(hono@4.9.1)(zod@3.25.76))(effect@3.17.6)(hono@4.9.1)(openapi-types@12.1.3)(valibot@1.1.0(typescript@5.9.2))(zod@3.25.76)
+        version: 0.4.8(@hono/zod-validator@0.7.2(hono@4.9.2)(zod@3.25.76))(effect@3.17.6)(hono@4.9.2)(openapi-types@12.1.3)(valibot@1.1.0(typescript@5.9.2))(zod@3.25.76)
       neverthrow:
         specifier: ^8.2.0
         version: 8.2.0
@@ -2711,8 +2711,8 @@ packages:
   effect@3.17.6:
     resolution: {integrity: sha512-BDVr3TEI6JpTnsZwDzXlzxDtyMS0cwtfWmhqfL3nl7Be/443+geFYAlVpCy7SCkLCck0NbmFX86LtlCZtCgdxA==}
 
-  electron-to-chromium@1.5.201:
-    resolution: {integrity: sha512-ZG65vsrLClodGqywuigc+7m0gr4ISoTQttfVh7nfpLv0M7SIwF4WbFNEOywcqTiujs12AUeeXbFyQieDICAIxg==}
+  electron-to-chromium@1.5.202:
+    resolution: {integrity: sha512-NxbYjRmiHcHXV1Ws3fWUW+SLb62isauajk45LUJ/HgIOkUA7jLZu/X2Iif+X9FBNK8QkF9Zb4Q2mcwXCcY30mg==}
 
   emoji-regex@10.4.0:
     resolution: {integrity: sha512-EC+0oUMY1Rqm4O6LLrgjtYDvcVYTy7chDnM4Q7030tP4Kwj3u/pR6gP9ygnp2CJMK5Gq+9Q2oqmrFJAz01DXjw==}
@@ -2947,8 +2947,8 @@ packages:
       zod-openapi:
         optional: true
 
-  hono@4.9.1:
-    resolution: {integrity: sha512-qfvdJ42t6CQE0N/iSCa8KsW8SQqYD67YB+TYbwPHlnALvX+s7ynh8otR1NEk5jXtUg73gpV/B82OSufDmwtX3w==}
+  hono@4.9.2:
+    resolution: {integrity: sha512-UG2jXGS/gkLH42l/1uROnwXpkjvvxkl3kpopL3LBo27NuaDPI6xHNfuUSilIHcrBkPfl4y0z6y2ByI455TjNRw==}
     engines: {node: '>=16.9.0'}
 
   husky@9.1.7:
@@ -5067,21 +5067,21 @@ snapshots:
   '@esbuild/win32-x64@0.25.9':
     optional: true
 
-  '@hono/swagger-ui@0.5.2(hono@4.9.1)':
+  '@hono/swagger-ui@0.5.2(hono@4.9.2)':
     dependencies:
-      hono: 4.9.1
+      hono: 4.9.2
 
-  '@hono/zod-openapi@1.1.0(hono@4.9.1)(zod@3.25.76)':
+  '@hono/zod-openapi@1.1.0(hono@4.9.2)(zod@3.25.76)':
     dependencies:
       '@asteasolutions/zod-to-openapi': 8.1.0(zod@3.25.76)
-      '@hono/zod-validator': 0.7.2(hono@4.9.1)(zod@3.25.76)
-      hono: 4.9.1
+      '@hono/zod-validator': 0.7.2(hono@4.9.2)(zod@3.25.76)
+      hono: 4.9.2
       openapi3-ts: 4.5.0
       zod: 3.25.76
 
-  '@hono/zod-validator@0.7.2(hono@4.9.1)(zod@3.25.76)':
+  '@hono/zod-validator@0.7.2(hono@4.9.2)(zod@3.25.76)':
     dependencies:
-      hono: 4.9.1
+      hono: 4.9.2
       zod: 3.25.76
 
   '@img/sharp-darwin-arm64@0.33.5':
@@ -6186,7 +6186,7 @@ snapshots:
   browserslist@4.25.2:
     dependencies:
       caniuse-lite: 1.0.30001735
-      electron-to-chromium: 1.5.201
+      electron-to-chromium: 1.5.202
       node-releases: 2.0.19
       update-browserslist-db: 1.1.3(browserslist@4.25.2)
     optional: true
@@ -6389,7 +6389,7 @@ snapshots:
       '@standard-schema/spec': 1.0.0
       fast-check: 3.23.2
 
-  electron-to-chromium@1.5.201:
+  electron-to-chromium@1.5.202:
     optional: true
 
   emoji-regex@10.4.0: {}
@@ -6651,18 +6651,18 @@ snapshots:
       function-bind: 1.1.2
     optional: true
 
-  hono-openapi@0.4.8(@hono/zod-validator@0.7.2(hono@4.9.1)(zod@3.25.76))(effect@3.17.6)(hono@4.9.1)(openapi-types@12.1.3)(valibot@1.1.0(typescript@5.9.2))(zod@3.25.76):
+  hono-openapi@0.4.8(@hono/zod-validator@0.7.2(hono@4.9.2)(zod@3.25.76))(effect@3.17.6)(hono@4.9.2)(openapi-types@12.1.3)(valibot@1.1.0(typescript@5.9.2))(zod@3.25.76):
     dependencies:
       json-schema-walker: 2.0.0
       openapi-types: 12.1.3
     optionalDependencies:
-      '@hono/zod-validator': 0.7.2(hono@4.9.1)(zod@3.25.76)
+      '@hono/zod-validator': 0.7.2(hono@4.9.2)(zod@3.25.76)
       effect: 3.17.6
-      hono: 4.9.1
+      hono: 4.9.2
       valibot: 1.1.0(typescript@5.9.2)
       zod: 3.25.76
 
-  hono@4.9.1: {}
+  hono@4.9.2: {}
 
   husky@9.1.7: {}
 
