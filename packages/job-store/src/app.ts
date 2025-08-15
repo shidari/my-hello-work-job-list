@@ -46,6 +46,9 @@ const openapi = fromHono(app, {
 app.get("/", (c) => {
   return c.redirect("/api/v1/docs", 302);
 });
+app.get("/api/v1", (c) => {
+  return c.redirect("/api/v1/docs", 302);
+});
 
 openapi.post("/api/v1/job", JobInsertEndpoint);
 openapi.get("/api/v1/job/:jobNumber", JobFetchEndpoint);
