@@ -55,6 +55,7 @@ export class JobFetchEndpoint extends OpenAPIRoute {
     return result.match(
       (job) => c.json(job),
       (error) => {
+        console.error(error);
         switch (error._tag) {
           case "FetchJobError":
             throw new HTTPException(500, { message: error.message });

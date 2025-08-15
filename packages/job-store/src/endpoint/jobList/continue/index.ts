@@ -122,6 +122,8 @@ export class JobListContinueEndpoint extends OpenAPIRoute {
     return result.match(
       ({ jobs, nextToken, meta }) => c.json({ jobs, nextToken, meta }),
       (error) => {
+        console.error(error);
+
         switch (error._tag) {
           case "JWTDecodeError":
             throw new HTTPException(400, { message: error.message });

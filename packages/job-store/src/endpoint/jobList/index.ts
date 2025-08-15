@@ -97,6 +97,8 @@ export class JobListEndpoint extends OpenAPIRoute {
     return await result.match(
       ({ jobs, nextToken, meta }) => c.json({ jobs, nextToken, meta }),
       (error) => {
+        console.error(error);
+
         switch (error._tag) {
           case "JWTSignatureError":
             throw new HTTPException(500, { message: error.message });
