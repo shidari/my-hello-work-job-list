@@ -49,16 +49,17 @@ export const createJobStoreDBClientAdapter = (
   }> => {
     const { cursor, limit, filter = {} } = options;
 
-    const conditions = [];
-
+    const cursorConditions = [];
     if (cursor) {
-      conditions.push(gt(jobs.id, cursor.jobId));
+      cursorConditions.push(gt(jobs.id, cursor.jobId));
     }
 
+    const filterConditions = [];
     if (filter.companyName) {
-      conditions.push(like(jobs.companyName, `%${filter.companyName}%`));
+      filterConditions.push(like(jobs.companyName, `%${filter.companyName}%`));
     }
 
+    const conditions = [...cursorConditions, ...filterConditions];
     const query = drizzleClient.select().from(jobs);
 
     const jobList =
@@ -68,7 +69,7 @@ export const createJobStoreDBClientAdapter = (
 
     const totalCount = await drizzleClient.$count(
       jobs,
-      conditions.length > 0 ? and(...conditions) : undefined,
+      filterConditions.length > 0 ? and(...filterConditions) : undefined,
     );
 
     return {
