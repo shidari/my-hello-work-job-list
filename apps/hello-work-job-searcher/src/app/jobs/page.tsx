@@ -5,12 +5,11 @@ import { dehydrate, QueryClient } from "@tanstack/react-query";
 import { FlexColumn, FlexN } from "../components";
 import { JobOverviewList } from "../components/client/components/JobOverViewList";
 import { JobsPageClient } from "../components/client/components/JobsPageClient";
-import { SearchFilter } from "../components/client/components/SearchFilter";
-import { jobStoreClient } from "../store/client";
+import { jobStoreClient } from "../store/server";
 
 export default async function Page() {
   // 一旦対応めんどいからunsafeUnwrapを使う
-  const data = (await jobStoreClient.getJobs())._unsafeUnwrap();
+  const data = (await jobStoreClient.getInitialJobs())._unsafeUnwrap();
   const initialItems: TJobOverview[] = data.jobs.map((job) => ({
     jobNumber: job.jobNumber,
     companyName: job.companyName,
@@ -37,7 +36,6 @@ export default async function Page() {
             <h1>求人情報一覧</h1>
           </FlexN>
           <FlexN n={9}>
-            <SearchFilter />
             <JobOverviewList />
           </FlexN>
         </FlexColumn>

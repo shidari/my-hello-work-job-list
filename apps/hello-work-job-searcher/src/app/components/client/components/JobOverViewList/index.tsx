@@ -1,11 +1,9 @@
 "use client";
 
 import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
-import { useAtomValue } from "jotai";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { JobOverview } from "@/app/components/Job";
-import { searchFilterAtom } from "../../atoms";
 import { useInfiniteJobList } from "../../hooks/useInfiniteJobList";
 import styles from "./JobOverviewList.module.css";
 
@@ -13,9 +11,8 @@ let _kSavedOffset = 0;
 let _kMeasurementsCache = [] as VirtualItem[];
 
 export function JobOverviewList() {
-  const filter = useAtomValue(searchFilterAtom); // 状態管理からフィルターを取得
   const { items, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    useInfiniteJobList(filter);
+    useInfiniteJobList();
 
   const parentRef = React.useRef<HTMLDivElement>(null);
 

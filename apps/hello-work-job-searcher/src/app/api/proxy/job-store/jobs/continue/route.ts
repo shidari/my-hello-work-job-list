@@ -3,11 +3,11 @@ import { jobStoreClient } from "@/app/store/server";
 
 export async function GET(request: NextRequest) {
   // NextRequestのsearchParamsを直接使用
-  const companyName =
-    request.nextUrl.searchParams.get("companyName") ?? undefined;
-  const result = await jobStoreClient.getInitialJobs(
-    companyName ? { companyName } : {},
-  );
+  const nextToken = request.nextUrl.searchParams.get("nextToken") ?? undefined;
+  if (!nextToken) {
+    return Response.json({ error: "Missing nextToken" }, { status: 400 });
+  }
+  const result = await jobStoreClient.getContinuedJobs(nextToken);
   return result.match(
     (validatedData) => {
       return Response.json(validatedData);

@@ -1,25 +1,8 @@
-import {
-  jobListSuccessResponseSchema,
-  type SearchFilter,
-  type TJobOverview,
-} from "@sho/models";
+import { jobListSuccessResponseSchema, type TJobOverview } from "@sho/models";
 import { useInfiniteQuery } from "@tanstack/react-query";
 
-async function fetchServerPage(
-  nextToken?: string,
-  searchFilter: SearchFilter = {},
-) {
-  // クエリパラメータを構築
-  const params = new URLSearchParams();
-  if (nextToken) {
-    params.append("nextToken", nextToken);
-  }
-  if (searchFilter.companyName) {
-    params.append("companyName", searchFilter.companyName);
-  }
-
-  const queryString = params.toString();
-  const url = `/api/proxy/job-store/jobs${queryString ? `?${queryString}` : ""}`;
+async function fetchContinuesJobList(nextToken: string) {
+  const url = `/api/proxy/job-store/jobs/continue?nextToken=${nextToken}`;
   const res = await fetch(url);
   const data = await res.json();
   const validatedData = jobListSuccessResponseSchema.parse(data);
@@ -33,11 +16,15 @@ async function fetchServerPage(
   return { items: nextItems, nextToken: validatedData.nextToken };
 }
 
-export const useInfiniteJobList = (searchFilter: SearchFilter = {}) => {
+export const useInfiniteJobList = () => {
   const { data, fetchNextPage, isFetchingNextPage, hasNextPage, isLoading } =
     useInfiniteQuery({
-      queryKey: ["jobs", searchFilter],
-      queryFn: (ctx) => fetchServerPage(ctx.pageParam, searchFilter),
+      queryKey: ["jobs"],
+      // 一旦面倒なので、エラー潰すため的なことしてる。あとで絶対修正しないといけない
+      queryFn: (ctx) =>
+        ctx.pageParam
+          ? fetchContinuesJobList(ctx.pageParam)
+          : Promise.resolve({ items: [], nextToken: undefined }),
       getNextPageParam: (lastGroup) => lastGroup.nextToken,
       initialPageParam: undefined as string | undefined, // 型を明示的に指定
       staleTime: 1000 * 60 * 5,
