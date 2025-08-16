@@ -13,6 +13,11 @@ export const jobListAtom = atom<{
   totalCount: 0,
 });
 
+export const JobtotalCountAtom = atom((get) => {
+  const { totalCount } = get(jobListAtom);
+  return totalCount;
+});
+
 export const JobOverviewListAtom = atom<{
   items: TJobOverview[];
   nextToken: string | undefined;
