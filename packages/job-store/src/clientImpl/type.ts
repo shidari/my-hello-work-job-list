@@ -1,6 +1,10 @@
 import type {
+  CheckJobExistsCommand,
+  CommandOutput,
+  FindJobByNumberCommand,
+  FindJobsCommand,
+  InsertJobCommand,
   InsertJobRequestBody,
-  Job,
   JobStoreDBClient,
   SearchFilter,
 } from "@sho/models";
@@ -17,25 +21,24 @@ export type JobStoreResultBuilder = (client: JobStoreDBClient) => {
   insertJob: (
     job: InsertJobRequestBody,
   ) => ResultAsync<
-    InsertJobRequestBody,
+    CommandOutput<InsertJobCommand>,
     InsertJobDuplicationError | InsertJobError
   >;
   fetchJob: (
     jobNumber: string,
-  ) => ResultAsync<Job, FetchJobError | JobNotFoundError>;
+  ) => ResultAsync<
+    CommandOutput<FindJobByNumberCommand>["job"],
+    FetchJobError | JobNotFoundError
+  >;
   checkDuplicate: (
     jobNumber: string,
-  ) => ResultAsync<boolean, InsertJobDuplicationError>;
+  ) => ResultAsync<
+    CommandOutput<CheckJobExistsCommand>["exists"],
+    InsertJobDuplicationError
+  >;
   fetchJobList: (params: {
     cursor?: { jobId: number };
     limit: number;
-    filter: { companyName?: string };
-  }) => ResultAsync<
-    {
-      jobs: Job[];
-      cursor: { jobId: number };
-      meta: { totalCount: number; filter: SearchFilter };
-    },
-    FetchJobListError
-  >;
+    filter: SearchFilter;
+  }) => ResultAsync<CommandOutput<FindJobsCommand>, FetchJobListError>;
 };
