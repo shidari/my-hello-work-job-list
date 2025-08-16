@@ -1,4 +1,9 @@
 import type {
+  CheckJobExistsCommand,
+  CommandOutput,
+  FindJobByNumberCommand,
+  FindJobsCommand,
+  InsertJobCommand,
   InsertJobRequestBody,
   JobStoreDBClient,
   SearchFilter,
@@ -13,43 +18,47 @@ import {
 } from "./error";
 import type { JobStoreResultBuilder } from "./type";
 
-// JobStoreResultBuilderの実装
+// JobStoreResultBuilderの実装（コマンドパターンで書き換え）
 export const createJobStoreResultBuilder: JobStoreResultBuilder = (
-  dbClient: JobStoreDBClient, // JobStoreDBClientインターフェースを受け取る
+  dbClient: JobStoreDBClient,
 ) => ({
   insertJob: (job: InsertJobRequestBody) => {
-    return ResultAsync.fromPromise(
-      dbClient.insertJob(job), // dbClientのメソッドを使用
-      (error) =>
-        createInsertJobError(`insert job failed.\n${String(error)}`, "server"),
+    const command: InsertJobCommand = { type: "InsertJob", payload: job };
+    return ResultAsync.fromPromise(dbClient.execute(command), (error) =>
+      createInsertJobError(`insert job failed.\n${String(error)}`, "server"),
     );
   },
+
   fetchJob: (jobNumber: string) => {
-    return ResultAsync.fromPromise(
-      dbClient.findJobByNumber(jobNumber), // dbClientのメソッドを使用
-      (error) =>
-        createFetchJobError(
-          `fetch job failed. jobNumber=${jobNumber}\n${String(error)}`,
-        ),
-    ).andThen((job) => {
-      if (!job) {
+    const command: FindJobByNumberCommand = {
+      type: "FindJobByNumber",
+      jobNumber,
+    };
+    return ResultAsync.fromPromise(dbClient.execute(command), (error) =>
+      createFetchJobError(
+        `fetch job failed. jobNumber=${jobNumber}\n${String(error)}`,
+      ),
+    ).andThen((result: CommandOutput<FindJobByNumberCommand>) => {
+      if (!result.job) {
         return errAsync(
           createJobNotFoundError(`Job not found for jobNumber=${jobNumber}`),
         );
       }
-      return okAsync(job);
+      return okAsync(result.job);
     });
   },
 
   checkDuplicate: (jobNumber: string) => {
-    return ResultAsync.fromPromise(
-      dbClient.checkJobExists(jobNumber), // dbClientのメソッドを使用
-      (error) =>
-        createInsertJobDuplicationError(
-          `check duplicate failed. jobNumber=${jobNumber}\n${String(error)}`,
-          "client",
-        ),
-    );
+    const command: CheckJobExistsCommand = {
+      type: "CheckJobExists",
+      jobNumber,
+    };
+    return ResultAsync.fromPromise(dbClient.execute(command), (error) =>
+      createInsertJobDuplicationError(
+        `check duplicate failed. jobNumber=${jobNumber}\n${String(error)}`,
+        "client",
+      ),
+    ).map((result) => result.exists);
   },
 
   fetchJobList: (params: {
@@ -57,10 +66,12 @@ export const createJobStoreResultBuilder: JobStoreResultBuilder = (
     limit: number;
     filter: SearchFilter;
   }) => {
-    return ResultAsync.fromPromise(
-      dbClient.findJobs(params), // dbClientのメソッドを使用
-      (error) =>
-        createFetchJobListError(`fetch job list failed.\n${String(error)}`),
+    const command: FindJobsCommand = {
+      type: "FindJobs",
+      options: params,
+    };
+    return ResultAsync.fromPromise(dbClient.execute(command), (error) =>
+      createFetchJobListError(`fetch job list failed.\n${String(error)}`),
     );
   },
 });
