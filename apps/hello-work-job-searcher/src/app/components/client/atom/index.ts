@@ -1,4 +1,4 @@
-import type { JobList, TJobOverview } from "@sho/models";
+import type { JobList, SearchFilter, TJobOverview } from "@sho/models";
 import { atom } from "jotai";
 import { jobStoreClientOnBrowser } from "@/app/store/client";
 
@@ -33,6 +33,25 @@ export const JobOverviewListAtom = atom<{
     })),
     nextToken,
   };
+});
+
+export const initializeJobListWriterAtom = atom<
+  null,
+  [SearchFilter],
+  Promise<void>
+>(null, async (_, set, searchFilter) => {
+  const {
+    jobs,
+    nextToken,
+    meta: { totalCount },
+  } = (
+    await jobStoreClientOnBrowser.getInitialJobs(searchFilter)
+  )._unsafeUnwrap();
+  set(jobListAtom, {
+    jobs,
+    nextToken,
+    totalCount,
+  });
 });
 
 // 書き込み専用atom: getContinuedJobsを叩いてリストを更新
