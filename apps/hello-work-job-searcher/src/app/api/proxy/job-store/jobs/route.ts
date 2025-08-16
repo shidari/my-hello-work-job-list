@@ -1,11 +1,11 @@
 import type { NextRequest } from "next/server";
-import { jobStoreClient } from "@/app/store/server";
+import { jobStoreClientOnServer } from "@/app/store/server";
 
 export async function GET(request: NextRequest) {
   // NextRequestのsearchParamsを直接使用
   const companyName =
     request.nextUrl.searchParams.get("companyName") ?? undefined;
-  const result = await jobStoreClient.getInitialJobs(
+  const result = await jobStoreClientOnServer.getInitialJobs(
     companyName ? { companyName } : {},
   );
   return result.match(

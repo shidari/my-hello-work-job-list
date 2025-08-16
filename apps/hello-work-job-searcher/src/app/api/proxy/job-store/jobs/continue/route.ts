@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server";
-import { jobStoreClient } from "@/app/store/server";
+import { jobStoreClientOnServer } from "@/app/store/server";
 
 export async function GET(request: NextRequest) {
   // NextRequestのsearchParamsを直接使用
@@ -7,7 +7,7 @@ export async function GET(request: NextRequest) {
   if (!nextToken) {
     return Response.json({ error: "Missing nextToken" }, { status: 400 });
   }
-  const result = await jobStoreClient.getContinuedJobs(nextToken);
+  const result = await jobStoreClientOnServer.getContinuedJobs(nextToken);
   return result.match(
     (validatedData) => {
       return Response.json(validatedData);

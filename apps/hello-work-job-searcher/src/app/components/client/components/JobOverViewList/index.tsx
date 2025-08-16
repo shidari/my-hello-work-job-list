@@ -1,19 +1,32 @@
 "use client";
 
+import type { TJobOverview } from "@sho/models";
 import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useHydrateAtoms } from "jotai/utils";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { JobOverview } from "@/app/components/Job";
-import { useInfiniteJobList } from "../../hooks/useInfiniteJobList";
+import {
+  continuousJobOverviewListWriterAtom,
+  JobOverviewListAtom,
+} from "../../atom";
 import styles from "./JobOverviewList.module.css";
 
 let _kSavedOffset = 0;
 let _kMeasurementsCache = [] as VirtualItem[];
 
-export function JobOverviewList() {
-  const { items, fetchNextPage, isFetchingNextPage, hasNextPage } =
-    useInfiniteJobList();
-
+export function JobOverviewList({
+  initialDataFromServer,
+}: {
+  initialDataFromServer: {
+    items: TJobOverview[];
+    nextToken: string | undefined;
+  };
+}) {
+  useHydrateAtoms([[JobOverviewListAtom, initialDataFromServer]]);
+  const { items, nextToken } = useAtomValue(JobOverviewListAtom);
+  const fetchNextPage = useSetAtom(continuousJobOverviewListWriterAtom);
   const parentRef = React.useRef<HTMLDivElement>(null);
 
   const rowVirtualizer = useVirtualizer({
@@ -39,15 +52,9 @@ export function JobOverviewList() {
       return;
     }
     if (lastItem.index >= items.length - 1) {
-      fetchNextPage();
+      nextToken && fetchNextPage(nextToken);
     }
-  }, [
-    rowVirtualizer.getVirtualItems(),
-    hasNextPage,
-    fetchNextPage,
-    items.length,
-    isFetchingNextPage,
-  ]);
+  }, [rowVirtualizer.getVirtualItems(), items.length, nextToken]);
 
   return (
     <div ref={parentRef} style={{ height: "100%", overflow: "auto" }}>
@@ -86,11 +93,6 @@ export function JobOverviewList() {
             </div>
           );
         })}
-        {isFetchingNextPage && (
-          <div className={styles.loadingMore}>
-            <p>Loading more jobs...</p>
-          </div>
-        )}
       </div>
     </div>
   );

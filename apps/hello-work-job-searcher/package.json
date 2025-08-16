@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@sho/models": "workspace:*",
-    "@tanstack/react-query": "^5.84.1",
     "@tanstack/react-virtual": "^3.13.12",
+    "jotai": "^2.13.1",
     "neverthrow": "^8.2.0",
     "next": "15.4.6",
     "react": "19.1.1",
