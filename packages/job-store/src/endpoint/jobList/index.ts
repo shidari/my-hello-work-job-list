@@ -51,7 +51,11 @@ export class JobListEndpoint extends OpenAPIRoute {
       );
 
       const {
-        query: { companyName: encodedCompanyName },
+        query: {
+          companyName: encodedCompanyName,
+          employeeCountGt,
+          employeeCountLt,
+        },
       } = validatedData;
 
       const companyName = encodedCompanyName
@@ -70,6 +74,8 @@ export class JobListEndpoint extends OpenAPIRoute {
         limit: 20,
         filter: {
           companyName,
+          employeeCountGt,
+          employeeCountLt,
         },
       });
 
@@ -79,12 +85,12 @@ export class JobListEndpoint extends OpenAPIRoute {
         meta,
       } = jobListResult;
 
-      // JWT署名
       const validPayload: DecodedNextToken = {
         exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
         cursor: { jobId },
         filter: meta.filter,
       };
+      // JWT署名
       const signResult = yield* ResultAsync.fromPromise(
         sign(validPayload, jwtSecret),
         (error) =>

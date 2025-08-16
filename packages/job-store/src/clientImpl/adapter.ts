@@ -7,7 +7,7 @@ import type {
   JobStoreCommand,
   JobStoreDBClient,
 } from "@sho/models";
-import { and, eq, gt, like } from "drizzle-orm";
+import { and, eq, gt, like, lt } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { jobs } from "../db/schema";
 
@@ -61,6 +61,12 @@ async function handleFindJobs(
   const filterConditions = [];
   if (filter.companyName) {
     filterConditions.push(like(jobs.companyName, `%${filter.companyName}%`));
+  }
+  if (filter.employeeCountGt !== undefined) {
+    filterConditions.push(gt(jobs.employeeCount, filter.employeeCountGt));
+  }
+  if (filter.employeeCountLt !== undefined) {
+    filterConditions.push(lt(jobs.employeeCount, filter.employeeCountLt));
   }
 
   const conditions = [...cursorConditions, ...filterConditions];

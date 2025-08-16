@@ -15,7 +15,7 @@ export type FindJobsCommand = {
   options: {
     cursor?: { jobId: number };
     limit: number;
-    filter: { companyName?: string };
+    filter: SearchFilter;
   };
 };
 export type CheckJobExistsCommand = {
@@ -30,7 +30,11 @@ export type JobStoreCommand =
   | CheckJobExistsCommand;
 
 // --- コマンドtypeごとのoutput型マッピング ---
-export type SearchFilter = { companyName?: string };
+export type SearchFilter = {
+  companyName?: string;
+  employeeCountLt?: number;
+  employeeCountGt?: number;
+};
 export interface CommandOutputMap {
   InsertJob: { jobId: number };
   FindJobByNumber: { job: Job | null };

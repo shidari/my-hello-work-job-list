@@ -8,10 +8,14 @@ extendZodWithOpenApi(z);
 
 export const jobListQuerySchema = z.object({
   companyName: z.string().optional(),
+  employeeCountLt: z.number().optional(), // 追加
+  employeeCountGt: z.number().optional(), // 追加
 });
 
 export const jobListSearchFilterSchema = z.object({
   companyName: z.string().optional(),
+  employeeCountLt: z.number().optional(), // 追加
+  employeeCountGt: z.number().optional(), // 追加
 });
 
 export const JobListSchema = z.array(
