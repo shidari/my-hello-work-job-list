@@ -4,33 +4,39 @@
 
 ### 🏗️ アーキテクチャ概要
 
-**モノレポ型サーバーレス構成** | **TypeScript + Effect-ts + AWS Lambda +
+**モノレポ型サーバーレス構成** | **TypeScript + neverthrow + AWS Lambda +
 Cloudflare Workers + Next.js 15**
 
 ```
-ハローワーク → headless-crawler(Lambda) → job-store(Workers) → React App
+ハローワーク → headless-crawler(Lambda) → job-store(Workers) → React 19 App
                      ↓
                @sho/models(型統一)
 ```
 
 ### ⚡ 技術的な見どころ
 
-**Effect-ts関数型プログラミング**
+**neverthrow関数型エラーハンドリング**
 
-- 依存注入の型安全性 + Result型エラーハンドリング
-- Stream.paginateChunkEffectによる効率的なページネーション
-- create/running effect分離の学習プロセス（最難関）
+- Result型による型安全なエラーハンドリング（タグ付きunion型でエラー分類）
+- Effect-tsからneverthrowへの移行（個人プロジェクトにはオーバースペックだった）
+- 実用性重視の関数型プログラミング（DIは引数、エラーハンドリングは返り値のResult型で解決）
 
 **型安全性の徹底**
 
 - Drizzle ORM + Zod + TypeScript統合
-- 生データ→変換→DB保存の3段階型設計
-- 手動同期の技術的負債を明示的管理
+- @sho/modelsによる一元的な型管理
+- フロントエンド〜バックエンド〜DBまでの型の一貫性
 
 **サーバーレス基盤の使い分け**
 
-- Cloudflare Workers: 軽量API（完全無料）
-- AWS Lambda: headless-browser処理（コスト最適化済み）
+- Cloudflare Workers: 軽量API（完全無料）+ D1データベース
+- AWS Lambda: Playwright headless-browser処理（コスト最適化済み）
+
+**モダンReact技術スタック**
+
+- React 19 + Next.js 15（App Router）
+- TanStack React Virtual（仮想化無限スクロール）
+- Jotai（効率的な状態管理）
 
 ### 📊 実績・パフォーマンス
 
@@ -38,27 +44,35 @@ Cloudflare Workers + Next.js 15**
 | ---------------- | -------------------- |
 | 開発期間         | 2ヶ月（180時間）     |
 | クローリング速度 | 200件/90秒           |
+| 収集データ       | 約600件の求人情報    |
 | コスト           | CF無料 + AWS大幅削減 |
-| 技術学習比重     | Effect-ts 40%        |
+| 技術学習比重     | Effect-ts→neverthrow移行 |
 
 ### 🔧 技術的課題と解決
 
 **学習困難ポイント**
 
-- Effect-ts: create/running effect分離 → Rustイテレータ概念で突破
-- Chunk概念: 型エラー格闘 → Effect-ts実装に合わせる設計転換
+- Effect-ts: create/running effect分離 → 実装の複雑さからneverthrowに移行
+- TanStack React Virtual: 仮想化による大量データ表示の最適化
+- Next.js 15 App Router: ハイブリッドデータフェッチング（SSR + クライアント）
 
 **設計反省点**
 
-- Effect-ts密結合 → 3rd party libraryのwrapper設計の重要性を学習
-- テスト戦略: 型ドリブン開発で品質担保、コストと効果の戦略的判断
+- Effect-ts密結合 → neverthrowによる実用性重視の設計に転換
+- テスト戦略: 型ドリブン開発で品質担保、実装効率とのバランス
 
 **技術的負債**
 
-- Option型理解不足（明示的管理）
 - headless-crawler密結合（インターフェース分離予定）
+- 検索機能のdebounce実装（パフォーマンス最適化）
 
 **デモサイト**: https://my-hello-work-job-list-hello-work-j.vercel.app/
+
+**主要機能**:
+- ✅ 求人一覧表示（仮想化無限スクロール）
+- ✅ 求人詳細ページ（動的ルーティング）
+- ✅ リアルタイム会社名フィルタリング
+- ✅ ハイブリッドデータフェッチング（SSR + クライアント）
 
 ---
 
@@ -75,20 +89,20 @@ Cloudflare Workers + Next.js 15**
 
 **工数配分の内訳**:
 
-- Effect-ts学習・実装: 40%（最も時間を要した）
-- インフラ設計・構築: 25%
-- フロントエンド実装: 20%
-- 型設計・スキーマ統合: 15%
+- フロントエンド実装（React 19 + Next.js 15）: 35%
+- インフラ設計・構築（AWS + Cloudflare）: 25%
+- 型設計・スキーマ統合（@sho/models）: 20%
+- Effect-ts学習→neverthrow移行: 20%
 
 ### パフォーマンス・スケーラビリティ設計
 
 **実測パフォーマンス**:
 
 - **クローリング処理**: 200件/90秒（約2.2件/秒）
-- **API レスポンス時間**:
-  未測定（「単純なDBアクセスなので1秒未満」の技術的判断）
-- **スケーラビリティ戦略**:
-  YAGNI原則に基づき、10万件規模時の対応は「作り直し」を選択
+- **収集データ**: 約600件の求人情報を自動収集・構造化
+- **フロントエンド**: TanStack React Virtualによる仮想化で大量データを効率表示
+- **API レスポンス時間**: 未測定（「単純なDBアクセスなので1秒未満」の技術的判断）
+- **スケーラビリティ戦略**: YAGNI原則に基づき、10万件規模時の対応は「作り直し」を選択
 
 **コスト最適化実績**:
 
@@ -100,34 +114,36 @@ Cloudflare Workers + Next.js 15**
 
 **成功した技術選定**:
 
-- **モノレポ採用理由**:
-  「単一責務を徹底しないと脳が爆発する」→モジュール化でスルスル開発を実現
-- **Effect-ts採用**:
-  Result型への親和性、依存注入の型安全性、エフェクトシステムの将来性
+- **モノレポ採用理由**: 「単一責務を徹底しないと脳が爆発する」→モジュール化でスルスル開発を実現
+- **neverthrow採用**: Effect-tsから移行、実装の複雑さを抑えつつ型安全性を確保
+- **React 19 + Next.js 15**: 最新技術スタックによるモダンな開発体験
+- **TanStack React Virtual**: 大量データの仮想化による効率的な表示
 
 **失敗・反省点**:
 
-- **Effect-ts密結合**: 「ナイーブに選択したのはミス」→3rd party
-  libraryのwrapper設計の重要性を学習
-- **DIパターンの見落とし**:
-  neverthrowでもDI可能だったが、Effect-tsにベッタリになってしまった
-- **技術的負債の明確化**:
-  headless-crawlerの密結合を今後インターフェースレベルで分離予定
+- **Effect-ts密結合**: 「ナイーブに選択したのはミス」→neverthrowによる実用性重視の設計に転換
+- **技術的負債の明確化**: headless-crawlerの密結合を今後インターフェースレベルで分離予定
+- **検索機能の最適化**: debounce実装によるパフォーマンス改善が必要
 
-### Effect-ts習得プロセス・技術的困難の克服
+### neverthrow移行・技術的困難の克服
 
-**最も困難だった概念**:
+**Effect-tsからneverthrowへの移行理由**:
 
-- **create effect vs running effect**: 分離の概念理解に最も時間を要した
-- **突破のきっかけ**: 「Rustのイテレータをぶん回してる」と理解することで腹落ち
-- **Chunk概念**: 「最難関」だったが、Effect-tsの実装に合わせる必要性を受け入れ
-- **Option型**: 「いまだに理解できない」明確な技術的負債として認識
+- **オーバースペック**: Effect-tsは個人プロジェクトには機能が豊富すぎた
+- **実用性重視**: 使わない機能が多すぎるため、Result型とContext明示のみに集中
+- **DIの簡素化**: neverthrowでは引数でDI、返り値でResultにすることで問題解決
 
-**学習アプローチ**:
+**技術的困難と解決**:
 
-- ドキュメント精読 + AIとの壁打ち
-- 実装を通じた試行錯誤
-- 型エラーとの格闘を通じた理解深化
+- **TanStack React Virtual**: 固有APIの理解が必要だが、疎結合設計で他処理との結合を最小化
+- **Next.js 15 App Router**: ハイブリッドデータフェッチング（SSR + クライアント）の実装
+- **Jotai状態管理**: atom分離設計による効率的な状態管理
+
+**実装時の判断基準**:
+
+- **仮想化の採用**: 600件程度でも将来を見据えて仮想化を実装（経験則的な判断）
+- **認知負荷の管理**: データベースAPI変更時にフロントエンド変更が連鎖する複雑性を回避
+- **デプロイ境界の明確化**: デプロイ先が異なるものを1つのプロジェクトで管理すると実態と認知が乖離
 
 ### テスト戦略・品質保証の技術的判断
 
@@ -135,14 +151,36 @@ Cloudflare Workers + Next.js 15**
 
 - **基本方針**: 「テスト書いてもご利益ない」→型ドリブン開発で品質担保
 - **型安全性重視**: @sho/modelsによる型統一で、コンパイル時エラー検出を優先
-- **個人プロジェクト特性**:
-  「ミスってもいいや」精神だが、デプロイ修正の手間を避けるためCI/CDでエラー検知は徹底
+- **個人プロジェクト特性**: 「ミスってもいいや」精神だが、デプロイ修正の手間を避けるためCI/CDでエラー検知は徹底
+- **実装効率重視**: neverthrowによる型安全なエラーハンドリングで品質と効率のバランスを確保
 
 **品質保証の実装**:
 
 - **コンパイル時チェック**: TypeScript strict mode全パッケージ適用
 - **CI/CD**: Husky + lint-staged + Biomeによる自動品質チェック
 - **型整合性**: Drizzle ORM + Zod統合による存在しないキー指定の防止
+- **モダンツール**: Biome（ESLint + Prettier代替）による高速なlint・format
+
+### エラーハンドリング・運用の実装戦略
+
+**neverthrowによるエラーハンドリング設計**:
+
+- **タグ付きunion型**: 現場経験を活かしたResult型の自作からneverthrowへの移行
+- **フロントエンドエラー表示**: サーバー側エラー詳細は非表示、4xx（ユーザー入力エラー）と5xx（システムエラー）で分類
+- **retry戦略**: headless-crawlerでのスクレイピング失敗時のretry機能は未実装（実装優先のため）
+- **エラー分類**: クラスベースではなくタグ付けによるエラーハンドリングで後続処理を制御
+
+**運用での実際の課題と対応**:
+
+- **想定外の問題**: 2ヶ月運用で発生したが詳細は失念（個人プロジェクトの特性）
+- **ハローワークサイト構造変更**: 滅多に変わらないと想定し、対応策は未検討
+- **AWS Lambdaコールドスタート**: 5秒程度の遅延は許容範囲として体感上問題なし
+- **検索パフォーマンス**: 600件規模では問題を感じていない
+
+**商用化時の技術改善優先順位**:
+
+- **可用性の確保**: 障害監視とすぐの障害対応体制構築を最優先
+- **技術的負債の解決**: 自分の技術力向上を重視し、headless-crawler密結合の解消を優先
 
 ### セキュリティ・運用設計
 
@@ -162,14 +200,13 @@ Cloudflare Workers + Next.js 15**
 
 ## 概要
 
-Hello Work
-Searcherは、ハローワークの求人情報を自動収集・管理・検索できるモノレポ型Webアプリケーションです。クローラー、API/DB、フロントエンドを独立したパッケージとして構成し、クラウドネイティブな設計・TypeScriptによる型設計を徹底しています。
+Hello Work Searcherは、ハローワークの求人情報を自動収集・管理・検索できるモノレポ型Webアプリケーションです。クローラー、API/DB、フロントエンドを独立したパッケージとして構成し、クラウドネイティブな設計・TypeScriptによる型設計を徹底しています。
 
 **実績**:
-約200件の求人データを自動収集・構造化し、従来の手動検索プロセスを完全自動化
+約600件の求人データを自動収集・構造化し、従来の手動検索プロセスを完全自動化
 
 **技術的ハイライト**:
-Effect-tsによる関数型プログラミング、型安全性の徹底、サーバーレスアーキテクチャの最適化、モノレポによる効率的な開発体験を実現。
+neverthrowによる関数型エラーハンドリング、React 19 + Next.js 15による最新技術スタック、TanStack React Virtualによる仮想化、型安全性の徹底、サーバーレスアーキテクチャの最適化、モノレポによる効率的な開発体験を実現。
 
 ---
 
@@ -204,74 +241,53 @@ graph TD
 
 ## 技術選定・設計思想
 
-### Effect-ts採用の技術的根拠と学習プロセス
+### neverthrow採用の技術的根拠と移行プロセス
 
-**採用理由**:
+**Effect-tsからneverthrowへの移行理由**:
 
-- **Result型への親和性**:
-  もともとResult型を好んでいたため、Effect-tsの型安全なエラーハンドリングが魅力的
-- **依存注入の型安全性**:
-  依存関係まで型で管理できる点が決定的。headless-crawlerでは`HelloWorkCrawler`を依存として扱い、テスタビリティと保守性を向上
-- **エフェクトシステムの将来性**:
-  エフェクトシステムは今後メジャーになると予想し、先取りする価値があると判断
+- **実装の複雑さ**: Effect-tsの学習コストが高く、実装が複雑になりがち
+- **実用性重視**: neverthrowによる型安全なエラーハンドリングで十分な品質を確保
+- **開発効率**: より直感的なAPIで開発速度を向上
+- **Result型への親和性**: もともとResult型を好んでいたため、neverthrowの方が自然
 
-**学習プロセスの詳細**:
-
-**最も困難だった概念 - create effect vs running effect**:
+**neverthrowの具体的なメリット（実装例）**:
 
 ```typescript
-// 理解に苦労した概念：effectの作成と実行の分離
-const createEffect = Effect.succeed("hello"); // effectを作成（まだ実行されない）
-const runEffect = Effect.runSync(createEffect); // effectを実行
+// neverthrowによる型安全なエラーハンドリング
+const result = safeTry(async function* () {
+  const validatedData = yield* await ResultAsync.fromPromise(
+    self.getValidatedData<typeof self.schema>(),
+    (error) =>
+      createFetchJobListValidationError(`validation failed\n${String(error)}`),
+  );
+  // ...
+});
 
-// 突破のきっかけ：「Rustのイテレータをぶん回してる」と理解
-const stream = Stream.paginateChunkEffect(
-  { jobListPage, count: initialCount, roughMaxCount, nextPageDelayMs },
-  fetchJobMetaData, // ここでeffectを作成
-); // 実行は別のタイミング
+// フロントエンドでの使用例
+const fetchJobs = async (): Promise<Result<JobListResponse, Error>> => {
+  return ResultAsync.fromPromise(
+    fetch('/api/proxy/job-store/jobs'),
+    (error) => new Error(`Failed to fetch jobs: ${error}`)
+  );
+};
 ```
 
-**Chunk概念の困難と解決**:
+**技術的困難と解決**:
 
-- **問題**: Effect-tsのchunk処理で型が合わない
-- **解決プロセス**: ドキュメント精読 + AIとの壁打ち
-- **学習**:
-  Effect-tsの実装に合わせる必要性を受け入れ、型システムに従う設計に転換
+- **TanStack React Virtual**: 仮想化による大量データ表示の最適化
+- **Next.js 15 App Router**: ハイブリッドデータフェッチング（SSR + クライアント）の実装
+- **Jotai状態管理**: atom分離設計による効率的な状態管理
 
-**現在も残る技術的負債**:
+**現在の技術的負債**:
 
-- **Option型**: 「いまだに理解できない」と明確に認識
-- **対策**: 明示的に技術的負債として管理し、将来的な学習課題として位置づけ
+- **headless-crawler密結合**: インターフェースレベルでの分離を計画
+- **検索機能のdebounce**: パフォーマンス最適化のため実装予定
 
-**具体的なメリット（実装例）**:
+**今後の改善**:
 
-```typescript
-// 依存注入による型安全な設計
-export class HelloWorkCrawler extends Context.Tag("HelloWorkCrawler")<
-  HelloWorkCrawler,
-  {
-    readonly crawlJobLinks: () => Effect.Effect<
-      JobMetadata[],
-      | ListJobsError
-      | EngineeringLabelSelectorError
-    > // ... 全てのエラー型を明示
-    ;
-  }
->() {}
-
-// Stream.paginateChunkEffectによる効率的なページネーション処理
-const stream = Stream.paginateChunkEffect(
-  { jobListPage, count: initialCount, roughMaxCount, nextPageDelayMs },
-  fetchJobMetaData,
-);
-```
-
-**反省点と今後の改善**:
-
-- **密結合の問題**:
-  Effect-tsをナイーブに選択し、headless-crawlerがEffect-tsにベッタリになった
-- **改善策**: 3rd party libraryを使う際は、wrapper/中間層を挟むべきだった
-- **今後の対応**: インターフェースレベルでの分離を計画
+- **インターフェース分離**: headless-crawlerの密結合を解消
+- **検索機能の最適化**: debounce実装によるパフォーマンス改善
+- **UI/UXの改善**: より使いやすいインターフェースの実装
 
 ### モノレポ設計の戦略的判断
 
@@ -356,12 +372,61 @@ const result = safeTry(async function* () {
 
 ### 1. @sho/models
 
-- **役割**: 全パッケージ共通の型定義・スキーマ管理
-- **主な技術**: TypeScript, Zod, Drizzle ORM
+- **役割**: 全パッケージ共通の型定義・スキーマ管理（Source of Truth）
+- **主な技術**: TypeScript, Zod, Drizzle ORM, tsup
 - **設計ポイント**:
   - 型の一元管理でパッケージ間の整合性担保
   - Zodによるランタイムバリデーション
   - Drizzle ORMによるDB型定義
+  - フロントエンド〜バックエンド〜DBまでの型の一貫性
+
+### 2. headless-crawler
+
+- **役割**: ハローワークサイトのクローリング・スクレイピング
+- **主な技術**: Playwright, AWS CDK, Effect (neverthrowに移行予定), AWS Lambda + SQS
+- **設計ポイント**:
+  - Playwrightによるブラウザ自動化
+  - @sparticuz/chromiumによるLambda最適化
+  - EventBridge (Cron) による定期実行（毎週月曜日午前1時）
+  - SQS連携による非同期ジョブ処理
+  - CloudWatch アラーム機能付き
+
+### 3. job-store
+
+- **役割**: 求人情報のデータベース管理・API提供
+- **主な技術**: Cloudflare Workers, Drizzle ORM, Hono, D1 (SQLite), Chanfana
+- **設計ポイント**:
+  - JWTベースのページネーション機能（15分有効期限）
+  - OpenAPI仕様書自動生成 (`/api/v1/docs`)
+  - neverthrowによる型安全なエラーハンドリング
+  - 主要エンドポイント:
+    - `POST /api/v1/job` - 求人情報登録
+    - `GET /api/v1/job/:jobNumber` - 求人詳細取得
+    - `GET /api/v1/jobs` - 求人一覧取得（会社名フィルタリング対応）
+    - `GET /api/v1/jobs/continue` - 継続ページネーション
+
+### 4. hello-work-job-searcher
+
+- **役割**: ユーザーインターフェース
+- **主な技術**: React 19, Next.js 15 (App Router), TanStack React Virtual, Jotai, neverthrow
+- **設計ポイント**:
+  - ハイブリッドデータフェッチング（SSR + クライアント）
+  - TanStack React Virtualによる仮想化無限スクロール
+  - Jotaiによる効率的な状態管理（jobListAtom, JobOverviewListAtom）
+  - プロキシAPI実装（CORS回避とエラーハンドリング）
+  - 実装済み機能:
+    - ✅ 求人一覧表示（仮想化無限スクロール）
+    - ✅ 求人詳細ページ（`/jobs/[jobNumber]`）
+    - ✅ リアルタイム会社名フィルタリング
+    - ✅ サーバーサイドレンダリング（SSR）による初期データプリロード
+
+### 5. @sho/scripts
+
+- **役割**: 共通スクリプト・ユーティリティ
+- **主な技術**: TypeScript, fs-extra, neverthrow, find-up
+- **設計ポイント**:
+  - スキーマコピー等の開発支援スクリプト (`copy-schema`)
+  - neverthrowによる型安全なエラーハンドリング
 
 #### 型安全性統一の具体的課題解決プロセス
 
