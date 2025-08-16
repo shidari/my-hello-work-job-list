@@ -1,14 +1,33 @@
-import type { TJobOverview } from "@sho/models";
+import type { JobList, TJobOverview } from "@sho/models";
 import { atom } from "jotai";
 import { jobStoreClientOnBrowser } from "@/app/store/client";
 
 // ジョブリストのatom（初期値をオブジェクトに修正）
+export const jobListAtom = atom<{
+  jobs: JobList;
+  nextToken: string | undefined;
+  totalCount: number;
+}>({
+  jobs: [],
+  nextToken: undefined,
+  totalCount: 0,
+});
+
 export const JobOverviewListAtom = atom<{
   items: TJobOverview[];
   nextToken: string | undefined;
-}>({
-  items: [],
-  nextToken: undefined,
+}>((get) => {
+  const { jobs, nextToken } = get(jobListAtom);
+  return {
+    items: jobs.map((job) => ({
+      jobNumber: job.jobNumber,
+      companyName: job.companyName,
+      jobTitle: job.occupation,
+      employmentType: job.employmentType,
+      workPlace: job.workPlace || "不明",
+    })),
+    nextToken,
+  };
 });
 
 // 書き込み専用atom: getContinuedJobsを叩いてリストを更新
@@ -17,18 +36,16 @@ export const continuousJobOverviewListWriterAtom = atom<
   [string],
   Promise<void>
 >(null, async (_get, set, nextToken) => {
-  const { jobs, nextToken: newNextToken } = (
+  const {
+    jobs,
+    nextToken: newNextToken,
+    meta: { totalCount },
+  } = (
     await jobStoreClientOnBrowser.getContinuedJobs(nextToken)
   )._unsafeUnwrap();
-  const newItems = jobs.map((job) => ({
-    jobNumber: job.jobNumber,
-    companyName: job.companyName,
-    jobTitle: job.occupation,
-    employmentType: job.employmentType,
-    workPlace: job.workPlace || "不明",
-  }));
-  set(JobOverviewListAtom, (prev) => ({
-    items: [...prev.items, ...newItems],
+  set(jobListAtom, (prev) => ({
+    jobs: [...prev.jobs, ...jobs],
     nextToken: newNextToken,
+    totalCount: totalCount,
   }));
 });

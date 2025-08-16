@@ -1,6 +1,6 @@
 "use client";
 
-import type { TJobOverview } from "@sho/models";
+import type { JobList } from "@sho/models";
 import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
@@ -10,6 +10,7 @@ import { JobOverview } from "@/app/components/Job";
 import {
   continuousJobOverviewListWriterAtom,
   JobOverviewListAtom,
+  jobListAtom,
 } from "../../atom";
 import styles from "./JobOverviewList.module.css";
 
@@ -20,11 +21,12 @@ export function JobOverviewList({
   initialDataFromServer,
 }: {
   initialDataFromServer: {
-    items: TJobOverview[];
+    jobs: JobList;
     nextToken: string | undefined;
+    totalCount: number;
   };
 }) {
-  useHydrateAtoms([[JobOverviewListAtom, initialDataFromServer]]);
+  useHydrateAtoms([[jobListAtom, initialDataFromServer]]);
   const { items, nextToken } = useAtomValue(JobOverviewListAtom);
   const fetchNextPage = useSetAtom(continuousJobOverviewListWriterAtom);
   const parentRef = React.useRef<HTMLDivElement>(null);
