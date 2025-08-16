@@ -1,7 +1,7 @@
 "use client";
 import { useSetAtom } from "jotai";
 import { useRef } from "react";
-import { initializeJobListWriterAtom } from "../atom";
+import { initializeJobListWriterAtom } from "./atom";
 
 export const JobsSearchfilter = () => {
   const formRef = useRef<HTMLFormElement>(null);

@@ -11,7 +11,7 @@ import {
   continuousJobOverviewListWriterAtom,
   JobOverviewListAtom,
   jobListAtom,
-} from "../../atom";
+} from "../atom";
 import styles from "./JobOverviewList.module.css";
 
 let _kSavedOffset = 0;

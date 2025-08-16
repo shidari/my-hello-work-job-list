@@ -1,9 +1,9 @@
 export const dynamic = "force-dynamic";
 
 import { FlexColumn, FlexN } from "../components";
-import { JobOverviewList } from "../components/client/components/JobOverViewList";
-import { JobsSearchfilter } from "../components/client/components/JobsSearchfilter";
-import { JobtotalCount } from "../components/client/components/JobTotalCount";
+import { JobOverviewList } from "../components/client/JobOverViewList";
+import { JobsSearchfilter } from "../components/client/JobsSearchfilter";
+import { JobtotalCount } from "../components/client/JobTotalCount";
 import { jobStoreClientOnServer } from "../store/server";
 
 export default async function Page() {

@@ -1,7 +1,7 @@
 "use client";
 
 import { useAtomValue } from "jotai";
-import { JobtotalCountAtom } from "../atom";
+import { JobtotalCountAtom } from "./atom";
 
 export const JobtotalCount = () => {
   const totalCount = useAtomValue(JobtotalCountAtom);
