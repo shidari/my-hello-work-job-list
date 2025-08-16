@@ -21,6 +21,12 @@ export const jobStoreClientOnServer = {
           encodeURIComponent(filter.companyName),
         );
       }
+      if (filter.employeeCountGt) {
+        searchParams.append("employeeCountGt", String(filter.employeeCountGt));
+      }
+      if (filter.employeeCountLt) {
+        searchParams.append("employeeCountLt", String(filter.employeeCountLt));
+      }
 
       const url = `${endpoint}/jobs${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 

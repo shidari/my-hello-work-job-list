@@ -7,6 +7,12 @@ export const jobStoreClientOnBrowser = {
     if (filter.companyName) {
       searchParams.append("companyName", filter.companyName);
     }
+    if (filter.employeeCountGt) {
+      searchParams.append("employeeCountGt", String(filter.employeeCountGt));
+    }
+    if (filter.employeeCountLt) {
+      searchParams.append("employeeCountLt", String(filter.employeeCountLt));
+    }
     return safeTry(async function* () {
       const response = yield* ResultAsync.fromPromise(
         fetch(

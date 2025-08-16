@@ -12,12 +12,12 @@ export default async function Page() {
   return (
     <main style={{ height: "100%" }}>
       <FlexColumn>
-        <FlexN n={2}>
+        <FlexN n={3}>
           <h1>求人情報一覧</h1>
           <JobtotalCount />
           <JobsSearchfilter />
         </FlexN>
-        <FlexN n={8}>
+        <FlexN n={7}>
           <JobOverviewList
             initialDataFromServer={{
               jobs: data.jobs,
