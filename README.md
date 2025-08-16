@@ -17,7 +17,7 @@ TypeScript + neverthrow + AWS Lambda + Cloudflare Workers + Next.js 15 + React
 モノレポ型サーバーレス構成（コスト最適化重視）
 
 **実績**\
-約200件の求人データを自動収集・構造化、手動検索プロセスを完全自動化
+約600件の求人データを自動収集・構造化、手動検索プロセスを完全自動化
 
 **技術的ハイライト**
 
@@ -134,10 +134,11 @@ graph TD
   - RESTful API提供（求人一覧・詳細取得）
   - OpenAPI仕様書自動生成 (`/api/v1/docs`)
   - ルートパスから自動的にドキュメントページへリダイレクト
-  - 3つのエンドポイント:
+  - 主要エンドポイント:
     - `POST /api/v1/job` - 求人情報登録
     - `GET /api/v1/job/:jobNumber` - 求人詳細取得
-    - `GET /api/v1/jobs` - 求人一覧取得
+    - `GET /api/v1/jobs` - 求人一覧取得（会社名フィルタリング対応）
+    - `GET /api/v1/jobs/continue` - 継続ページネーション（JWTトークンベース）
 
 ##### `hello-work-job-searcher`
 
@@ -147,20 +148,20 @@ graph TD
   - Next.js (v15.4.6) - App Router
   - TypeScript (v5)
   - Turbopack - 開発時高速化
-  - TanStack React Query (v5.84.1) - データフェッチング
-  - TanStack React Virtual (v3.13.12) - 仮想化
+  - TanStack React Virtual (v3.13.12) - 仮想化による無限スクロール
   - neverthrow (v8.2.0) - エラーハンドリング
-  - Jotai (v2.13.0) - 状態管理
+  - Jotai (v2.13.1) - 状態管理
 - **デプロイ**: Vercel
-- **現在の状況**:
-  - job-store APIとの連携完了
-  - 求人一覧表示機能実装済み
-  - プロキシAPI (`/api/proxy/job-store/jobs`) 実装済み
-  - 無限スクロール対応の求人一覧表示
-  - 求人詳細ページ (`/jobs/[jobNumber]`) 実装済み
-  - ホームページから求人一覧への自動リダイレクト実装済み
-  - 会社名フィルタリング機能対応
-  - サーバーサイドレンダリング（SSR）による初期データプリロード実装済み
+- **実装済み機能**:
+  - ✅ ハイブリッドデータフェッチング（サーバーサイド + クライアントサイド）
+  - ✅ 求人一覧表示（TanStack React Virtualによる仮想化無限スクロール）
+  - ✅ プロキシAPI実装（`/api/proxy/job-store/jobs`, `/api/proxy/job-store/jobs/continue`）
+  - ✅ 求人詳細ページ（`/jobs/[jobNumber]`）
+  - ✅ ホームページから求人一覧への自動リダイレクト
+  - ✅ リアルタイム会社名フィルタリング（onChange即時検索）
+  - ✅ サーバーサイドレンダリング（SSR）による初期データプリロード
+  - ✅ Jotaiによる効率的な状態管理（jobListAtom, JobOverviewListAtom）
+  - ✅ 仮想化による大量データの効率的な表示とスクロール位置保持
 
 ##### `@sho/scripts`
 
@@ -260,17 +261,20 @@ pnpm start          # 本番環境での起動確認
 
 ### 完成済み
 
-- ✅ 求人検索条件に基づく自動クローリング
-- ✅ 求人詳細情報の自動スクレイピング
-- ✅ 求人情報のデータベース管理（`job-store`によるAPI提供）
-- ✅ JWTベースのページネーション機能付き求人一覧API
-- ✅ OpenAPI仕様書の自動生成
-- ✅ フロントエンドと`job-store` APIの連携
-- ✅ 求人一覧表示機能（無限スクロール対応）
-- ✅ 求人詳細表示機能
-- ✅ レスポンシブなWeb UI
-- ✅ 会社名による求人フィルタリング機能
-- ✅ プロキシAPIによるCORS回避
+- ✅ 求人検索条件に基づく自動クローリング（EventBridge Cron定期実行）
+- ✅ 求人詳細情報の自動スクレイピング（Playwright + AWS Lambda）
+- ✅ 求人情報のデータベース管理（Cloudflare D1 + Drizzle ORM）
+- ✅ JWTベースのページネーション機能（15分有効期限、カーソルベース）
+- ✅ OpenAPI仕様書の自動生成（Chanfana + Zod統合）
+- ✅ ハイブリッドデータフェッチング（SSR + クライアントサイド）
+- ✅ TanStack React Virtualによる仮想化無限スクロール
+- ✅ 求人詳細表示機能（動的ルーティング `/jobs/[jobNumber]`）
+- ✅ レスポンシブなWeb UI（React 19 + Next.js 15）
+- ✅ リアルタイム会社名フィルタリング（onChange即時検索）
+- ✅ プロキシAPIによるCORS回避とエラーハンドリング
+- ✅ Jotaiによる効率的な状態管理（atom分離設計）
+- ✅ 仮想化によるスクロール位置保持とメモリ効率化
+- ✅ neverthrowによる型安全なエラーハンドリング
 
 ### 開発中・今後の予定
 
@@ -317,11 +321,13 @@ pnpm start          # 本番環境での起動確認
 
 ### パフォーマンス最適化
 
-- TanStack React Query による効率的なデータフェッチング
-- TanStack React Virtual による大量データの仮想化
-- JWTベースのページネーション
-- プロキシAPIによるCORS回避
-- Jotaiによる効率的な状態管理
+- ハイブリッドデータフェッチング（SSR + クライアントサイド）による初期表示高速化
+- TanStack React Virtual による大量データの仮想化と無限スクロール
+- JWTベースのページネーション（15分有効期限、カーソルベース）
+- プロキシAPIによるCORS回避とエラーハンドリング
+- Jotaiによる効率的な状態管理（jobListAtom, JobOverviewListAtom）
+- 仮想化によるスクロール位置保持とメモリ効率化
+- neverthrowによる型安全なエラーハンドリング
 
 ## API仕様
 
@@ -334,13 +340,13 @@ pnpm start          # 本番環境での起動確認
 
 - `POST /api/v1/job` - 求人情報登録
 - `GET /api/v1/job/:jobNumber` - 求人詳細取得
-- `GET /api/v1/jobs?nextToken={token}&companyName={name}` -
-  求人一覧取得（ページネーション・フィルタリング対応）
+- `GET /api/v1/jobs?companyName={name}` - 求人一覧取得（会社名フィルタリング対応）
+- `GET /api/v1/jobs/continue?nextToken={token}` - 継続ページネーション（JWTトークンベース、15分有効期限）
 
 #### プロキシAPI（フロントエンド）
 
-- `GET /api/proxy/job-store/jobs?nextToken={token}&companyName={name}` -
-  求人一覧取得プロキシ
+- `GET /api/proxy/job-store/jobs?companyName={name}` - 求人一覧取得プロキシ
+- `GET /api/proxy/job-store/jobs/continue?nextToken={token}` - 継続ページネーションプロキシ
 
 ## 開発ガイドライン
 
