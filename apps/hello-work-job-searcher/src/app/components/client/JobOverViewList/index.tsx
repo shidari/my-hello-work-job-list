@@ -7,6 +7,7 @@ import { useHydrateAtoms } from "jotai/utils";
 import Link from "next/link";
 import React, { useEffect } from "react";
 import { JobOverview } from "@/app/components/Job";
+import { useJobsWithFavorite } from "@/app/hooks/useJobsWithFavorite.tsx";
 import {
   continuousJobOverviewListWriterAtom,
   JobOverviewListAtom,
@@ -27,6 +28,7 @@ export function JobOverviewList({
 }) {
   useHydrateAtoms([[jobListAtom, initialDataFromServer]]);
   const { items, nextToken } = useAtomValue(JobOverviewListAtom);
+  const wrappedItems = useJobsWithFavorite(items);
   const fetchNextPage = useSetAtom(continuousJobOverviewListWriterAtom);
   const parentRef = React.useRef<HTMLDivElement>(null);
   const [_kSavedOffset, setSavedOffset] = useAtom(
@@ -37,7 +39,7 @@ export function JobOverviewList({
   );
 
   const rowVirtualizer = useVirtualizer({
-    count: items.length,
+    count: wrappedItems.length,
     getScrollElement: () => parentRef.current,
     estimateSize: () => 250, // 内部計算用はpxのまま
     initialOffset: _kSavedOffset,
@@ -73,7 +75,8 @@ export function JobOverviewList({
         }}
       >
         {rowVirtualizer.getVirtualItems().map((virtualItem) => {
-          const item = items[virtualItem.index];
+          const wrappedItem = wrappedItems[virtualItem.index];
+          const { item, JobFavoriteButton } = wrappedItem;
           return (
             <div
               key={item.jobNumber}
@@ -96,6 +99,7 @@ export function JobOverviewList({
                     workPlace={item.workPlace}
                   />
                 </Link>
+                <JobFavoriteButton />
               </section>
             </div>
           );

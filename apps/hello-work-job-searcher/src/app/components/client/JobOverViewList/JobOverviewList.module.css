@@ -5,6 +5,7 @@
     margin: 4px;
     border: 0.1em solid gainsboro;
     padding: 2%;
+    position: relative;
 }
 
 /* ちょっと良くない気がする */

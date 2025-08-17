@@ -1,4 +1,9 @@
-import type { JobList, SearchFilter, TJobOverview } from "@sho/models";
+import {
+  type JobList,
+  JobOverviewSchema,
+  type SearchFilter,
+  type TJobOverview,
+} from "@sho/models";
 import type { VirtualItem } from "@tanstack/react-virtual";
 import { atom } from "jotai";
 import { jobStoreClientOnBrowser } from "@/app/store/client";
@@ -78,3 +83,43 @@ export const continuousJobOverviewListWriterAtom = atom<
 export const scrollRestorationByItemIndexAtom = atom(0);
 // あまり直接的に外部ライブラリのインターフェースに依存させたくないが、仕方なく
 export const scrollRestorationByItemListAtom = atom<VirtualItem[]>([]);
+
+// writableなatom: 初回はlocalStorageから取得
+export const favoriteJobsAtom = atom<TJobOverview[]>(
+  (() => {
+    try {
+      const raw = localStorage.getItem("favoriteJobs");
+      if (!raw) return [];
+      const parsed = JSON.parse(raw);
+      if (!Array.isArray(parsed)) return [];
+      const validated = parsed.map((item) => JobOverviewSchema.parse(item));
+      return validated;
+    } catch {
+      return [];
+    }
+  })(),
+);
+
+// favoriteJobsAtomにTJobOverviewをappendし、localStorageにも書き込むwrite-only atom
+export const appendFavoriteJobAtom = atom<null, [TJobOverview], void>(
+  null,
+  (get, set, job) => {
+    const prev = get(favoriteJobsAtom);
+    const next = [...prev, job];
+    set(favoriteJobsAtom, next);
+    localStorage.setItem("favoriteJobs", JSON.stringify(next));
+  },
+);
+
+// favoriteJobsAtomからjobNumberで該当データを削除し、localStorageにも書き込むwrite-only atom
+export const removeFavoriteJobAtom = atom<null, [string], void>(
+  null,
+  (get, set, jobNumber) => {
+    const prev = get(favoriteJobsAtom);
+    const next = prev.filter((job) => job.jobNumber !== jobNumber);
+    set(favoriteJobsAtom, next);
+    localStorage.setItem("favoriteJobs", JSON.stringify(next));
+  },
+);
+
+// favoriteJobsAtomが書き換わるたびにlocalStorageに書き込むeffect atom
