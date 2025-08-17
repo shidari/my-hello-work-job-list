@@ -1,10 +1,17 @@
+"use client";
 import type { TJobOverview } from "@sho/models";
-import { useAtom } from "jotai";
-import { favoriteJobsAtom } from "../components/client/atom";
+import { useAtomValue, useSetAtom } from "jotai";
+import {
+  appendFavoriteJobAtom,
+  favoriteJobsAtom,
+  removeFavoriteJobAtom,
+} from "../components/client/atom";
 import styles from "./useJobsWithFavoriteButton.module.css";
 
 export function useJobsWithFavorite(items: TJobOverview[]) {
-  const [favoriteJobs, setFavoriteJobs] = useAtom(favoriteJobsAtom);
+  const favoriteJobs = useAtomValue(favoriteJobsAtom);
+  const appendFavoriteJob = useSetAtom(appendFavoriteJobAtom);
+  const removeFavoriteJob = useSetAtom(removeFavoriteJobAtom);
 
   return items.map((item) => {
     const isFavorite = !!favoriteJobs.find(
@@ -12,11 +19,9 @@ export function useJobsWithFavorite(items: TJobOverview[]) {
     );
     const toggleFavorite = () => {
       if (isFavorite) {
-        setFavoriteJobs(
-          favoriteJobs.filter((job) => job.jobNumber !== item.jobNumber),
-        );
+        removeFavoriteJob(item.jobNumber);
       } else {
-        setFavoriteJobs([...favoriteJobs, item]);
+        appendFavoriteJob(item);
       }
     };
     return {

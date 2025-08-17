@@ -121,5 +121,3 @@ export const removeFavoriteJobAtom = atom<null, [string], void>(
     localStorage.setItem("favoriteJobs", JSON.stringify(next));
   },
 );
-
-// favoriteJobsAtomが書き換わるたびにlocalStorageに書き込むeffect atom
