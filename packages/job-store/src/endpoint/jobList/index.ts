@@ -88,18 +88,22 @@ export class JobListEndpoint extends OpenAPIRoute {
         meta,
       } = jobListResult;
 
-      const validPayload: DecodedNextToken = {
-        exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
-        cursor: { jobId },
-        filter: meta.filter,
-      };
-      const signResult = yield* ResultAsync.fromPromise(
-        sign(validPayload, jwtSecret),
-        (error) =>
-          createJWTSignatureError(`JWT signing failed.\n${String(error)}`),
-      );
+      const nextToken = yield* (() => {
+        if (jobs.length === 0) return okAsync(undefined);
+        const validPayload: DecodedNextToken = {
+          exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
+          cursor: { jobId },
+          filter: meta.filter,
+        };
+        const signResult = ResultAsync.fromPromise(
+          sign(validPayload, jwtSecret),
+          (error) =>
+            createJWTSignatureError(`JWT signing failed.\n${String(error)}`),
+        );
+        return signResult;
+      })();
 
-      return okAsync({ jobs, nextToken: signResult, meta });
+      return okAsync({ jobs, nextToken, meta });
     });
 
     return await result.match(
