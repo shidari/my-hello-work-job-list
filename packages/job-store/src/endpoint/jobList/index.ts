@@ -71,9 +71,10 @@ export class JobListEndpoint extends OpenAPIRoute {
       const dbClient = createJobStoreDBClientAdapter(db);
       const jobStore = createJobStoreResultBuilder(dbClient);
 
+      const limit = 20;
       const jobListResult = yield* await jobStore.fetchJobList({
         cursor: { jobId: INITIAL_JOB_ID },
-        limit: 20,
+        limit,
         filter: {
           companyName,
           employeeCountGt,
@@ -89,7 +90,7 @@ export class JobListEndpoint extends OpenAPIRoute {
       } = jobListResult;
 
       const nextToken = yield* (() => {
-        if (jobs.length === 0) return okAsync(undefined);
+        if (jobs.length <= limit) return okAsync(undefined);
         const validPayload: DecodedNextToken = {
           exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
           cursor: { jobId },

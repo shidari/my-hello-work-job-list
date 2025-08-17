@@ -1,4 +1,5 @@
 import {
+  type DecodedNextToken,
   decodedNextTokenSchema,
   jobListContinueClientErrorResponseSchema,
   jobListContinueQuerySchema,
@@ -89,10 +90,11 @@ export class JobListContinueEndpoint extends OpenAPIRoute {
         return errAsync(createJWTExpiredError("JWT expired"));
       }
 
+      const limit = 20;
       // ジョブリスト取得
       const jobListResult = yield* await jobStore.fetchJobList({
         cursor: { jobId: validatedPayload.cursor.jobId },
-        limit: 20,
+        limit,
         filter: validatedPayload.filter,
       });
 
@@ -102,21 +104,22 @@ export class JobListContinueEndpoint extends OpenAPIRoute {
         meta,
       } = jobListResult;
 
-      // JWT署名
-      const signResult = yield* ResultAsync.fromPromise(
-        sign(
-          {
-            exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
-            cursor: { jobId },
-            filter: meta.filter,
-          },
-          jwtSecret,
-        ),
-        (error) =>
-          createJWTSignatureError(`JWT signing failed.\n${String(error)}`),
-      );
+      const newNextToken = yield* (() => {
+        if (jobs.length <= limit) return okAsync(undefined);
+        const validPayload: DecodedNextToken = {
+          exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
+          cursor: { jobId },
+          filter: meta.filter,
+        };
+        const signResult = ResultAsync.fromPromise(
+          sign(validPayload, jwtSecret),
+          (error) =>
+            createJWTSignatureError(`JWT signing failed.\n${String(error)}`),
+        );
+        return signResult;
+      })();
 
-      return okAsync({ jobs, nextToken: signResult, meta });
+      return okAsync({ jobs, nextToken: newNextToken, meta });
     });
 
     return result.match(
