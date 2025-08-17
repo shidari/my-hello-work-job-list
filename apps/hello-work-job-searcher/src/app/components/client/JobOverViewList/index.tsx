@@ -53,7 +53,7 @@ export function JobOverviewList({
     if (!lastItem) {
       return;
     }
-    if (lastItem.index >= items.length - 3) {
+    if (lastItem.index >= items.length - 5) {
       nextToken && fetchNextPage(nextToken);
     }
   }, [rowVirtualizer.getVirtualItems(), items.length, nextToken]);
