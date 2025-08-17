@@ -1,6 +1,6 @@
 "use client";
 import { useSetAtom } from "jotai";
-import { useCallback, useRef } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import {
   initializeJobListWriterAtom,
   scrollRestorationByItemIndexAtom,
@@ -9,6 +9,7 @@ import {
 
 export const JobsSearchfilter = () => {
   const formRef = useRef<HTMLFormElement>(null);
+  const debounceRef = useRef<number | null>(null); // 追加
   const initializeJobList = useSetAtom(initializeJobListWriterAtom);
   const jobListIndexSetter = useSetAtom(scrollRestorationByItemIndexAtom);
   const jobListItemSetter = useSetAtom(scrollRestorationByItemListAtom);
@@ -18,46 +19,55 @@ export const JobsSearchfilter = () => {
     jobListItemSetter([]);
   }, [jobListIndexSetter, jobListItemSetter]);
 
-  const handleChange = () => {
-    if (formRef.current === null) return;
-    const formData = new FormData(formRef.current);
-    const companyName = formData.get("companyName");
-    const jobDescription = formData.get("jobDescription");
-    const jobDescriptionExclude = formData.get("jobDescriptionExclude");
-    const employeeCountRange = formData.get("employeeCountRange");
-    let employeeCountFilter: Record<string, number> = {};
-
-    switch (employeeCountRange) {
-      case "1-9":
-        employeeCountFilter = { employeeCountGt: 0, employeeCountLt: 10 };
-        break;
-      case "10-30":
-        employeeCountFilter = { employeeCountGt: 9, employeeCountLt: 31 };
-        break;
-      case "30-100":
-        employeeCountFilter = { employeeCountGt: 29, employeeCountLt: 101 };
-        break;
-      case "100+":
-        employeeCountFilter = { employeeCountGt: 100 };
-        break;
-      default:
-        employeeCountFilter = {};
-    }
-
-    const searchFilter = {
-      ...(typeof companyName === "string" && companyName
-        ? { companyName }
-        : {}),
-      ...(typeof jobDescription === "string" && jobDescription
-        ? { jobDescription }
-        : {}),
-      ...(typeof jobDescriptionExclude === "string" && jobDescriptionExclude
-        ? { jobDescriptionExclude }
-        : {}),
-      ...employeeCountFilter,
+  useEffect(() => {
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-    initializeJobList(searchFilter);
-    resetRestoration();
+  }, []);
+
+  const handleChange = () => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = window.setTimeout(() => {
+      if (formRef.current === null) return;
+      const formData = new FormData(formRef.current);
+      const companyName = formData.get("companyName");
+      const jobDescription = formData.get("jobDescription");
+      const jobDescriptionExclude = formData.get("jobDescriptionExclude");
+      const employeeCountRange = formData.get("employeeCountRange");
+      let employeeCountFilter: Record<string, number> = {};
+
+      switch (employeeCountRange) {
+        case "1-9":
+          employeeCountFilter = { employeeCountGt: 0, employeeCountLt: 10 };
+          break;
+        case "10-30":
+          employeeCountFilter = { employeeCountGt: 9, employeeCountLt: 31 };
+          break;
+        case "30-100":
+          employeeCountFilter = { employeeCountGt: 29, employeeCountLt: 101 };
+          break;
+        case "100+":
+          employeeCountFilter = { employeeCountGt: 100 };
+          break;
+        default:
+          employeeCountFilter = {};
+      }
+
+      const searchFilter = {
+        ...(typeof companyName === "string" && companyName
+          ? { companyName }
+          : {}),
+        ...(typeof jobDescription === "string" && jobDescription
+          ? { jobDescription }
+          : {}),
+        ...(typeof jobDescriptionExclude === "string" && jobDescriptionExclude
+          ? { jobDescriptionExclude }
+          : {}),
+        ...employeeCountFilter,
+      };
+      initializeJobList(searchFilter);
+      resetRestoration();
+    }, 300);
   };
 
   return (
