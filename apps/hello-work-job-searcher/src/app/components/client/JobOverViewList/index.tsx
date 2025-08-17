@@ -1,8 +1,8 @@
 "use client";
 
 import type { JobList } from "@sho/models";
-import { useVirtualizer, type VirtualItem } from "@tanstack/react-virtual";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useVirtualizer } from "@tanstack/react-virtual";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useHydrateAtoms } from "jotai/utils";
 import Link from "next/link";
 import React, { useEffect } from "react";
@@ -11,11 +11,10 @@ import {
   continuousJobOverviewListWriterAtom,
   JobOverviewListAtom,
   jobListAtom,
+  scrollRestorationByItemIndexAtom,
+  scrollRestorationByItemListAtom,
 } from "../atom";
 import styles from "./JobOverviewList.module.css";
-
-let _kSavedOffset = 0;
-let _kMeasurementsCache = [] as VirtualItem[];
 
 export function JobOverviewList({
   initialDataFromServer,
@@ -30,6 +29,12 @@ export function JobOverviewList({
   const { items, nextToken } = useAtomValue(JobOverviewListAtom);
   const fetchNextPage = useSetAtom(continuousJobOverviewListWriterAtom);
   const parentRef = React.useRef<HTMLDivElement>(null);
+  const [_kSavedOffset, setSavedOffset] = useAtom(
+    scrollRestorationByItemIndexAtom,
+  );
+  const [_kMeasurementsCache, setSavedItemList] = useAtom(
+    scrollRestorationByItemListAtom,
+  );
 
   const rowVirtualizer = useVirtualizer({
     count: items.length,
@@ -39,8 +44,8 @@ export function JobOverviewList({
     initialMeasurementsCache: _kMeasurementsCache,
     onChange: (virtualizer) => {
       if (!virtualizer.isScrolling) {
-        _kMeasurementsCache = virtualizer.measurementsCache;
-        _kSavedOffset = virtualizer.scrollOffset || 0;
+        setSavedItemList(virtualizer.measurementsCache);
+        setSavedOffset(virtualizer.scrollOffset || 0);
       }
     },
   });

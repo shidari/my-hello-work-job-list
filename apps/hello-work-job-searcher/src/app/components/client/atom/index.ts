@@ -1,4 +1,5 @@
 import type { JobList, SearchFilter, TJobOverview } from "@sho/models";
+import type { VirtualItem } from "@tanstack/react-virtual";
 import { atom } from "jotai";
 import { jobStoreClientOnBrowser } from "@/app/store/client";
 
@@ -73,3 +74,7 @@ export const continuousJobOverviewListWriterAtom = atom<
     totalCount: totalCount,
   }));
 });
+
+export const scrollRestorationByItemIndexAtom = atom(0);
+// あまり直接的に外部ライブラリのインターフェースに依存させたくないが、仕方なく
+export const scrollRestorationByItemListAtom = atom<VirtualItem[]>([]);

@@ -1,11 +1,22 @@
 "use client";
 import { useSetAtom } from "jotai";
-import { useRef } from "react";
-import { initializeJobListWriterAtom } from "./atom";
+import { useCallback, useRef } from "react";
+import {
+  initializeJobListWriterAtom,
+  scrollRestorationByItemIndexAtom,
+  scrollRestorationByItemListAtom,
+} from "./atom";
 
 export const JobsSearchfilter = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const initializeJobList = useSetAtom(initializeJobListWriterAtom);
+  const jobListIndexSetter = useSetAtom(scrollRestorationByItemIndexAtom);
+  const jobListItemSetter = useSetAtom(scrollRestorationByItemListAtom);
+
+  const resetRestoration = useCallback(() => {
+    jobListIndexSetter(0);
+    jobListItemSetter([]);
+  }, [jobListIndexSetter, jobListItemSetter]);
 
   const handleChange = () => {
     if (formRef.current === null) return;
@@ -38,6 +49,7 @@ export const JobsSearchfilter = () => {
       ...employeeCountFilter,
     };
     initializeJobList(searchFilter);
+    resetRestoration();
   };
 
   return (
