@@ -1,4 +1,4 @@
-# Hello Work Searcher
+# Hello Work Software Jobs
 
 求人情報の自動収集・管理システム
 
@@ -7,7 +7,7 @@
 ## 🚀 TL;DR（斜め読み用サマリー）
 
 **何をするプロジェクト？**\
-ハローワークの求人情報を自動収集・管理・検索できるWebアプリケーション
+ハローワークのソフトウェア関連求人情報を自動収集・管理・検索できるWebアプリケーション
 
 **技術スタック**\
 TypeScript + neverthrow + AWS Lambda + Cloudflare Workers + Next.js 15 + React
@@ -44,7 +44,7 @@ TypeScript + neverthrow + AWS Lambda + Cloudflare Workers + Next.js 15 + React
 ### 全体構成
 
 ```
-hello-work-searcher/
+hello-work-software-jobs/
 ├── apps/
 │   └── hello-work-job-searcher/ # フロントエンドアプリケーション (Next.js 15)
 ├── packages/
