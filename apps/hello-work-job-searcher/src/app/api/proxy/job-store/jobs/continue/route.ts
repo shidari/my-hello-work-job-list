@@ -2,7 +2,6 @@ import type { NextRequest } from "next/server";
 import { jobStoreClientOnServer } from "@/app/store/server";
 
 export async function GET(request: NextRequest) {
-  // NextRequestのsearchParamsを直接使用
   const nextToken = request.nextUrl.searchParams.get("nextToken") ?? undefined;
   if (!nextToken) {
     return Response.json({ error: "Missing nextToken" }, { status: 400 });

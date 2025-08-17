@@ -6,8 +6,10 @@ export async function GET(request: NextRequest) {
   const companyName = searchParams.get("companyName") ?? undefined;
   const employeeCountGtRaw = searchParams.get("employeeCountGt");
   const employeeCountLtRaw = searchParams.get("employeeCountLt");
+  const jobDescription = searchParams.get("jobDescription") ?? undefined;
+  const jobDescriptionExclude =
+    searchParams.get("jobDescriptionExclude") ?? undefined;
 
-  // 数値変換（nullや空文字はundefinedに）
   const employeeCountGt =
     employeeCountGtRaw !== null && employeeCountGtRaw !== ""
       ? Number(employeeCountGtRaw)
@@ -17,13 +19,15 @@ export async function GET(request: NextRequest) {
       ? Number(employeeCountLtRaw)
       : undefined;
 
-  // フィルターオブジェクトを組み立て
   const filter: Record<string, unknown> = {};
   if (companyName) filter.companyName = companyName;
   if (typeof employeeCountGt === "number" && !Number.isNaN(employeeCountGt))
     filter.employeeCountGt = employeeCountGt;
   if (typeof employeeCountLt === "number" && !Number.isNaN(employeeCountLt))
     filter.employeeCountLt = employeeCountLt;
+  if (jobDescription) filter.jobDescription = jobDescription;
+  if (jobDescriptionExclude)
+    filter.jobDescriptionExclude = jobDescriptionExclude;
 
   const result = await jobStoreClientOnServer.getInitialJobs(filter);
 

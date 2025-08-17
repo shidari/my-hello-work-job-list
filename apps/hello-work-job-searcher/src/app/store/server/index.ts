@@ -1,10 +1,11 @@
 import { jobListSuccessResponseSchema, type SearchFilter } from "@sho/models";
 import { err, ok, okAsync, ResultAsync, safeTry } from "neverthrow";
+import type { JobStoreClient } from "../type";
 
 const j = Symbol();
 type JobEndPoint = { [j]: unknown } & string;
-export const jobStoreClientOnServer = {
-  async getInitialJobs(filter: SearchFilter = {}) {
+export const jobStoreClientOnServer: JobStoreClient = {
+  getInitialJobs(filter: SearchFilter = {}) {
     return safeTry(async function* () {
       const endpoint = yield* (() => {
         const envEndpoint = process.env.JOB_STORE_ENDPOINT;
@@ -28,6 +29,17 @@ export const jobStoreClientOnServer = {
         searchParams.append("employeeCountLt", String(filter.employeeCountLt));
       }
 
+      if (filter.jobDescription) {
+        searchParams.append("jobDescription", filter.jobDescription);
+      }
+
+      if (filter.jobDescriptionExclude) {
+        searchParams.append(
+          "jobDescriptionExclude",
+          filter.jobDescriptionExclude,
+        );
+      }
+
       const url = `${endpoint}/jobs${searchParams.toString() ? `?${searchParams.toString()}` : ""}`;
 
       const response = yield* ResultAsync.fromPromise(
@@ -49,7 +61,7 @@ export const jobStoreClientOnServer = {
       return okAsync(validatedData);
     });
   },
-  async getContinuedJobs(nextToken: string) {
+  getContinuedJobs(nextToken: string) {
     return safeTry(async function* () {
       const endpoint = yield* (() => {
         const envEndpoint = process.env.JOB_STORE_ENDPOINT;

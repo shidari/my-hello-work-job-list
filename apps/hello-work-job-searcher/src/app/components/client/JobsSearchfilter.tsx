@@ -22,6 +22,8 @@ export const JobsSearchfilter = () => {
     if (formRef.current === null) return;
     const formData = new FormData(formRef.current);
     const companyName = formData.get("companyName");
+    const jobDescription = formData.get("jobDescription");
+    const jobDescriptionExclude = formData.get("jobDescriptionExclude");
     const employeeCountRange = formData.get("employeeCountRange");
     let employeeCountFilter: Record<string, number> = {};
 
@@ -46,6 +48,12 @@ export const JobsSearchfilter = () => {
       ...(typeof companyName === "string" && companyName
         ? { companyName }
         : {}),
+      ...(typeof jobDescription === "string" && jobDescription
+        ? { jobDescription }
+        : {}),
+      ...(typeof jobDescriptionExclude === "string" && jobDescriptionExclude
+        ? { jobDescriptionExclude }
+        : {}),
       ...employeeCountFilter,
     };
     initializeJobList(searchFilter);
@@ -55,13 +63,29 @@ export const JobsSearchfilter = () => {
   return (
     <form
       ref={formRef}
-      style={{ display: "flex", flexDirection: "column", gap: "8px" }}
+      style={{ display: "flex", flexDirection: "column", gap: "0.3em" }}
     >
       <div>
         <input
           type="text"
           placeholder="会社名を検索"
           name="companyName"
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <input
+          type="text"
+          placeholder="求人内容をキーワード検索"
+          name="jobDescription"
+          onChange={handleChange}
+        />
+      </div>
+      <div>
+        <input
+          type="text"
+          placeholder="求人内容をキーワード除外検索"
+          name="jobDescriptionExclude"
           onChange={handleChange}
         />
       </div>

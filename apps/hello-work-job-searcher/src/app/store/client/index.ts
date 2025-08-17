@@ -1,8 +1,9 @@
 import { jobListSuccessResponseSchema, type SearchFilter } from "@sho/models";
 import { err, ok, okAsync, ResultAsync, safeTry } from "neverthrow";
+import type { JobStoreClient } from "../type";
 
-export const jobStoreClientOnBrowser = {
-  async getInitialJobs(filter: SearchFilter = {}) {
+export const jobStoreClientOnBrowser: JobStoreClient = {
+  getInitialJobs(filter: SearchFilter = {}) {
     const searchParams = new URLSearchParams();
     if (filter.companyName) {
       searchParams.append("companyName", filter.companyName);
@@ -12,6 +13,17 @@ export const jobStoreClientOnBrowser = {
     }
     if (filter.employeeCountLt) {
       searchParams.append("employeeCountLt", String(filter.employeeCountLt));
+    }
+
+    if (filter.jobDescription) {
+      searchParams.append("jobDescription", filter.jobDescription);
+    }
+
+    if (filter.jobDescriptionExclude) {
+      searchParams.append(
+        "jobDescriptionExclude",
+        filter.jobDescriptionExclude,
+      );
     }
     return safeTry(async function* () {
       const response = yield* ResultAsync.fromPromise(
@@ -35,7 +47,7 @@ export const jobStoreClientOnBrowser = {
       return okAsync(validatedData);
     });
   },
-  async getContinuedJobs(nextToken: string) {
+  getContinuedJobs(nextToken: string) {
     return safeTry(async function* () {
       const response = yield* ResultAsync.fromPromise(
         fetch(`/api/proxy/job-store/jobs/continue?nextToken=${nextToken}`),
