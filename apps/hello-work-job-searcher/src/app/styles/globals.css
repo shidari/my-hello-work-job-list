@@ -1,3 +1,7 @@
 body {
     height: 98vh;
 }
+
+h1 {
+    margin: 0;
+}
