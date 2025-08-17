@@ -55,20 +55,22 @@ export class JobListEndpoint extends OpenAPIRoute {
           companyName: encodedCompanyName,
           employeeCountGt,
           employeeCountLt,
+          jobDescription: encodedJobDescription,
         },
       } = validatedData;
 
       const companyName = encodedCompanyName
         ? decodeURIComponent(encodedCompanyName)
         : undefined;
+      const jobDescription = encodedJobDescription
+        ? decodeURIComponent(encodedJobDescription)
+        : undefined;
       const jwtSecret = c.env.JWT_SECRET;
 
-      // JobStoreClientの作成
       const db = getDb(c);
-      const dbClient = createJobStoreDBClientAdapter(db); // DrizzleをJobStoreDBClientに変換
+      const dbClient = createJobStoreDBClientAdapter(db);
       const jobStore = createJobStoreResultBuilder(dbClient);
 
-      // nextTokenがない場合（初回リクエスト）
       const jobListResult = yield* await jobStore.fetchJobList({
         cursor: { jobId: INITIAL_JOB_ID },
         limit: 20,
@@ -76,6 +78,7 @@ export class JobListEndpoint extends OpenAPIRoute {
           companyName,
           employeeCountGt,
           employeeCountLt,
+          jobDescription,
         },
       });
 
@@ -90,7 +93,6 @@ export class JobListEndpoint extends OpenAPIRoute {
         cursor: { jobId },
         filter: meta.filter,
       };
-      // JWT署名
       const signResult = yield* ResultAsync.fromPromise(
         sign(validPayload, jwtSecret),
         (error) =>

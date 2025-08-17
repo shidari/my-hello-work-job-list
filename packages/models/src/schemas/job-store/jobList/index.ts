@@ -6,17 +6,16 @@ import { jobSelectSchema } from "../drizzle";
 
 extendZodWithOpenApi(z);
 
-export const jobListQuerySchema = z.object({
+export const searchFilterSchema = z.object({
   companyName: z.string().optional(),
-  employeeCountLt: z.number().optional(), // 追加
-  employeeCountGt: z.number().optional(), // 追加
+  employeeCountLt: z.number().optional(),
+  employeeCountGt: z.number().optional(),
+  jobDescription: z.string().optional(),
 });
 
-export const jobListSearchFilterSchema = z.object({
-  companyName: z.string().optional(),
-  employeeCountLt: z.number().optional(), // 追加
-  employeeCountGt: z.number().optional(), // 追加
-});
+export const jobListQuerySchema = searchFilterSchema;
+
+export const jobListSearchFilterSchema = searchFilterSchema;
 
 export const JobListSchema = z.array(
   jobSelectSchema.omit({

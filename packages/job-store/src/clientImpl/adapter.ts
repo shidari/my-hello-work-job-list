@@ -15,7 +15,6 @@ type DrizzleD1Client = DrizzleD1Database<Record<string, never>> & {
   $client: D1Database;
 };
 
-// --- コマンドごとの処理 ---
 async function handleInsertJob(
   drizzle: DrizzleD1Client,
   cmd: InsertJobCommand,
@@ -69,6 +68,11 @@ async function handleFindJobs(
     filterConditions.push(lt(jobs.employeeCount, filter.employeeCountLt));
   }
 
+  if (filter.jobDescription !== undefined) {
+    filterConditions.push(
+      like(jobs.jobDescription, `%${filter.jobDescription}%`),
+    );
+  }
   const conditions = [...cursorConditions, ...filterConditions];
   const query = drizzle.select().from(jobs);
 
@@ -77,7 +81,6 @@ async function handleFindJobs(
       ? await query.where(and(...conditions)).limit(limit)
       : await query.limit(limit);
 
-  // 仮のtotalCount取得
   const totalCount = await drizzle.$count(
     jobs,
     filterConditions.length > 0 ? and(...filterConditions) : undefined,

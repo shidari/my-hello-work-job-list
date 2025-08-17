@@ -1,3 +1,5 @@
+import type z from "zod";
+import type { searchFilterSchema } from "../../schemas";
 import type { Job } from "./jobFetch";
 import type { InsertJobRequestBody } from "./jobInsert";
 
@@ -30,11 +32,7 @@ export type JobStoreCommand =
   | CheckJobExistsCommand;
 
 // --- コマンドtypeごとのoutput型マッピング ---
-export type SearchFilter = {
-  companyName?: string;
-  employeeCountLt?: number;
-  employeeCountGt?: number;
-};
+export type SearchFilter = z.infer<typeof searchFilterSchema>;
 export interface CommandOutputMap {
   InsertJob: { jobId: number };
   FindJobByNumber: { job: Job | null };
