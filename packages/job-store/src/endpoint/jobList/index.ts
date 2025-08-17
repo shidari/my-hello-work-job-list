@@ -41,7 +41,6 @@ export class JobListEndpoint extends OpenAPIRoute {
   async handle(c: AppContext) {
     const self = this;
     const result = safeTry(async function* () {
-      // バリデーション
       const validatedData = yield* await ResultAsync.fromPromise(
         self.getValidatedData<typeof self.schema>(),
         (error) =>
@@ -56,6 +55,7 @@ export class JobListEndpoint extends OpenAPIRoute {
           employeeCountGt,
           employeeCountLt,
           jobDescription: encodedJobDescription,
+          jobDescriptionExclude: encodedJobDescriptionExclude,
         },
       } = validatedData;
 
@@ -65,6 +65,11 @@ export class JobListEndpoint extends OpenAPIRoute {
       const jobDescription = encodedJobDescription
         ? decodeURIComponent(encodedJobDescription)
         : undefined;
+
+      const jobDescriptionExclude = encodedJobDescriptionExclude
+        ? decodeURIComponent(encodedJobDescriptionExclude)
+        : undefined;
+
       const jwtSecret = c.env.JWT_SECRET;
 
       const db = getDb(c);
@@ -80,6 +85,7 @@ export class JobListEndpoint extends OpenAPIRoute {
           employeeCountGt,
           employeeCountLt,
           jobDescription,
+          jobDescriptionExclude,
         },
       });
 
