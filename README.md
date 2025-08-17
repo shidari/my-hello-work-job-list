@@ -10,8 +10,7 @@
 ハローワークのソフトウェア関連求人情報を自動収集・管理・検索できるWebアプリケーション
 
 **技術スタック**\
-TypeScript + neverthrow + AWS Lambda + Cloudflare Workers + Next.js 15 + React
-19
+TypeScript + neverthrow + AWS Lambda + Cloudflare Workers + Next.js 15 + React 19
 
 **アーキテクチャ**\
 モノレポ型サーバーレス構成（コスト最適化重視）
@@ -115,15 +114,14 @@ graph TD
   - TypeScript (v5.8.3) - 型定義
   - tsup (v8.5.0) - ビルドツール
   - Playwright (v1.53.1) - テスト用ブラウザ自動化
-  - @asteasolutions/zod-to-openapi (v7.2.0) -
-    OpenAPI仕様生成（chanfanaのバグ対応のため）
+  - @asteasolutions/zod-to-openapi (v7.2.0) - OpenAPI仕様生成（chanfanaのバグ対応のため）
 
 ##### `headless-crawler`
 
 - **目的**: ハローワークサイトのクローリング・スクレイピング
 - **技術**:
   - Playwright (v1.53.1) - ブラウザ自動化
-  - AWS CDK (v2.1024.0) - インフラ管理
+  - AWS CDK (v2.1025.0) - インフラ管理
   - Effect (v3.16.5) - 関数型プログラミング（**今後neverthrowに移行予定**）
   - AWS Lambda + SQS - 実行環境
   - @sparticuz/chromium (v138.0.0) - Lambda用Chromium
@@ -182,9 +180,15 @@ graph TD
   - ✅ プロキシAPI実装（`/api/proxy/job-store/jobs`, `/api/proxy/job-store/jobs/continue`）
   - ✅ 求人詳細ページ（`/jobs/[jobNumber]`）
   - ✅ ホームページから求人一覧への自動リダイレクト
-  - ✅ リアルタイム会社名フィルタリング（onChange即時検索）
+  - ✅ 高度な検索・フィルタリング機能
+    - 会社名検索（リアルタイム）
+    - 職務内容キーワード検索
+    - 除外キーワード検索
+    - 従業員数範囲フィルタ（1-9人、10-30人、30-100人、100人以上）
+  - ✅ デバウンス機能付き検索（300ms遅延、メモリリーク対策済み）
+  - ✅ お気に入り機能（localStorage永続化）
   - ✅ サーバーサイドレンダリング（SSR）による初期データプリロード
-  - ✅ Jotaiによる効率的な状態管理（jobListAtom, JobOverviewListAtom）
+  - ✅ Jotaiによる効率的な状態管理（jobListAtom, favoriteJobsAtom）
   - ✅ 仮想化による大量データの効率的な表示とスクロール位置保持
 
 ##### `@sho/scripts`
@@ -195,6 +199,7 @@ graph TD
   - fs-extra (v11.3.0) - ファイル操作
   - neverthrow (v8.2.0) - エラーハンドリング
   - find-up (v7.0.0) - ファイル検索
+  - tsx (v4.20.3) - TypeScript実行環境
 - **機能**:
   - スキーマコピー等の開発支援スクリプト (`copy-schema`)
 
@@ -294,7 +299,9 @@ pnpm start          # 本番環境での起動確認
 - ✅ TanStack React Virtualによる仮想化無限スクロール
 - ✅ 求人詳細表示機能（動的ルーティング `/jobs/[jobNumber]`）
 - ✅ レスポンシブなWeb UI（React 19 + Next.js 15）
-- ✅ リアルタイム会社名フィルタリング（onChange即時検索）
+- ✅ 高度な検索・フィルタリング機能（会社名、職務内容、除外キーワード、従業員数）
+- ✅ デバウンス機能付きリアルタイム検索（300ms遅延、メモリリーク対策）
+- ✅ お気に入り機能（localStorage永続化、ハートアイコンUI）
 - ✅ プロキシAPIによるCORS回避とエラーハンドリング
 - ✅ Jotaiによる効率的な状態管理（atom分離設計）
 - ✅ 仮想化によるスクロール位置保持とメモリ効率化
@@ -302,13 +309,12 @@ pnpm start          # 本番環境での起動確認
 
 ### 開発中・今後の予定
 
-- 🔄 検索機能のdebounce実装
 - 🔄 Effect-tsからneverthrowへの移行（実装の複雑さ軽減のため）
-- 🔄 高度な検索・フィルタリング機能の拡張
 - 🔄 UIの改善・完成
 - 📋 認証・認可機能の実装
-- 📋 お気に入り機能
 - 📋 求人アラート機能
+- 📋 お気に入り求人の一覧表示・管理機能
+- 📋 検索条件の保存・復元機能
 
 ## 技術的特徴
 
@@ -364,12 +370,12 @@ pnpm start          # 本番環境での起動確認
 
 - `POST /api/v1/job` - 求人情報登録
 - `GET /api/v1/job/:jobNumber` - 求人詳細取得
-- `GET /api/v1/jobs?companyName={name}` - 求人一覧取得（会社名フィルタリング対応）
+- `GET /api/v1/jobs?companyName={name}&jobDescription={keyword}&jobDescriptionExclude={exclude}&employeeCountGt={min}&employeeCountLt={max}` - 求人一覧取得（高度なフィルタリング対応）
 - `GET /api/v1/jobs/continue?nextToken={token}` - 継続ページネーション（JWTトークンベース、15分有効期限）
 
 #### プロキシAPI（フロントエンド）
 
-- `GET /api/proxy/job-store/jobs?companyName={name}` - 求人一覧取得プロキシ
+- `GET /api/proxy/job-store/jobs?companyName={name}&jobDescription={keyword}&jobDescriptionExclude={exclude}&employeeCountGt={min}&employeeCountLt={max}` - 求人一覧取得プロキシ（高度なフィルタリング対応）
 - `GET /api/proxy/job-store/jobs/continue?nextToken={token}` - 継続ページネーションプロキシ
 
 ## 開発ガイドライン
