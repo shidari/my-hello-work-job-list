@@ -20,11 +20,11 @@ export const jobListAtom = atom<{
 });
 
 export const JobtotalCountAtom = atom(
-  (get) => {
+  async (get) => {
     const { totalCount } = get(jobListAtom);
     return totalCount;
   },
-  (_get, set, newCount: number) => {
+  async (_get, set, newCount: number) => {
     set(jobListAtom, (prev) => ({
       ...prev,
       totalCount: newCount,
