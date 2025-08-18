@@ -5,7 +5,8 @@ import {
   initializeJobListWriterAtom,
   scrollRestorationByItemIndexAtom,
   scrollRestorationByItemListAtom,
-} from "./atom";
+} from "../atom";
+import styles from "./JobsSearchfilter.module.css";
 
 export const JobsSearchfilter = () => {
   const formRef = useRef<HTMLFormElement>(null);
@@ -71,47 +72,40 @@ export const JobsSearchfilter = () => {
   };
 
   return (
-    <form
-      ref={formRef}
-      style={{ display: "flex", flexDirection: "column", gap: "0.3em" }}
-    >
-      <div>
-        <input
-          type="text"
-          placeholder="会社名を検索"
-          name="companyName"
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <input
-          type="text"
-          placeholder="求人内容をキーワード検索"
-          name="jobDescription"
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <input
-          type="text"
-          placeholder="求人内容をキーワード除外検索"
-          name="jobDescriptionExclude"
-          onChange={handleChange}
-        />
-      </div>
-      <div>
-        <select
-          name="employeeCountRange"
-          defaultValue=""
-          onChange={handleChange}
-        >
-          <option value="">従業員数で絞り込む</option>
-          <option value="1-9">1~9人</option>
-          <option value="10-30">10~30人</option>
-          <option value="30-100">30~100人</option>
-          <option value="100+">100人以上</option>
-        </select>
-      </div>
+    <form ref={formRef} className={styles.formGrid}>
+      <input
+        type="text"
+        placeholder="会社名を検索"
+        name="companyName"
+        onChange={handleChange}
+        className={styles.inputFull}
+      />
+      <input
+        type="text"
+        placeholder="求人内容をキーワード検索"
+        name="jobDescription"
+        onChange={handleChange}
+        className={styles.inputFull}
+      />
+      <input
+        type="text"
+        placeholder="求人内容をキーワード除外検索"
+        name="jobDescriptionExclude"
+        onChange={handleChange}
+        className={styles.inputFull}
+      />
+      <select
+        name="employeeCountRange"
+        defaultValue=""
+        onChange={handleChange}
+        className={styles.inputFull}
+      >
+        <option value="">従業員数で絞り込む</option>
+        <option value="1-9">1~9人</option>
+        <option value="10-30">10~30人</option>
+        <option value="30-100">30~100人</option>
+        <option value="100+">100人以上</option>
+      </select>
     </form>
   );
 };
