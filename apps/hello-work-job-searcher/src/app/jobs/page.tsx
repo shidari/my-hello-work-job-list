@@ -14,7 +14,7 @@ export default async function Page() {
       <FlexColumn>
         <FlexN n={2}>
           <h1>求人情報一覧</h1>
-          <JobtotalCount />
+          <JobtotalCount initialDataFromServer={data.meta.totalCount} />
           <JobsSearchfilter />
         </FlexN>
         <FlexN n={8}>

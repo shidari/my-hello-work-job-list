@@ -19,10 +19,18 @@ export const jobListAtom = atom<{
   totalCount: 0,
 });
 
-export const JobtotalCountAtom = atom((get) => {
-  const { totalCount } = get(jobListAtom);
-  return totalCount;
-});
+export const JobtotalCountAtom = atom(
+  (get) => {
+    const { totalCount } = get(jobListAtom);
+    return totalCount;
+  },
+  (_get, set, newCount: number) => {
+    set(jobListAtom, (prev) => ({
+      ...prev,
+      totalCount: newCount,
+    }));
+  },
+);
 
 export const JobOverviewListAtom = atom<{
   items: TJobOverview[];
