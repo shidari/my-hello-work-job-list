@@ -1,5 +1,6 @@
-body {
-    height: 98vh;
+html, body {
+    height: 100vh;
+    overflow: hidden;
 }
 
 h1 {

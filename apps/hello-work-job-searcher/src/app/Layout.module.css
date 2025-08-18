@@ -1,0 +1,16 @@
+.layoutRoot {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  max-height: 100vh;
+  box-sizing: border-box;
+}
+
+.layoutHeader {
+  flex: 1;
+}
+
+.layoutMain {
+  flex: 9;
+  overflow: auto;
+}
