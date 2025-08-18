@@ -114,7 +114,7 @@ graph TD
   - TypeScript (v5.8.3) - 型定義
   - tsup (v8.5.0) - ビルドツール
   - Playwright (v1.53.1) - テスト用ブラウザ自動化
-  - @asteasolutions/zod-to-openapi (v7.2.0) - OpenAPI仕様生成（chanfanaのバグ対応のため）
+  - @asteasolutions/zod-to-openapi (v7.2.0) - OpenAPI仕様生成
 
 ##### `headless-crawler`
 
@@ -127,6 +127,7 @@ graph TD
   - @sparticuz/chromium (v138.0.0) - Lambda用Chromium
   - @aws-sdk/client-sqs (v3.840.0) - SQS連携
   - esbuild (v0.25.5) - ビルドツール
+  - Zod (v3.25.74) - スキーマバリデーション
 - **機能**:
   - 求人検索条件に基づく求人一覧取得
   - 個別求人詳細情報のスクレイピング
@@ -149,7 +150,10 @@ graph TD
   - Wrangler (v4.26.1) - デプロイメントツール
   - tsup (v8.5.0) - ビルドツール
   - @hono/zod-openapi (v1.0.2) - OpenAPI統合
+  - @hono/zod-validator (v0.7.2) - Zodバリデーション統合
   - valibot (v1.1.0) - 追加バリデーション
+  - dotenv (v17.0.0) - 環境変数管理
+  - hono-openapi (v0.4.8) - OpenAPI拡張
 - **機能**:
   - 求人情報の保存・取得
   - JWTベースのページネーション機能
@@ -196,9 +200,7 @@ graph TD
 - **目的**: 共通スクリプト・ユーティリティ
 - **技術**:
   - TypeScript (v5.8.3)
-  - fs-extra (v11.3.0) - ファイル操作
   - neverthrow (v8.2.0) - エラーハンドリング
-  - find-up (v7.0.0) - ファイル検索
   - tsx (v4.20.3) - TypeScript実行環境
 - **機能**:
   - スキーマコピー等の開発支援スクリプト (`copy-schema`)
@@ -311,7 +313,9 @@ pnpm start          # 本番環境での起動確認
 
 - 🔄 Effect-tsからneverthrowへの移行（実装の複雑さ軽減のため）
 - 🔄 UIの改善・完成
-- 📋 認証・認可機能の実装
+- 📋 事業形態タグ機能（SES、受託開発、自社開発の分類）
+- 📋 プログラミング言語タグ機能（使用技術の分類・フィルタリング）
+- 📋 企業ごとの求人まとまり機能（同一企業の求人をグループ化）
 - 📋 求人アラート機能
 - 📋 お気に入り求人の一覧表示・管理機能
 - 📋 検索条件の保存・復元機能
