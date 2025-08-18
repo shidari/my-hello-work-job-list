@@ -43,6 +43,15 @@ export const createInsertJobError = (
   errorType,
 });
 
+export const createJobsCountError = (
+  message: string,
+  errorType: "server" = "server",
+): FetchJobCountError => ({
+  _tag: "FetchJobCountError",
+  message,
+  errorType,
+});
+
 export type InsertJobError = {
   readonly _tag: "InsertJobError";
   readonly message: string;
@@ -73,10 +82,17 @@ export type FetchJobListError = {
   readonly errorType: "client" | "server";
 };
 
+export type FetchJobCountError = {
+  readonly _tag: "FetchJobCountError";
+  readonly message: string;
+  readonly errorType: "server";
+};
+
 // エラーユニオン型
 export type JobStoreErrors =
   | InsertJobError
   | InsertJobDuplicationError
   | FetchJobError
   | JobNotFoundError
-  | FetchJobListError;
+  | FetchJobListError
+  | FetchJobCountError;

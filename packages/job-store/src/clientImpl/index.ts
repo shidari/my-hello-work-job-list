@@ -1,6 +1,7 @@
 import type {
   CheckJobExistsCommand,
   CommandOutput,
+  CountJobsCommand,
   FindJobByNumberCommand,
   FindJobsCommand,
   InsertJobCommand,
@@ -15,6 +16,7 @@ import {
   createInsertJobDuplicationError,
   createInsertJobError,
   createJobNotFoundError,
+  createJobsCountError,
 } from "./error";
 import type { JobStoreResultBuilder } from "./type";
 
@@ -72,6 +74,15 @@ export const createJobStoreResultBuilder: JobStoreResultBuilder = (
     };
     return ResultAsync.fromPromise(dbClient.execute(command), (error) =>
       createFetchJobListError(`fetch job list failed.\n${String(error)}`),
+    );
+  },
+  countJobs: (params: { cursor?: { jobId: number }; filter: SearchFilter }) => {
+    const command: CountJobsCommand = {
+      type: "CountJobs",
+      options: params,
+    };
+    return ResultAsync.fromPromise(dbClient.execute(command), (error) =>
+      createJobsCountError(`count jobs failed.\n${String(error)}`),
     );
   },
 });

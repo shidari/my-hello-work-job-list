@@ -25,11 +25,20 @@ export type CheckJobExistsCommand = {
   jobNumber: string;
 };
 
+export type CountJobsCommand = {
+  type: "CountJobs";
+  options: {
+    cursor?: { jobId: number };
+    filter: SearchFilter;
+  };
+};
+
 export type JobStoreCommand =
   | InsertJobCommand
   | FindJobByNumberCommand
   | FindJobsCommand
-  | CheckJobExistsCommand;
+  | CheckJobExistsCommand
+  | CountJobsCommand;
 
 // --- コマンドtypeごとのoutput型マッピング ---
 export type SearchFilter = z.infer<typeof searchFilterSchema>;
@@ -42,6 +51,7 @@ export interface CommandOutputMap {
     meta: { totalCount: number; filter: SearchFilter };
   };
   CheckJobExists: { exists: boolean };
+  CountJobs: { count: number };
 }
 
 // --- typeからoutput型を推論 ---

@@ -1,6 +1,7 @@
 import type {
   CheckJobExistsCommand,
   CommandOutput,
+  CountJobsCommand,
   FindJobByNumberCommand,
   FindJobsCommand,
   InsertJobCommand,
@@ -116,6 +117,36 @@ async function handleCheckJobExists(
   return { exists: rows.length > 0 };
 }
 
+async function handleCountJobs(
+  drizzle: DrizzleD1Client,
+  cmd: CountJobsCommand,
+): Promise<CommandOutput<CountJobsCommand>> {
+  const conditions = [];
+  const { cursor, filter } = cmd.options;
+  if (cursor) {
+    conditions.push(gt(jobs.id, cursor.jobId));
+  }
+  if (filter.companyName) {
+    conditions.push(like(jobs.companyName, `%${filter.companyName}%`));
+  }
+  if (filter.employeeCountGt !== undefined) {
+    conditions.push(gt(jobs.employeeCount, filter.employeeCountGt));
+  }
+  if (filter.employeeCountLt !== undefined) {
+    conditions.push(lt(jobs.employeeCount, filter.employeeCountLt));
+  }
+  if (filter.jobDescription !== undefined) {
+    conditions.push(like(jobs.jobDescription, `%${filter.jobDescription}%`));
+  }
+  if (filter.jobDescriptionExclude !== undefined) {
+    conditions.push(
+      not(like(jobs.jobDescription, `%${filter.jobDescriptionExclude}%`)),
+    );
+  }
+  const resCount = await drizzle.$count(jobs, and(...conditions));
+  return { count: resCount };
+}
+
 // --- アダプタ本体 ---
 export const createJobStoreDBClientAdapter = (
   drizzleClient: DrizzleD1Client,
@@ -143,6 +174,11 @@ export const createJobStoreDBClientAdapter = (
         return (await handleCheckJobExists(
           drizzleClient,
           cmd as CheckJobExistsCommand,
+        )) as CommandOutput<T>;
+      case "CountJobs":
+        return (await handleCountJobs(
+          drizzleClient,
+          cmd as CountJobsCommand,
         )) as CommandOutput<T>;
       default: {
         const _exhaustive: never = cmd;

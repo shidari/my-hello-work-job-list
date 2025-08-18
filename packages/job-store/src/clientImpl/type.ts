@@ -1,6 +1,7 @@
 import type {
   CheckJobExistsCommand,
   CommandOutput,
+  CountJobsCommand,
   FindJobByNumberCommand,
   FindJobsCommand,
   InsertJobCommand,
@@ -10,6 +11,7 @@ import type {
 } from "@sho/models";
 import type { ResultAsync } from "neverthrow";
 import type {
+  FetchJobCountError,
   FetchJobError,
   FetchJobListError,
   InsertJobDuplicationError,
@@ -41,4 +43,8 @@ export type JobStoreResultBuilder = (client: JobStoreDBClient) => {
     limit: number;
     filter: SearchFilter;
   }) => ResultAsync<CommandOutput<FindJobsCommand>, FetchJobListError>;
+  countJobs: (params: {
+    cursor?: { jobId: number };
+    filter: SearchFilter;
+  }) => ResultAsync<CommandOutput<CountJobsCommand>, FetchJobCountError>;
 };

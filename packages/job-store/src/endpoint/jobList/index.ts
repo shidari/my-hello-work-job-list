@@ -95,8 +95,13 @@ export class JobListEndpoint extends OpenAPIRoute {
         meta,
       } = jobListResult;
 
+      const { count: restJobCount } = yield* await jobStore.countJobs({
+        cursor: { jobId },
+        filter: meta.filter,
+      });
+
       const nextToken = yield* (() => {
-        if (jobs.length <= limit) return okAsync(undefined);
+        if (restJobCount <= limit) return okAsync(undefined);
         const validPayload: DecodedNextToken = {
           exp: Math.floor(Date.now() / 1000) + 60 * 15, // 15分後の有効期限
           cursor: { jobId },
