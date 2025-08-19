@@ -1,4 +1,5 @@
 import z from "zod";
+import { ISODateSchema } from "../common";
 
 export const JobOverviewSchema = z.object({
   jobNumber: z.string(),
@@ -7,6 +8,7 @@ export const JobOverviewSchema = z.object({
   jobTitle: z.string(),
   employmentType: z.string(), // 後でもっと型を細かくする
   employeeCount: z.number(),
+  receivedDate: ISODateSchema,
 });
 
 export const JobDetailSchema = JobOverviewSchema.extend({

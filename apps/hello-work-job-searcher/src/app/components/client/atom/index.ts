@@ -45,6 +45,7 @@ export const JobOverviewListAtom = atom<{
       employmentType: job.employmentType,
       workPlace: job.workPlace || "不明",
       employeeCount: job.employeeCount || Number.NaN,
+      receivedDate: job.receivedDate,
     })),
     nextToken,
   };

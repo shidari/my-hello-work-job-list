@@ -1,3 +1,35 @@
+.jobOverviewRelative {
+    position: relative;
+}
+.jobLink {
+    flex: 1;
+    text-decoration: none;
+    color: inherit;
+}
+.newBadgeAbsolute {
+    position: absolute;
+    top: 0.8rem;
+    left: 0.5rem;
+    z-index: 1;
+    padding-top: 0.3rem;
+    padding-left: 0.2rem;
+}
+.newBadge {
+    background: #ff5252;
+    color: white;
+    border-radius: 0.5em;
+    font-size: 0.8em;
+    padding: 0.1em 0.6em;
+    font-weight: 700;
+    margin-left: 0.5rem;
+    display: inline-block;
+}
+
+.sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
 .jobOverview {
     transition: all 0.2s ease;
     cursor: pointer;

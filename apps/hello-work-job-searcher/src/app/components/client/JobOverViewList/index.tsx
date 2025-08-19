@@ -17,6 +17,14 @@ import {
 } from "../atom";
 import styles from "./JobOverviewList.module.css";
 
+function NewBadge() {
+  return (
+    <span className={`${styles.newBadge} ${styles.newBadgeAbsolute}`}>
+      新着
+    </span>
+  );
+}
+
 export function JobOverviewList({
   initialDataFromServer,
 }: {
@@ -77,6 +85,11 @@ export function JobOverviewList({
         {rowVirtualizer.getVirtualItems().map((virtualItem) => {
           const wrappedItem = wrappedItems[virtualItem.index];
           const { item, JobFavoriteButton } = wrappedItem;
+          // 新着判定: 1週間以内
+          const isNew =
+            !!item.receivedDate &&
+            Date.now() - new Date(item.receivedDate).getTime() <=
+              7 * 24 * 60 * 60 * 1000;
           return (
             <div
               key={item.jobNumber}
@@ -89,18 +102,27 @@ export function JobOverviewList({
                 transform: `translateY(${virtualItem.start}px)`,
               }}
             >
-              <section className={styles.jobOverview}>
-                <Link href={`/jobs/${item.jobNumber}`}>
-                  <JobOverview
-                    jobNumber={item.jobNumber}
-                    companyName={item.companyName}
-                    jobTitle={item.jobTitle}
-                    employmentType={item.employmentType}
-                    workPlace={item.workPlace}
-                    employeeCount={item.employeeCount}
-                  />
-                </Link>
-                <JobFavoriteButton />
+              <section
+                className={`${styles.jobOverview} ${styles.jobOverviewRelative}`}
+              >
+                {isNew && <NewBadge />}
+                <div className={styles.sectionHeader}>
+                  <Link
+                    href={`/jobs/${item.jobNumber}`}
+                    className={styles.jobLink}
+                  >
+                    <JobOverview
+                      jobNumber={item.jobNumber}
+                      companyName={item.companyName}
+                      jobTitle={item.jobTitle}
+                      employmentType={item.employmentType}
+                      workPlace={item.workPlace}
+                      employeeCount={item.employeeCount}
+                      receivedDate={item.receivedDate}
+                    />
+                  </Link>
+                  <JobFavoriteButton />
+                </div>
               </section>
             </div>
           );
