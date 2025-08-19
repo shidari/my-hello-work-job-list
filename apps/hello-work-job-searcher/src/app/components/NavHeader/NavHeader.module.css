@@ -1,3 +1,16 @@
+.navLink {
+  color: #fff;
+  background: none;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 1.1rem;
+  border-radius: 1rem;
+  padding: 0.3rem 1rem;
+  display: inline-block;
+  text-decoration: none;
+  border: none;
+  transition: background 0.2s;
+}
 
 
 .nav {

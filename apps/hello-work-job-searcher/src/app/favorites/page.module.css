@@ -1,0 +1,18 @@
+
+.listSection {
+  text-align: left;
+}
+.mainSection {
+  padding: 2rem 0;
+  background: #f8f9fa;
+  min-height: 100vh;
+}
+
+.layoutContainer {
+  max-width: 900px;
+  padding: 0 1rem;
+}
+
+.headerSection {
+  margin-bottom: 2rem;
+}

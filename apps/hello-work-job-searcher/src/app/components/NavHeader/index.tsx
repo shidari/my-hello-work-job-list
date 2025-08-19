@@ -7,12 +7,7 @@ export const NavHeader = () => {
       <Link href="/" className={styles.navTitle}>
         求人検索
       </Link>
-      <Link
-        href="/favorites"
-        className={styles.navLinkDisabled}
-        tabIndex={-1}
-        aria-disabled="true"
-      >
+      <Link href="/favorites" className={styles.navLink}>
         お気に入り一覧
       </Link>
     </nav>
