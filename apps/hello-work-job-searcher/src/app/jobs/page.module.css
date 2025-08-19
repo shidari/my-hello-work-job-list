@@ -10,13 +10,14 @@
 }
 
 
+
 .headerSection {
   min-height: 0;
-  flex: 2;
 }
+
 
 
 .listSection {
   min-height: 0;
-  flex: 8;
+  flex: 1;
 }

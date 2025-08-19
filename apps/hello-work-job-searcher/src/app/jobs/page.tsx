@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 
+import { Accordion } from "../components/client/Accordion";
 import { JobOverviewList } from "../components/client/JobOverViewList";
 import { JobsSearchfilter } from "../components/client/JobsSearchfilter/index";
 import { JobtotalCount } from "../components/client/JobTotalCount";
@@ -15,7 +16,9 @@ export default async function Page() {
         <div className={styles.headerSection}>
           <h1>求人情報一覧</h1>
           <JobtotalCount initialDataFromServer={data.meta.totalCount} />
-          <JobsSearchfilter />
+          <Accordion title="絞り込み">
+            <JobsSearchfilter />
+          </Accordion>
         </div>
         <div className={styles.listSection}>
           <JobOverviewList
