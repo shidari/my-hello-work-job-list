@@ -1,23 +1,23 @@
 export const dynamic = "force-dynamic";
 
-import { FlexColumn, FlexN } from "../components";
 import { JobOverviewList } from "../components/client/JobOverViewList";
 import { JobsSearchfilter } from "../components/client/JobsSearchfilter/index";
 import { JobtotalCount } from "../components/client/JobTotalCount";
 import { jobStoreClientOnServer } from "../store/server";
+import styles from "./page.module.css";
 
 export default async function Page() {
   // 一旦対応めんどいからunsafeUnwrapを使う
   const data = (await jobStoreClientOnServer.getInitialJobs())._unsafeUnwrap();
   return (
-    <main style={{ height: "100%" }}>
-      <FlexColumn>
-        <FlexN n={2}>
+    <main className={styles.mainSection}>
+      <div className={styles.layoutContainer}>
+        <div className={styles.headerSection}>
           <h1>求人情報一覧</h1>
           <JobtotalCount initialDataFromServer={data.meta.totalCount} />
           <JobsSearchfilter />
-        </FlexN>
-        <FlexN n={8}>
+        </div>
+        <div className={styles.listSection}>
           <JobOverviewList
             initialDataFromServer={{
               jobs: data.jobs,
@@ -25,8 +25,8 @@ export default async function Page() {
               totalCount: data.meta.totalCount,
             }}
           />
-        </FlexN>
-      </FlexColumn>
+        </div>
+      </div>
     </main>
   );
 }

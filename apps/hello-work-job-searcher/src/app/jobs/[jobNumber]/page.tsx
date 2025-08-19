@@ -1,6 +1,6 @@
-import { FlexColumn, FlexN } from "@/app/components";
-import { JobDetail } from "@/app/components/Job";
 import { jobFetchSuccessResponseSchema } from "@sho/models";
+import { JobDetail } from "@/app/components/Job";
+import styles from "./page.module.css";
 
 interface PageProps {
   params: Promise<{ jobNumber: string }>;
@@ -28,15 +28,15 @@ export default async function Page({ params }: PageProps) {
   };
 
   return (
-    <main>
-      <FlexColumn>
-        <FlexN n={1}>
+    <main className={styles.mainSection}>
+      <div className={styles.layoutContainer}>
+        <div className={styles.headerSection}>
           <h1>求人情報一覧</h1>
-        </FlexN>
-        <FlexN n={9}>
+        </div>
+        <div className={styles.detailSection}>
           <JobDetail jobDetail={jobDetail} />
-        </FlexN>
-      </FlexColumn>
+        </div>
+      </div>
     </main>
   );
 }
