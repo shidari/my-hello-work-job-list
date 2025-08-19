@@ -4,8 +4,7 @@
 
 ### 🏗️ アーキテクチャ概要
 
-**モノレポ型サーバーレス構成** | **TypeScript + neverthrow + AWS Lambda +
-Cloudflare Workers + Next.js 15**
+**モノレポ型サーバーレス構成** | **TypeScript + neverthrow + AWS Lambda + Cloudflare Workers + Next.js 15**
 
 ```
 ハローワーク → headless-crawler(Lambda) → job-store(Workers) → React 19 App
@@ -74,6 +73,9 @@ Cloudflare Workers + Next.js 15**
 - ✅ 求人詳細ページ（動的ルーティング）
 - ✅ リアルタイム会社名フィルタリング
 - ✅ ハイブリッドデータフェッチング（SSR + クライアント）
+- ✅ お気に入り機能（localStorage永続化）
+- ✅ 高度な検索・フィルタリング機能
+- ✅ OpenAPI仕様書自動生成
 
 ---
 
@@ -437,47 +439,82 @@ const result = safeTry(async function* () {
 ### 2. headless-crawler
 
 - **役割**: ハローワークサイトのクローリング・スクレイピング
-- **主な技術**: Playwright, AWS CDK, Effect (neverthrowに移行予定), AWS Lambda + SQS
+- **主な技術**: 
+  - Playwright (v1.53.1) - ブラウザ自動化
+  - AWS CDK (v2.1025.0) - インフラ管理
+  - Effect (v3.16.5) - 関数型プログラミング（neverthrowに移行予定）
+  - @sparticuz/chromium (v138.0.0) - Lambda用Chromium
+  - @aws-sdk/client-sqs (v3.840.0) - SQS連携
+  - esbuild (v0.25.5) - ビルドツール
+  - AWS Lambda + SQS - 実行環境
 - **設計ポイント**:
   - Playwrightによるブラウザ自動化
   - @sparticuz/chromiumによるLambda最適化
   - EventBridge (Cron) による定期実行（毎週月曜日午前1時）
   - SQS連携による非同期ジョブ処理
   - CloudWatch アラーム機能付き
+  - ts-node による開発時検証スクリプト
 
 ### 3. job-store
 
 - **役割**: 求人情報のデータベース管理・API提供
-- **主な技術**: Cloudflare Workers, Drizzle ORM, Hono, D1 (SQLite), Chanfana
+- **主な技術**:
+  - Cloudflare Workers - 実行環境
+  - Drizzle ORM (v0.44.2) - データベースORM
+  - Hono (v4.8.3) - Webフレームワーク
+  - D1 (SQLite) - データベース
+  - Chanfana (v2.8.1) - OpenAPI生成
+  - Vitest (v3.2.0) - テスト
+  - neverthrow (v8.2.0) - エラーハンドリング
+  - Wrangler (v4.26.1) - デプロイメントツール
+  - @hono/zod-openapi (v1.0.2) - OpenAPI統合
+  - @hono/zod-validator (v0.7.2) - Zodバリデーション統合
+  - valibot (v1.1.0) - 追加バリデーション
+  - hono-openapi (v0.4.8) - OpenAPI拡張
 - **設計ポイント**:
   - JWTベースのページネーション機能（15分有効期限）
   - OpenAPI仕様書自動生成 (`/api/v1/docs`)
   - neverthrowによる型安全なエラーハンドリング
+  - ルートパスから自動的にドキュメントページへリダイレクト
   - 主要エンドポイント:
     - `POST /api/v1/job` - 求人情報登録
     - `GET /api/v1/job/:jobNumber` - 求人詳細取得
-    - `GET /api/v1/jobs` - 求人一覧取得（会社名フィルタリング対応）
-    - `GET /api/v1/jobs/continue` - 継続ページネーション
+    - `GET /api/v1/jobs` - 求人一覧取得（高度なフィルタリング対応）
+    - `GET /api/v1/jobs/continue` - 継続ページネーション（JWTトークンベース）
 
 ### 4. hello-work-job-searcher
 
 - **役割**: ユーザーインターフェース
-- **主な技術**: React 19, Next.js 15 (App Router), TanStack React Virtual, Jotai, neverthrow
+- **主な技術**:
+  - React (v19.1.1)
+  - Next.js (v15.4.7) - App Router
+  - TypeScript (v5)
+  - Turbopack - 開発時高速化
+  - TanStack React Virtual (v3.13.12) - 仮想化による無限スクロール
+  - neverthrow (v8.2.0) - エラーハンドリング
+  - Jotai (v2.13.1) - 状態管理
 - **設計ポイント**:
   - ハイブリッドデータフェッチング（SSR + クライアント）
   - TanStack React Virtualによる仮想化無限スクロール
-  - Jotaiによる効率的な状態管理（jobListAtom, JobOverviewListAtom）
+  - Jotaiによる効率的な状態管理（jobListAtom, favoriteJobsAtom）
   - プロキシAPI実装（CORS回避とエラーハンドリング）
   - 実装済み機能:
     - ✅ 求人一覧表示（仮想化無限スクロール）
     - ✅ 求人詳細ページ（`/jobs/[jobNumber]`）
-    - ✅ リアルタイム会社名フィルタリング
+    - ✅ 高度な検索・フィルタリング機能（会社名、職務内容、除外キーワード、従業員数）
+    - ✅ デバウンス機能付き検索（300ms遅延、メモリリーク対策済み）
+    - ✅ お気に入り機能（localStorage永続化）
+    - ✅ お気に入り求人の一覧表示・管理機能（専用ページ `/favorites`）
     - ✅ サーバーサイドレンダリング（SSR）による初期データプリロード
+    - ✅ 仮想化による大量データの効率的な表示とスクロール位置保持
 
 ### 5. @sho/scripts
 
 - **役割**: 共通スクリプト・ユーティリティ
-- **主な技術**: TypeScript, fs-extra, neverthrow, find-up
+- **主な技術**:
+  - TypeScript (v5.8.3)
+  - neverthrow (v8.2.0) - エラーハンドリング
+  - tsx (v4.20.3) - TypeScript実行環境
 - **設計ポイント**:
   - スキーマコピー等の開発支援スクリプト (`copy-schema`)
   - neverthrowによる型安全なエラーハンドリング
