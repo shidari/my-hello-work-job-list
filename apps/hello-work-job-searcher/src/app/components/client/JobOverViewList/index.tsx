@@ -41,7 +41,7 @@ export function JobOverviewList({
   const rowVirtualizer = useVirtualizer({
     count: wrappedItems.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 250, // 内部計算用はpxのまま
+    estimateSize: () => 300, // 内部計算用はpxのまま
     initialOffset: _kSavedOffset,
     initialMeasurementsCache: _kMeasurementsCache,
     onChange: (virtualizer) => {
@@ -97,6 +97,7 @@ export function JobOverviewList({
                     jobTitle={item.jobTitle}
                     employmentType={item.employmentType}
                     workPlace={item.workPlace}
+                    employeeCount={item.employeeCount}
                   />
                 </Link>
                 <JobFavoriteButton />

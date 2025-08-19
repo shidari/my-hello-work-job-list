@@ -6,6 +6,7 @@ export const JobOverviewSchema = z.object({
   workPlace: z.string(),
   jobTitle: z.string(),
   employmentType: z.string(), // 後でもっと型を細かくする
+  employeeCount: z.number(),
 });
 
 export const JobDetailSchema = JobOverviewSchema.extend({

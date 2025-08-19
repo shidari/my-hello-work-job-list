@@ -7,6 +7,7 @@ export function JobOverview({
   jobTitle,
   employmentType,
   workPlace,
+  employeeCount,
 }: TJobOverview) {
   return (
     <div>
@@ -20,6 +21,9 @@ export function JobOverview({
         </li>
         <li data-label="work-place" data-value="suginami">
           就業場所: {workPlace}
+        </li>
+        <li data-label="employee-count" data-value={employeeCount}>
+          従業員数: {employeeCount}人
         </li>
       </ul>
     </div>
