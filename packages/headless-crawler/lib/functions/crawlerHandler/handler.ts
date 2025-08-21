@@ -10,7 +10,7 @@ export const handler: Handler<
 > = async (_) => {
   const program = pipe(
     crawlerRunnable,
-    Effect.flatMap((jobs) => Effect.forEach(jobs, sendJobToQueue)),
+    Effect.tap((jobs) => Effect.forEach(jobs, sendJobToQueue)),
   );
 
   const exit = await Effect.runPromiseExit(program);
