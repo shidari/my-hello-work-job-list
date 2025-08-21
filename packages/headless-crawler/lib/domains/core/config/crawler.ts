@@ -18,7 +18,7 @@ export default defineHelloWorkCrawlingConfig(async () => {
       desiredOccupation: {
         occupationSelection: "ソフトウェア開発技術者、プログラマー",
       },
-      employmentType: "PartTimeWorker",
+      employmentType: "RegularEmployee",
       searchPeriod: "all",
     },
   };
