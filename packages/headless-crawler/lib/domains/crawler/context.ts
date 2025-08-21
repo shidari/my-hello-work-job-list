@@ -1,13 +1,6 @@
 import type { JobListPage, JobMetadata } from "@sho/models";
 import { Chunk, Context, Effect, Layer, Option, Stream } from "effect";
 import {
-  createContext,
-  createPage,
-  launchBrowser,
-} from "../core/browser/builder";
-import type { HelloWorkCrawlingConfig } from "../core/config/crawler";
-
-import {
   extractJobNumbers,
   goToJobSearchPage,
   goToNextJobListPage,
@@ -15,6 +8,11 @@ import {
   listJobOverviewElem,
   searchThenGotoJobListPage,
 } from "../core/browser";
+import {
+  createContext,
+  createPage,
+  launchBrowser,
+} from "../core/browser/builder";
 import type {
   IsNextPageEnabledError,
   ListJobsError,
@@ -30,6 +28,7 @@ import type {
   NextJobListPageError,
   SearchThenGotoJobListPageError,
 } from "../core/browser/interactions/navigation/error";
+import type { HelloWorkCrawlingConfig } from "../core/config/crawler";
 import { delay } from "../core/util";
 import { validateJobListPage, validateJobSearchPage } from "../core/validation";
 import type { JobNumberValidationError } from "../core/validation/jobDetail/error";
@@ -118,16 +117,17 @@ function fetchJobMetaData({
       }),
     );
     const chunked = Chunk.fromIterable(jobNumbers);
-    const nextPage = yield* goToNextJobListPage(jobListPage);
-    const nextPageEnabled = yield* isNextPageEnabled(nextPage);
-    yield* delay(nextPageDelayMs);
     const tmpTotal = count + jobNumbers.length;
-    yield* Effect.logInfo(`${tmpTotal} crawling finished`);
+    const nextPageEnabled = yield* isNextPageEnabled(jobListPage);
+    if (nextPageEnabled) {
+      yield* goToNextJobListPage(jobListPage);
+    }
+    yield* delay(nextPageDelayMs);
     return [
       chunked,
       nextPageEnabled && tmpTotal <= roughMaxCount
         ? Option.some({
-            jobListPage: nextPage,
+            jobListPage: jobListPage,
             count: tmpTotal,
             roughMaxCount,
             nextPageDelayMs, // 後で構造修正する予定
