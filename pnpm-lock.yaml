@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@hono/swagger-ui':
         specifier: ^0.5.2
-        version: 0.5.2(hono@4.9.2)
+        version: 0.5.2(hono@4.9.4)
     devDependencies:
       '@biomejs/biome':
         specifier: ^2.0.6
@@ -124,10 +124,10 @@ importers:
     dependencies:
       '@hono/zod-openapi':
         specifier: ^1.0.2
-        version: 1.1.0(hono@4.9.2)(zod@3.25.76)
+        version: 1.1.0(hono@4.9.4)(zod@3.25.76)
       '@hono/zod-validator':
         specifier: ^0.7.2
-        version: 0.7.2(hono@4.9.2)(zod@3.25.76)
+        version: 0.7.2(hono@4.9.4)(zod@3.25.76)
       '@sho/models':
         specifier: workspace:*
         version: link:../models
@@ -142,10 +142,10 @@ importers:
         version: 17.2.1
       hono:
         specifier: ^4.8.3
-        version: 4.9.2
+        version: 4.9.4
       hono-openapi:
         specifier: ^0.4.8
-        version: 0.4.8(@hono/zod-validator@0.7.2(hono@4.9.2)(zod@3.25.76))(effect@3.17.7)(hono@4.9.2)(openapi-types@12.1.3)(valibot@1.1.0(typescript@5.9.2))(zod@3.25.76)
+        version: 0.4.8(@hono/zod-validator@0.7.2(hono@4.9.4)(zod@3.25.76))(effect@3.17.7)(hono@4.9.4)(openapi-types@12.1.3)(valibot@1.1.0(typescript@5.9.2))(zod@3.25.76)
       neverthrow:
         specifier: ^8.2.0
         version: 8.2.0
@@ -2653,8 +2653,8 @@ packages:
       zod-openapi:
         optional: true
 
-  hono@4.9.2:
-    resolution: {integrity: sha512-UG2jXGS/gkLH42l/1uROnwXpkjvvxkl3kpopL3LBo27NuaDPI6xHNfuUSilIHcrBkPfl4y0z6y2ByI455TjNRw==}
+  hono@4.9.4:
+    resolution: {integrity: sha512-61hl6MF6ojTl/8QSRu5ran6GXt+6zsngIUN95KzF5v5UjiX/xnrLR358BNRawwIRO49JwUqJqQe3Rb2v559R8Q==}
     engines: {node: '>=16.9.0'}
 
   husky@9.1.7:
@@ -2890,11 +2890,6 @@ packages:
   mimic-function@5.0.1:
     resolution: {integrity: sha512-VP79XUPxV2CigYP3jWwAUFSku2aKqBH7uTAapFWCBqutsbmDo96KY5o8uh6U+/YSIn5OxJnXp73beVkpqMIGhA==}
     engines: {node: '>=18'}
-
-  miniflare@4.20250816.0:
-    resolution: {integrity: sha512-HuakGvmsU8aC60wsHP7Su+BgJFly1GmKbmbR/nqIz0Xlk6wcd/pp3vZ7jtbT3unf+aeBOlEO/CzcUb8xFsJLdA==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
 
   miniflare@4.20250816.1:
     resolution: {integrity: sha512-2X8yMy5wWw0dF1pNU4kztzZgp0jWv2KMqAOOb2FeQ/b11yck4aczmYHi7UYD3uyOgtj8WFhwG/KdRWAaATTtRA==}
@@ -3559,16 +3554,6 @@ packages:
     resolution: {integrity: sha512-5gIvHPE/3QVlQR1Sc1NdBkWmqWj/TSgIbY/f/qs9lhiLBw/Da+HbNBTVYGjvwYqEb3NQ+XQM4gAm5b2+JJaUJg==}
     engines: {node: '>=16'}
     hasBin: true
-
-  wrangler@4.31.0:
-    resolution: {integrity: sha512-blb8NfA4BGscvSzvLm2mEQRuUTmaMCiglkqHiR3EIque78UXG39xxVtFXlKhK32qaVvGI7ejdM//HC9plVPO3w==}
-    engines: {node: '>=18.0.0'}
-    hasBin: true
-    peerDependencies:
-      '@cloudflare/workers-types': ^4.20250816.0
-    peerDependenciesMeta:
-      '@cloudflare/workers-types':
-        optional: true
 
   wrangler@4.32.0:
     resolution: {integrity: sha512-q7TRSavBW3Eg3pp4rxqKJwSK+u/ieFOBdNvUsq1P1EMmyj3//tN/iXDokFak+dkW0vDYjsVG3PfOfHxU92OS6w==}
@@ -4550,21 +4535,21 @@ snapshots:
   '@esbuild/win32-x64@0.25.9':
     optional: true
 
-  '@hono/swagger-ui@0.5.2(hono@4.9.2)':
+  '@hono/swagger-ui@0.5.2(hono@4.9.4)':
     dependencies:
-      hono: 4.9.2
+      hono: 4.9.4
 
-  '@hono/zod-openapi@1.1.0(hono@4.9.2)(zod@3.25.76)':
+  '@hono/zod-openapi@1.1.0(hono@4.9.4)(zod@3.25.76)':
     dependencies:
       '@asteasolutions/zod-to-openapi': 8.1.0(zod@3.25.76)
-      '@hono/zod-validator': 0.7.2(hono@4.9.2)(zod@3.25.76)
-      hono: 4.9.2
+      '@hono/zod-validator': 0.7.2(hono@4.9.4)(zod@3.25.76)
+      hono: 4.9.4
       openapi3-ts: 4.5.0
       zod: 3.25.76
 
-  '@hono/zod-validator@0.7.2(hono@4.9.2)(zod@3.25.76)':
+  '@hono/zod-validator@0.7.2(hono@4.9.4)(zod@3.25.76)':
     dependencies:
-      hono: 4.9.2
+      hono: 4.9.4
       zod: 3.25.76
 
   '@img/sharp-darwin-arm64@0.33.5':
@@ -5957,18 +5942,18 @@ snapshots:
       function-bind: 1.1.2
     optional: true
 
-  hono-openapi@0.4.8(@hono/zod-validator@0.7.2(hono@4.9.2)(zod@3.25.76))(effect@3.17.7)(hono@4.9.2)(openapi-types@12.1.3)(valibot@1.1.0(typescript@5.9.2))(zod@3.25.76):
+  hono-openapi@0.4.8(@hono/zod-validator@0.7.2(hono@4.9.4)(zod@3.25.76))(effect@3.17.7)(hono@4.9.4)(openapi-types@12.1.3)(valibot@1.1.0(typescript@5.9.2))(zod@3.25.76):
     dependencies:
       json-schema-walker: 2.0.0
       openapi-types: 12.1.3
     optionalDependencies:
-      '@hono/zod-validator': 0.7.2(hono@4.9.2)(zod@3.25.76)
+      '@hono/zod-validator': 0.7.2(hono@4.9.4)(zod@3.25.76)
       effect: 3.17.7
-      hono: 4.9.2
+      hono: 4.9.4
       valibot: 1.1.0(typescript@5.9.2)
       zod: 3.25.76
 
-  hono@4.9.2: {}
+  hono@4.9.4: {}
 
   husky@9.1.7: {}
 
@@ -6183,24 +6168,6 @@ snapshots:
   mime@3.0.0: {}
 
   mimic-function@5.0.1: {}
-
-  miniflare@4.20250816.0:
-    dependencies:
-      '@cspotcode/source-map-support': 0.8.1
-      acorn: 8.14.0
-      acorn-walk: 8.3.2
-      exit-hook: 2.2.1
-      glob-to-regexp: 0.4.1
-      sharp: 0.33.5
-      stoppable: 1.1.0
-      undici: 7.14.0
-      workerd: 1.20250816.0
-      ws: 8.18.0
-      youch: 4.1.0-beta.10
-      zod: 3.22.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   miniflare@4.20250816.1:
     dependencies:
@@ -6906,22 +6873,6 @@ snapshots:
       '@cloudflare/workerd-linux-64': 1.20250816.0
       '@cloudflare/workerd-linux-arm64': 1.20250816.0
       '@cloudflare/workerd-windows-64': 1.20250816.0
-
-  wrangler@4.31.0:
-    dependencies:
-      '@cloudflare/kv-asset-handler': 0.4.0
-      '@cloudflare/unenv-preset': 2.6.2(unenv@2.0.0-rc.19)(workerd@1.20250816.0)
-      blake3-wasm: 2.1.5
-      esbuild: 0.25.4
-      miniflare: 4.20250816.0
-      path-to-regexp: 6.3.0
-      unenv: 2.0.0-rc.19
-      workerd: 1.20250816.0
-    optionalDependencies:
-      fsevents: 2.3.3
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
 
   wrangler@4.32.0:
     dependencies:
