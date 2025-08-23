@@ -171,7 +171,12 @@ export function fillJobNumber(page: JobSearchPage, jobNumber: JobNumber) {
 export function fillJobPeriod(page: JobSearchPage, searchPeriod: SearchPeriod) {
   return Effect.gen(function* () {
     yield* Effect.logDebug(`fillJobPeriod: searchPeriod=${searchPeriod}`);
-    const id = searchPeriod === "all" ? undefined : "#ID_newArrivedCKBox1";
+    const id =
+      searchPeriod === "today"
+        ? "#ID_newArrivedCKBox1"
+        : searchPeriod === "week"
+          ? "#ID_newArrivedCKBox2"
+          : null;
     id &&
       (yield* Effect.tryPromise({
         try: async () => {
