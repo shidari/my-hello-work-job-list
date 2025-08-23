@@ -12,6 +12,7 @@ export const searchFilterSchema = z.object({
   employeeCountGt: z.number().optional(),
   jobDescription: z.string().optional(),
   jobDescriptionExclude: z.string().optional(), // 除外キーワード
+  onlyNotExpired: z.boolean().optional(),
 });
 
 export const jobListQuerySchema = searchFilterSchema;

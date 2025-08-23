@@ -80,6 +80,12 @@ async function handleFindJobs(
       not(like(jobs.jobDescription, `%${filter.jobDescriptionExclude}%`)),
     );
   }
+
+  if (filter.onlyNotExpired) {
+    const nowIsoStr = new Date().toISOString();
+    filterConditions.push(gt(jobs.expiryDate, nowIsoStr));
+  }
+
   const conditions = [...cursorConditions, ...filterConditions];
   const query = drizzle.select().from(jobs);
 

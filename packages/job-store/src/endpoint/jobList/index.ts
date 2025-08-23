@@ -56,6 +56,7 @@ export class JobListEndpoint extends OpenAPIRoute {
           employeeCountLt,
           jobDescription: encodedJobDescription,
           jobDescriptionExclude: encodedJobDescriptionExclude,
+          onlyNotExpired,
         },
       } = validatedData;
 
@@ -86,6 +87,7 @@ export class JobListEndpoint extends OpenAPIRoute {
           employeeCountLt,
           jobDescription,
           jobDescriptionExclude,
+          onlyNotExpired,
         },
       });
 
