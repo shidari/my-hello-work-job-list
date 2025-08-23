@@ -8,7 +8,7 @@ import type {
   JobStoreCommand,
   JobStoreDBClient,
 } from "@sho/models";
-import { and, eq, gt, like, lt, not } from "drizzle-orm";
+import { and, desc, eq, gt, like, lt, not } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import { jobs } from "../db/schema";
 
@@ -87,7 +87,7 @@ async function handleFindJobs(
   }
 
   const conditions = [...cursorConditions, ...filterConditions];
-  const query = drizzle.select().from(jobs);
+  const query = drizzle.select().from(jobs).orderBy(desc(jobs.receivedDate));
 
   const jobList =
     conditions.length > 0
