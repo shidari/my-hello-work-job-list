@@ -52,14 +52,14 @@ export const qualificationsSchema = z.string().brand("qualifications");
 export const RawEmployeeCountSchema = z.string().brand("employeeCount(raw)");
 
 const r = Symbol();
-export type TransformedReceivedDate = string & { [r]: unknown };
+export type TransformedJSTReceivedDateToISOStr = string & { [r]: unknown };
 const e = Symbol();
-export type TransformedExpiryDate = string & { [e]: unknown };
+export type TransformedJSTExpiryDateToISOStr = string & { [e]: unknown };
 const ec = Symbol();
 export type TransformedEmployeeCount = number & { [ec]: unknown };
 
-export const transformedReceivedDateSchema = RawReceivedDateShema.transform(
-  (value) => {
+export const transformedJSTReceivedDateToISOStrSchema =
+  RawReceivedDateShema.transform((value) => {
     // "2025年7月23日" → "2025-07-23"
     const dateStr = value
       .replace("年", "-")
@@ -68,10 +68,9 @@ export const transformedReceivedDateSchema = RawReceivedDateShema.transform(
 
     const isoDate = new Date(dateStr).toISOString();
     return isoDate;
-  },
-).brand<TransformedReceivedDate>();
-export const transformedExpiryDateSchema = RawReceivedDateShema.transform(
-  (value) => {
+  }).brand<TransformedJSTReceivedDateToISOStr>();
+export const transformedJSTExpiryDateToISOStrSchema =
+  RawExpiryDateSchema.transform((value) => {
     // "2025年7月23日" → "2025-07-23"
     const dateStr = value
       .replace("年", "-")
@@ -80,8 +79,7 @@ export const transformedExpiryDateSchema = RawReceivedDateShema.transform(
 
     const isoDate = new Date(dateStr).toISOString();
     return isoDate;
-  },
-).brand<TransformedExpiryDate>();
+  }).brand<TransformedJSTExpiryDateToISOStr>();
 
 export const transformedWageSchema = RawWageSchema.transform((value) => {
   // 直接正規表現を使って上限と下限を抽出し、数値に変換

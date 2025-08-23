@@ -1,24 +1,24 @@
 import {
   type InsertJobRequestBody,
+  insertJobSuccessResponseSchema,
   type JobNumber,
   type ScrapedJob,
-  insertJobSuccessResponseSchema,
   transformedEmployeeCountSchema,
-  transformedExpiryDateSchema,
-  transformedReceivedDateSchema,
+  transformedJSTExpiryDateToISOStrSchema,
+  transformedJSTReceivedDateToISOStrSchema,
+  transformedWageSchema,
+  transformedWorkingHoursSchema,
 } from "@sho/models";
-import { transformedWageSchema } from "@sho/models";
-import { transformedWorkingHoursSchema } from "@sho/models";
 import { Effect, Schema } from "effect";
 import {
   GetEndPointError,
   InsertJobError,
   InsertJobSuccessResponseValidationError,
+  ParsedWorkingHoursError,
   ParseEmployeeCountError,
   ParseExpiryDateError,
   ParseReceivedDateError,
   ParseWageError,
-  ParsedWorkingHoursError,
   SafeParseEventBodyError,
   ToFirstRecordError,
 } from "./error";
@@ -87,14 +87,15 @@ export const job2InsertedJob = (job: ScrapedJob) => {
         }),
     });
     const receivedDate = yield* Effect.try({
-      try: () => transformedReceivedDateSchema.parse(rawReceivedDate),
+      try: () =>
+        transformedJSTReceivedDateToISOStrSchema.parse(rawReceivedDate),
       catch: (e) =>
         new ParseReceivedDateError({
           message: `parse received date failed.\n${String(e)}`,
         }),
     });
     const expiryDate = yield* Effect.try({
-      try: () => transformedExpiryDateSchema.parse(rawExpiryDate),
+      try: () => transformedJSTExpiryDateToISOStrSchema.parse(rawExpiryDate),
       catch: (e) =>
         new ParseExpiryDateError({
           message: `parse expiry date failed.\n${String(e)}`,
